@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; connect-src https://gmail.googleapis.com https://oauth2.googleapis.com; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="app.css">
+<title>Connect Gmail · Email AgenticCell</title>
+<meta name="description" content="The browser gateway's first test: sign in with Google, read-only metadata, see your mailbox's counts. Nothing is stored or sent anywhere but Google.">
+</head>
+<body>
+<main>
+<nav><a href="../index.html">Email AgenticCell</a> / <a href="../plan/browser-gateway.html">The browser gateway</a></nav>
+<h1><img src="/assets/logo.svg" alt="" width="44" height="44">Connect Gmail</h1>
+<p>The first test of the browser gateway. Sign in with your riskmandate.ai Google account, grant <b>read-only metadata</b> (<code>gmail.metadata</code>), and this page shows your mailbox's counts.</p>
+
+<div class="box">
+<p><button id="connect" type="button">Connect with Google</button> <button id="revoke" class="secondary" type="button" hidden>Disconnect</button></p>
+<p id="status" role="status"></p>
+<p id="error" role="alert" hidden></p>
+<div id="result" hidden>
+<dl>
+<dt>Mailbox</dt><dd id="who"></dd>
+<dt>Messages</dt><dd id="messages"></dd>
+<dt>Threads</dt><dd id="threads"></dd>
+<dt>Labels</dt><dd id="labels"></dd>
+<dt>History cursor</dt><dd id="history"></dd>
+</dl>
+</div>
+</div>
+
+<h2>What this page does, and does not</h2>
+<ul>
+<li>It sends you to Google's own consent screen. Google returns a token to this page in the address bar's fragment, which browsers never send to a server; the page removes it at once.</li>
+<li>The token stays in this tab's memory. It is never stored, and the page can connect only to Google's Gmail and token-revocation services: its content security policy forbids anything else.</li>
+<li>It reads two things: your profile (address, counts, history cursor) and your labels. No message, subject or sender is read, and nothing is written to Gmail, a vault or anywhere else.</li>
+<li>Disconnect revokes the token at Google. Closing the tab forgets it; it expires within an hour regardless.</li>
+<li>Next, once you have created your vault through pki.sgit.ai: the page syncs headers into it.</li>
+</ul>
+<p class="muted">Rules: <a href="../abp/cell-email.html">abp/cell-email</a> v1.1.0, N1, N17, N18. Version __VERSION__. Code Apache-2.0.</p>
+</main>
+<script type="module" src="connect.js"></script>
+</body>
+</html>

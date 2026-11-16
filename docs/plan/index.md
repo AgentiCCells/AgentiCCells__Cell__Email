@@ -15,7 +15,7 @@ Start with [the architecture diagrams](../../src/architecture.html): what is on 
 5. [The fifteen features, in order](features.md): what each one is and where it stands.
 6. [What each build step needs from Dinis](needs.md): the Google OAuth app in testing, its scopes, and the user's own vault.
 7. [Google OAuth setup](google-oauth.md): every value for Dinis to enter in the Google Cloud console.
-8. [The browser as the gateway](browser-gateway.md): a proposal for a full twin with only the website and vaults, with the policy and OAuth changes it needs.
+8. [The browser as the gateway](browser-gateway.md): a full twin with only the website and vaults; approved, and its test page [/app/connect.html](../../src/app/connect.html) is built.
 
 The draft [privacy policy](../pages/privacy.md) is the link the consent screen needs.
 
@@ -32,7 +32,7 @@ The cell's own Agent Behaviour Policy is [abp/cell-email](../../abp/cell-email.m
 | Policy simulator, first cut | built (simulation) | `cell/policy/simulate.mjs` |
 | Gateway decision (which proposals go, wait or are refused), no Gmail | built (simulation) | `cell/gateway/decide.mjs` |
 | Inbound firewall: cleaned copy, links, hidden text, likely prompt injections | built (simulation) | `cell/firewall/clean.mjs` |
-| Tests: 57, run with `node --test tests/*.test.mjs` | passing on 16 November 2026 | `tests/` |
+| Tests: 63, run with `node --test tests/*.test.mjs` | passing on 16 November 2026 | `tests/` |
 | The gateway's Gmail sync and send | plan: needs the Google OAuth app | |
 | The twin in the user's own vault | plan: the user creates it through pki.sgit.ai and grants the gateway an access key | |
 | Agent keys held and rotated | plan: needs the vault | |

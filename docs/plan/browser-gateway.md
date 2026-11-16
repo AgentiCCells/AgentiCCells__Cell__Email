@@ -1,6 +1,6 @@
 # The browser as the gateway: a twin with only a website and vaults
 
-**Status: a proposal.** Dinis asked on 16 November 2026: "can we implement a full gmail twin and live site just using a website and vaults? (with PKI and OAuth)", and said yes to writing it up. Nothing here is built. It changes the approved Agent Behaviour Policy and the Google OAuth values, so both changes below wait for his approval. [Back to the plan](index.md).
+**Status: approved and started.** Dinis asked on 16 November 2026: "can we implement a full gmail twin and live site just using a website and vaults? (with PKI and OAuth)", created the Web client, and approved the policy change ("yes I added the scope and I approve the policy"): abp/cell-email v1.1.0. Built: the safety rails and the test page [/app/connect.html](../../src/app/connect.html). Not built: the vault sync. [Back to the plan](index.md).
 
 ## The short answer
 
@@ -9,7 +9,7 @@ Mostly yes. The user's own browser tab becomes the gateway. There is no server o
 ## How it works
 
 1. **Sign in to the vault (PKI).** The user opens the site and signs in with their pki.sgit.ai passkey, which opens their own vault and their key. That key signs their approvals on the lanes.
-2. **Connect Gmail (OAuth).** The page asks Google for an access token with Google's browser sign-in, the site being the client's authorised JavaScript origin. The consent screen is Google's own; the user picks the tier.
+2. **Connect Gmail (OAuth).** The page sends the user to Google's own consent screen (the OAuth 2.0 token flow for client-side apps) and Google returns an access token to `/app/connect.html` in the URL fragment, which browsers never send to a server; the page takes it out of the address bar at once. No Google script is loaded into the page (rule N18), which is why this flow, and not Google's pop-up library, is used.
 3. **Sync.** While the tab is open, the page reads what changed since the last sync from Gmail's history, writes `raw/`, runs the inbound firewall in the browser to write `clean/`, and updates the threads, the correspondents index and the change feed in the vault.
 4. **Work together.** Agents (Claude sessions, the CRM app) read `clean/` with access keys the user sealed to them, and propose on the actions lane. They never see the Google token.
 5. **Send.** When the user opens the page, it shows pending proposals. The user approves with their key; the page verifies the lanes and the signed policies, runs the email policy checker, sends through Gmail, and writes the outbox.

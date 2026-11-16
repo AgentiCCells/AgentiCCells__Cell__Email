@@ -1,0 +1,52 @@
+// check-app: the browser gateway's pages hold the Google token, so their rules are checked on
+// every build (abp/cell-email v1.1.0: N1, N17, N18, C5). For every HTML page under _site/app/:
+//   - a Content-Security-Policy meta tag, first thing after the charset;
+//   - default-src 'none', script-src 'self' only, base-uri 'none', form-action 'none';
+//   - connect-src only Google's Gmail and token-revocation services (and later the vault service);
+//   - no inline script, no script from another site, a no-referrer policy;
+// and for every script under _site/app/: no storage of the token (no localStorage, no IndexedDB,
+// no cookies), and fetch only to the allowed hosts.
+// Prints OK or each problem. By cell.email@AgentiCCells.dinis, 2026-11-16. Apache-2.0.
+import { readdirSync, readFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+
+const DIR = '_site/app';
+const CONNECT = new Set(['https://gmail.googleapis.com', 'https://oauth2.googleapis.com']);
+const problems = [];
+const fail = (m) => problems.push(m);
+
+if (!existsSync(DIR)) { console.error('check-app: _site/app/ is not built'); process.exit(1); }
+const files = readdirSync(DIR);
+
+for (const f of files.filter((n) => n.endsWith('.html'))) {
+  const s = readFileSync(join(DIR, f), 'utf8');
+  const head = s.slice(0, s.indexOf('</head>'));
+  const m = head.match(/<meta http-equiv="Content-Security-Policy" content="([^"]+)">/);
+  if (!m) { fail(`${f}: no Content-Security-Policy meta tag`); continue; }
+  if (head.indexOf(m[0]) > head.indexOf('<meta charset') + 40) fail(`${f}: the policy must come straight after the charset`);
+  const csp = Object.fromEntries(m[1].split(';').map((d) => d.trim().split(/\s+/)).filter((d) => d[0]).map(([k, ...v]) => [k, v]));
+  const is = (k, v) => JSON.stringify(csp[k] || []) === JSON.stringify(v);
+  if (!is('default-src', ["'none'"])) fail(`${f}: default-src must be 'none'`);
+  if (!is('script-src', ["'self'"])) fail(`${f}: script-src must be 'self' only`);
+  if (!is('base-uri', ["'none'"])) fail(`${f}: base-uri must be 'none'`);
+  if (!is('form-action', ["'none'"])) fail(`${f}: form-action must be 'none'`);
+  for (const h of csp['connect-src'] || []) if (!CONNECT.has(h)) fail(`${f}: connect-src allows ${h}, which is not Google's Gmail or token-revocation service`);
+  if (!head.includes('<meta name="referrer" content="no-referrer">')) fail(`${f}: no no-referrer policy`);
+  for (const t of s.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)) {
+    const src = t[1].match(/\bsrc="([^"]+)"/);
+    if (!src) fail(`${f}: an inline script`);
+    else if (/^(https?:)?\/\//.test(src[1])) fail(`${f}: a script from another site (${src[1]})`);
+    if (t[2].trim()) fail(`${f}: a script with inline code`);
+  }
+  if (/\son[a-z]+\s*=/.test(s)) fail(`${f}: an inline event handler`);
+}
+
+for (const f of files.filter((n) => n.endsWith('.js'))) {
+  const s = readFileSync(join(DIR, f), 'utf8');
+  if (/\blocalStorage\b|\bindexedDB\b|document\.cookie/.test(s)) fail(`${f}: uses persistent storage; the token must stay in memory`);
+  for (const u of s.matchAll(/fetch\(\s*[`'"](https:\/\/[^/`'"]+)/g)) if (!CONNECT.has(u[1])) fail(`${f}: fetches ${u[1]}, which is not allowed`);
+  if (/sessionStorage\.setItem\(\s*[^,]+,\s*token/.test(s)) fail(`${f}: stores the token`);
+}
+
+if (problems.length) { console.error(problems.join('\n')); console.error(`FAILED: ${problems.length} problem(s)`); process.exit(1); }
+console.log(`OK (${files.filter((n) => n.endsWith('.html')).length} app pages, ${files.filter((n) => n.endsWith('.js')).length} scripts)`);

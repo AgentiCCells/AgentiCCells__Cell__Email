@@ -16,11 +16,11 @@ A proposal to use a browser client instead (the site itself as the gateway, no s
 | Client | `email-cell-browser`, Web application |
 | Client id | `235486550409-67qqf0j65poc62fbm2in7jbceci3sv5k.apps.googleusercontent.com` (public by nature: a browser client's id is in its page) |
 | Authorised JavaScript origin | `https://email-cell.agenticcells.site` |
-| Redirect URIs | none (pop-up sign-in) |
+| Authorised redirect URI | `https://email-cell.agenticcells.site/app/connect.html`: **Dinis to add** (the page uses Google's redirect sign-in so that no Google script is loaded into it, rule N18) |
 | Gmail API | enabled by Dinis |
-| Scope (`gmail.metadata` under Data access) | to confirm with Dinis |
+| Scope | `gmail.metadata`, added by Dinis |
 
-The Web client follows [the browser gateway proposal](browser-gateway.md). Nothing in this repository requests a token yet: that waits for Dinis to approve the proposal's policy change.
+The Web client follows [the browser gateway](browser-gateway.md), approved by Dinis (abp/cell-email v1.1.0). The test page is [/app/connect.html](../../src/app/connect.html).
 
 ## The values, in one table
 
