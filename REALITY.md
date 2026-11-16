@@ -6,7 +6,7 @@ A thing not written here does not exist. Updated by cell.email@AgentiCCells.dini
 
 - Seeded by the AgentiCCells site factory on 2026-11-16 from AgentiCCells/AgentiCCells__Site__Template@dev. Its live state is recorded in requests/2026-11-16__email-cell/status.json in AgentiCCells__Site__Factory.
 - The site, with the plan (`docs/plan/`, published at `/plan/`) and the Agent Behaviour Policy (`abp/cell-email.md` v1.0.0, AgentiCCells ABP format 0.1, reviewed by specialist.abp@AgentiCCells.dinis, approved by Dinis Cruz on 16 November 2026; checked in CI by `scripts/abp-check.mjs`).
-- Code, tested against a simulated mailbox of 12 made-up messages only (63 tests passing on 16 November 2026):
+- Code, tested against a simulated mailbox of 12 made-up messages only (71 tests passing on 16 November 2026):
   - the twin's schema and loader, with a change feed (`cell/twin/schema.mjs`), format v1 agreed with crm.ios@sgit.dinis on 16 November 2026;
   - lane entries with Ed25519 signatures, hash chains and merge checks, including per-agent rights (`cell/lanes/entry.mjs`, `policy/agents.json`);
   - the email policy checker: recipients, languages, templates, rates, first contact or reply, attachments, data loss, kill switch (`cell/policy/checker.mjs`, `policy/email-policy.json`);
@@ -14,6 +14,7 @@ A thing not written here does not exist. Updated by cell.email@AgentiCCells.dini
   - the gateway's decision, which sends nothing (`cell/gateway/decide.mjs`);
   - the inbound firewall's cleaned copy (`cell/firewall/clean.mjs`).
 - Tests run in CI before every deploy and in `scripts/release.sh`.
+- The twin sync on `/app/connect.html`: after connecting Gmail, the user opens or creates their own twin vault (SG/Send access token and vault key held in the tab's memory only) and syncs headers and labels into it through sgit's own vault library (v0.2.3, vendored unedited and pinned under `src/app/vendor/`). Re-sync adds only new messages. Checked end to end against the real vault service with simulated messages, not yet on a real mailbox.
 - The browser gateway's test page, `/app/connect.html` (approved, abp/cell-email v1.1.0): signs in with Google's Web client (Internal audience, `gmail.metadata`), shows the mailbox's counts, stores nothing and connects only to Google; `scripts/check-app.mjs` checks its content security policy in CI. Checked end to end against a faked Google, and on 16 November 2026 (about 21:20 UTC) against the real one: Dinis connected a riskmandate.ai mailbox from his browser and the page read its counts and labels. That mailbox's address and counts are not recorded here (a public repository holds no real mailbox data).
 - A Google OAuth setup page for Dinis (`docs/plan/google-oauth.md`, at `/plan/google-oauth.html`) and the privacy policy (`docs/pages/privacy.md`, at `/privacy.html`), approved by Dinis on 16 November 2026.
 

@@ -32,7 +32,7 @@ The cell's own Agent Behaviour Policy is [abp/cell-email](../../abp/cell-email.m
 | Policy simulator, first cut | built (simulation) | `cell/policy/simulate.mjs` |
 | Gateway decision (which proposals go, wait or are refused), no Gmail | built (simulation) | `cell/gateway/decide.mjs` |
 | Inbound firewall: cleaned copy, links, hidden text, likely prompt injections | built (simulation) | `cell/firewall/clean.mjs` |
-| Tests: 63, run with `node --test tests/*.test.mjs` | passing on 16 November 2026 | `tests/` |
+| Tests: 71, run with `node --test tests/*.test.mjs` | passing on 16 November 2026 | `tests/` |
 | The gateway's Gmail sync and send | plan: needs the Google OAuth app | |
 | The twin in the user's own vault | plan: the user creates it through pki.sgit.ai and grants the gateway an access key | |
 | Agent keys held and rotated | plan: needs the vault | |

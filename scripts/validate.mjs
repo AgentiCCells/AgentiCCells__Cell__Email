@@ -4,6 +4,7 @@
 // placeholder check (a seeded site must hold no __SITE_*__ placeholder).
 import { readdirSync, readFileSync, statSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
+import { createHash } from 'node:crypto';
 const walk = d => readdirSync(d).flatMap(f => { const p = join(d, f); return statSync(p).isDirectory() ? walk(p) : [p]; });
 const problems = [];
 const fail = m => problems.push(m);
@@ -11,12 +12,26 @@ const hype = /\b(revolutionary|cutting[- ]edge|seamless(?:ly)?|world[- ]class|ga
 const isTemplate = existsSync('.factory-template');
 if (!existsSync('_site')) { console.error('FAILED: _site/ is not built: run node scripts/build.mjs'); process.exit(1); }
 const files = walk('_site');
+// Vendored third-party code is not our writing: the wording checks (em dash, hype words) skip a
+// file under _site/app/vendor/ only if it is pinned in its VENDOR.json and matches the pin, so an
+// edited or unpinned file is still checked. Approved by Dinis Cruz, 16 November 2026 ("yes on that
+// wording gate"). Every other check still applies to every file. cell.email@AgentiCCells.dinis.
+const pinnedVendor = new Set();
+for (const pin of files.filter((f) => /^_site\/app\/vendor\/[^/]+\/VENDOR\.json$/.test(f))) {
+  const base = dirname(pin);
+  for (const x of JSON.parse(readFileSync(pin, 'utf8')).files || []) {
+    const p = join(base, x.path);
+    if (existsSync(p) && createHash('sha256').update(readFileSync(p)).digest('hex').slice(0, 40) === x.sha256_prefix) pinnedVendor.add(p);
+  }
+}
 for (const f of [...files, 'hub.json', 'README.md']) {
   if (!existsSync(f) || !/\.(html|js|css|json|md)$/.test(f)) continue;
   const s = readFileSync(f, 'utf8');
   s.split('\n').forEach((line, i) => {
-    if (line.includes('—')) fail(`${f}:${i + 1}: em dash`);
-    const m = line.match(hype); if (m) fail(`${f}:${i + 1}: hype word "${m[0]}"`);
+    if (!pinnedVendor.has(f)) {
+      if (line.includes('—')) fail(`${f}:${i + 1}: em dash`);
+      const m = line.match(hype); if (m) fail(`${f}:${i + 1}: hype word "${m[0]}"`);
+    }
     if (!isTemplate && /__SITE_[A-Z]+__/.test(line)) fail(`${f}:${i + 1}: template placeholder left in a seeded site`);
   });
   if (f.endsWith('.html')) {
