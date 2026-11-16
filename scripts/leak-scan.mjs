@@ -87,7 +87,11 @@ function highEntropy(line) {
 
 // Narrow allowlist: [path, kind, reason]. Keep each entry to one file and one kind.
 const ALLOW = [
-  // (none yet)
+  // The browser gateway's trusted senders: the public halves of team/keys/*.json, built into one
+  // file for the page (scripts/build.mjs). Public keys only; team/keys/ itself is checked as
+  // usual. Approved by Dinis Cruz, 16 November 2026. cell.email@AgentiCCells.dinis.
+  ['_site/app/trusted.js', 'public key outside team/keys', 'trusted senders for the browser gateway, built from team/keys/'],
+  ['_site/app/trusted.js', 'long high-entropy string', 'the same public keys, as PEM text inside a JS string'],
 ];
 const allowed = (path, kind) => ALLOW.some(([p, k]) => p === path && k === kind);
 

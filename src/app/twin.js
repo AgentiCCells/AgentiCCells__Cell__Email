@@ -3,8 +3,8 @@
 // tests run them on made-up answers. With the gmail.metadata scope there is no body: messages
 // carry headers and labels only, and say so (body.available false).
 // By cell.email@AgentiCCells.dinis, 2026-11-16. Apache-2.0.
-import { messagePath, checkMessage, buildCorrespondents, updateCorrespondents, syncFileName, ADDR } from './cell/model.mjs';
-import { clean } from './cell/clean.mjs';
+import { messagePath, checkMessage, buildCorrespondents, updateCorrespondents, syncFileName, ADDR } from './cell/model.mjs?v=__VERSION__';
+import { clean } from './cell/clean.mjs?v=__VERSION__';
 
 // The headers asked for with format=metadata.
 export const HEADERS = ['From', 'To', 'Cc', 'Bcc', 'Reply-To', 'Subject', 'Date', 'Message-ID', 'In-Reply-To', 'References', 'Authentication-Results'];

@@ -2,9 +2,15 @@
 // open or create the user's twin vault, and sync headers and labels into it. The Google token,
 // the vault key and the access token stay in this tab's memory; nothing is stored.
 // By cell.email@AgentiCCells.dinis, 2026-11-16. Apache-2.0.
-import { authUrl, newState, parseFragment } from './oauth.js';
-import { HEADERS, syncPlan } from './twin.js';
-import { createTwinVault, openTwinVault, displayKey, readState as readVaultState, readThreads, writeMany, publish } from './vault.js';
+import { authUrl, newState, parseFragment } from './oauth.js?v=__VERSION__';
+import { HEADERS, syncPlan } from './twin.js?v=__VERSION__';
+import { createTwinVault, openTwinVault, displayKey, readState as readVaultState, readThreads, writeMany, publish, readJson, ensureLoaded } from './vault.js?v=__VERSION__';
+import { identity, publicCode, publicQrText, openSealed, keep, recall, forget, kept } from './pki.js?v=__VERSION__';
+import { TRUSTED } from './trusted.js?v=__VERSION__';
+import qrcode from './vendor/qrcode-generator/2.0.4/qrcode.mjs?v=__VERSION__';
+
+const OUTBOX_VAULT = 'co57gzld'; // promptugal-outreach (conductor@PrompTugal.dinis)
+let accessToken = ''; // the SG/Send access token: in memory only
 
 const $ = (id) => document.getElementById(id);
 const STATE_KEY = 'cell-email.oauth-state';
@@ -72,7 +78,7 @@ for (const radio of document.querySelectorAll('input[name=mode]')) radio.addEven
 
 $('open-vault').addEventListener('click', async () => {
   const create = document.querySelector('input[name=mode]:checked').value === 'create';
-  const accessToken = $('token').value.trim();
+  accessToken = $('token').value.trim() || accessToken;
   const status = $('vault-status');
   if (!accessToken) { status.textContent = 'The SG/Send access token is needed to write to a vault.'; return; }
   $('open-vault').disabled = true;
@@ -89,11 +95,89 @@ $('open-vault').addEventListener('click', async () => {
       $('vault-key').value = '';
     }
     $('token').value = '';
-    status.textContent = `Vault ${vault.vaultId} is open${vault.writable ? '' : ' (read-only)'}.`;
+    if ($('keep-twin').checked) { await keep(await identity(), 'vault:twin', displayKey(vault)); showKept(); }
+    status.textContent = `Vault ${vault.vaultId} is open${vault.writable ? '' : ' (read-only)'}${$('keep-twin').checked ? '; its key is kept in this browser, sealed to the page\'s key' : ''}.`;
     $('sync-box').hidden = false;
   } catch (e) {
     status.textContent = `Could not ${create ? 'create' : 'open'} the vault: ${e.message}.`;
   } finally { $('open-vault').disabled = false; }
+});
+
+async function showKept() {
+  const has = await kept('vault:twin').catch(() => false);
+  $('open-kept-twin').hidden = !has; $('forget-twin').hidden = !has;
+}
+showKept();
+
+$('open-kept-twin').addEventListener('click', async () => {
+  const status = $('vault-status');
+  accessToken = $('token').value.trim() || accessToken;
+  if (!accessToken) { status.textContent = 'Paste the SG/Send access token first: writing needs it.'; return; }
+  status.textContent = 'Opening your kept twin vault...';
+  try {
+    const key = await recall(await identity(), 'vault:twin');
+    vault = await openTwinVault(accessToken, key);
+    $('token').value = '';
+    status.textContent = `Vault ${vault.vaultId} is open.`;
+    $('sync-box').hidden = false;
+  } catch (e) { status.textContent = `Could not open the kept vault: ${e.message}.`; }
+});
+
+$('forget-twin').addEventListener('click', async () => {
+  await forget('vault:twin'); showKept();
+  $('vault-status').textContent = 'The kept twin vault key was deleted from this browser. Keep a copy in your password manager.';
+});
+
+// ------------------------------------------------------------ keys: this page's key, sealed vault keys
+$('trusted-list').textContent = TRUSTED.map((t) => `${t.label} (${t.bundle.signing_fingerprint})`).join(', ');
+
+$('show-key').addEventListener('click', async () => {
+  $('show-key').disabled = true; $('show-key').textContent = 'Making or loading the key (the first time takes a few seconds)...';
+  try {
+    const id = await identity();
+    $('key-fp').textContent = id.bundle.signing_fingerprint;
+    const qr = qrcode(0, 'L'); qr.addData(publicQrText(id)); qr.make();
+    $('key-qr').innerHTML = qr.createSvgTag({ cellSize: 3, margin: 2, scalable: true });
+    $('key-out').hidden = false;
+    $('show-key').textContent = 'This page\'s public key';
+  } catch (e) { $('show-key').textContent = `Could not make the key: ${e.message}`; }
+});
+
+$('copy-key-code').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(publicCode(await identity())); $('copy-key-code').textContent = 'Copied'; } catch { $('copy-key-code').textContent = 'Could not copy'; }
+});
+
+$('open-sealed').addEventListener('click', async () => {
+  const status = $('sealed-status');
+  try {
+    const r = await openSealed(await identity(), $('sealed-in').value, TRUSTED);
+    $('sealed-in').value = '';
+    if (!r.vaultKeys.length) { status.textContent = `Opened a message from ${r.from}, but it holds no vault key.`; return; }
+    for (const v of r.vaultKeys) await keep(await identity(), 'vault:' + v.id, v.key);
+    status.textContent = `From ${r.from}, signature checked: the key of vault${r.vaultKeys.length > 1 ? 's' : ''} ${r.vaultKeys.map((v) => v.id).join(', ')}, now kept in this browser, sealed to the page's key.`;
+  } catch (e) { status.textContent = `Not opened: ${e.message}.`; }
+});
+
+// ------------------------------------------------------------ the outreach outbox
+let outbox = null;
+$('open-outbox').addEventListener('click', async () => {
+  const status = $('outbox-status');
+  status.textContent = 'Opening the outbox...';
+  try {
+    const key = await recall(await identity(), 'vault:' + OUTBOX_VAULT);
+    if (!key) throw new Error('no key for it yet: open the sealed vault key above first');
+    outbox = await openTwinVault(accessToken, key);
+    await ensureLoaded(outbox, '/outbox');
+    const folders = (outbox.listFolder('/outbox') || []).filter((e) => e.type === 'folder').map((e) => e.name).sort();
+    const list = $('outbox-list'); list.replaceChildren();
+    for (const f of folders) {
+      const meta = await readJson(outbox, `/outbox/${f}`, 'meta.json');
+      const li = document.createElement('li');
+      li.textContent = `${f}: ${meta?.status || '?'} · to ${(meta?.to || []).join(', ')} · ${meta?.subject || ''}`;
+      list.append(li);
+    }
+    status.textContent = `${folders.length} message${folders.length === 1 ? '' : 's'} in the outbox (vault ${outbox.vaultId}${accessToken ? '' : ', read-only: paste the access token in step 2 to approve'}). Approve and send come next.`;
+  } catch (e) { status.textContent = `Could not open the outbox: ${e.message}.`; }
 });
 
 $('copy-key').addEventListener('click', async () => {

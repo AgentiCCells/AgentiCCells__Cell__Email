@@ -37,7 +37,8 @@
 <p><label>SG/Send access token<br><input id="token" type="password" autocomplete="off" spellcheck="false" size="40"></label></p>
 <p><label><input type="radio" name="mode" value="open" checked> Open my twin vault</label> <label><input type="radio" name="mode" value="create"> Create a new one</label></p>
 <p id="key-row"><label>Vault key<br><input id="vault-key" type="password" autocomplete="off" spellcheck="false" size="40"></label></p>
-<p><button id="open-vault" type="button">Open vault</button></p>
+<p><label><input type="checkbox" id="keep-twin" checked> Keep this vault key in this browser, sealed to the page's key</label></p>
+<p><button id="open-vault" type="button">Open vault</button> <button id="open-kept-twin" class="secondary" type="button" hidden>Open my kept twin vault</button> <button id="forget-twin" class="secondary" type="button" hidden>Forget the kept key</button></p>
 <p id="vault-status" role="status"></p>
 <div id="new-key" hidden>
 <p><b>Save this vault key now</b>, in your password manager. It is the only way back into your twin: there is no reset. Anyone who has it can read and write the twin.</p>
@@ -59,10 +60,35 @@
 </dl>
 </div>
 
+<div class="box" id="keys-box">
+<h2>Keys: this page's key, and sealed vault keys</h2>
+<p class="muted">This page has its own key pair, made in this browser. The private half cannot be read or exported, not even by the page; it stays in this browser. Someone can seal a vault key to the public half, and only this browser can open it.</p>
+<p><button id="show-key" type="button">Show this page's public key</button></p>
+<div id="key-out" hidden>
+<p>Fingerprint (signing): <code id="key-fp"></code></p>
+<div id="key-qr" class="qr"></div>
+<p><button id="copy-key-code" class="secondary" type="button">Copy the key as text</button></p>
+</div>
+<h3>Open a sealed vault key</h3>
+<p class="muted">Paste the sealed code (m1..., a pki.sgit.ai link, or the QR code's text). Only codes signed by a trusted sender are accepted: <span id="trusted-list"></span>.</p>
+<p><textarea id="sealed-in" rows="3" cols="50" spellcheck="false" autocomplete="off"></textarea></p>
+<p><button id="open-sealed" type="button">Open</button></p>
+<p id="sealed-status" role="status"></p>
+</div>
+
+<div class="box" id="outbox-box">
+<h2>Outreach outbox</h2>
+<p class="muted">The PrompTugal outreach vault: drafts written by agents, approved and sent by you. Its key arrives sealed to this page (above) and is kept sealed in this browser. Opening it needs the SG/Send access token (in step 2).</p>
+<p><button id="open-outbox" type="button">Open the outbox</button></p>
+<p id="outbox-status" role="status"></p>
+<ol id="outbox-list"></ol>
+</div>
+
 <h2>What this page does, and does not</h2>
 <ul>
 <li>It sends you to Google's own consent screen. Google returns a token to this page in the address bar's fragment, which browsers never send to a server; the page removes it at once.</li>
-<li>The Google token stays in this tab's memory and is never stored.</li>
+<li>The Google token and the SG/Send access token stay in this tab's memory and are never stored.</li>
+<li>The page keeps one key pair in this browser, with private halves that cannot be read or exported, and vault keys sealed to it, so only this browser can open them. Clearing the site's data deletes them.</li>
 <li>It reads your profile, your labels and, when you sync, each message's headers (from, to, subject, date, thread) and labels. No message body is read: the grant does not allow it. Nothing is ever written to Gmail.</li>
 <li>Sync writes the twin into <b>your</b> vault through sgit's own vault library, served from this site: one file per message, a cleaned copy for agents, threads, labels, a correspondents index and a change feed. Everything is encrypted in this browser before it leaves.</li>
 <li>The page can connect only to Google and to the vault service (<code>dev.send.sgraph.ai</code>), which stores ciphertext it cannot read.</li>
@@ -71,18 +97,18 @@
 </ul>
 <p class="muted">Rules: <a href="../abp/cell-email.html">abp/cell-email</a>, N1, N17, N18. Version __VERSION__. Code Apache-2.0.</p>
 </main>
-<script defer src="vendor/sg-vault/v0.2.3/sg-send/sg-send-crypto.js"></script>
-<script defer src="vendor/sg-vault/v0.2.3/sg-send/sg-send.js"></script>
-<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault-crypto.js"></script>
-<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault-object-store.js"></script>
-<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault-ref-manager.js"></script>
-<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault-commit.js"></script>
-<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault.js"></script>
-<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--file-ops.js"></script>
-<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--folder-ops.js"></script>
-<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--sync.js"></script>
-<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--history.js"></script>
-<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--branches.js"></script>
-<script type="module" src="connect.js"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-send/sg-send-crypto.js?v=__VERSION__"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-send/sg-send.js?v=__VERSION__"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault-crypto.js?v=__VERSION__"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault-object-store.js?v=__VERSION__"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault-ref-manager.js?v=__VERSION__"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault-commit.js?v=__VERSION__"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault.js?v=__VERSION__"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--file-ops.js?v=__VERSION__"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--folder-ops.js?v=__VERSION__"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--sync.js?v=__VERSION__"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--history.js?v=__VERSION__"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--branches.js?v=__VERSION__"></script>
+<script type="module" src="connect.js?v=__VERSION__"></script>
 </body>
 </html>

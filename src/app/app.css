@@ -18,3 +18,7 @@ dd{margin:0;font-variant-numeric:tabular-nums}
 input[type=password],select{font:inherit;padding:.4rem .5rem;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);max-width:100%}
 #new-key code{word-break:break-all}
 h2{font-size:1.2rem;margin-top:0}
+.qr svg{width:min(320px,100%);height:auto;background:#fff;padding:6px;border-radius:6px}
+textarea{font:14px ui-monospace,Menlo,monospace;width:100%;max-width:40rem;padding:.4rem;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
+h3{font-size:1.05rem;margin-top:1.4rem}
+#outbox-list li{margin-bottom:.4rem}

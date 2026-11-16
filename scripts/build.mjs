@@ -36,6 +36,14 @@ for (const [from] of PAGES) {
     writeFileSync(join('_site', dirname(out), f), src);
   }
 }
+// cell.email@AgentiCCells.dinis, 2026-11-16: the browser gateway's trusted senders, the public
+// bundles in team/keys/ named below, written for the page as _site/app/trusted.js. A sealed vault
+// key is accepted only when one of them signed it. Approved by Dinis Cruz, 16 November 2026.
+const TRUSTED_SENDERS = ['conductor-promptugal-dinis'];
+if (existsSync('_site/app')) {
+  const trusted = TRUSTED_SENDERS.map((n) => { const b = JSON.parse(readFileSync(`team/keys/${n}.json`, 'utf8')); return { label: b.label, bundle: { v: b.v, encrypt: b.encrypt, sign: b.sign, label: b.label, fingerprint: b.fingerprint, signing_fingerprint: b.signing_fingerprint } }; });
+  writeFileSync('_site/app/trusted.js', `// Built from team/keys/ by scripts/build.mjs: the senders whose sealed vault keys the page accepts.\nexport const TRUSTED = ${JSON.stringify(trusted, null, 2)};\n`);
+}
 const walk = d => readdirSync(d).flatMap(f => { const p = join(d, f); return statSync(p).isDirectory() ? walk(p) : [p]; });
 for (const f of walk('_site')) {
   if (!/\.(html|js|css|json|md|txt)$/.test(f)) continue;

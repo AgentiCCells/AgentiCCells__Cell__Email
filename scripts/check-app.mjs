@@ -48,7 +48,12 @@ for (const f of files.filter((n) => n.endsWith('.html'))) {
 
 for (const f of files.filter((n) => n.endsWith('.js'))) {
   const s = readFileSync(join(DIR, f), 'utf8');
-  if (/\blocalStorage\b|\bindexedDB\b|document\.cookie/.test(s)) fail(`${f}: uses persistent storage; the token must stay in memory`);
+  // Persistent storage: never localStorage or cookies. IndexedDB only in pki.js, for the page's
+  // non-extractable key pair and secrets sealed to it (approved by Dinis, 16 November 2026).
+  if (/\blocalStorage\b|document\.cookie/.test(s)) fail(`${f}: uses persistent storage; tokens and keys stay in memory or sealed in pki.js`);
+  if (/\bindexedDB\b/.test(s) && f !== 'pki.js') fail(`${f}: uses IndexedDB, which only pki.js may use`);
+  if (f === 'pki.js' && /generateKey\([^)]*,\s*true\s*,/.test(s)) fail(`${f}: makes an extractable key pair; the page's private keys must not be extractable`);
+  if (f === 'pki.js' && !/generateKey\(RSA_GEN, false,/.test(s)) fail(`${f}: the encryption key pair must be made with extractable false`);
   for (const u of s.matchAll(/fetch\(\s*[`'"](https:\/\/[^/`'"]+)/g)) if (!CONNECT.has(u[1])) fail(`${f}: fetches ${u[1]}, which is not allowed`);
   if (/sessionStorage\.setItem\(\s*[^,]+,\s*token/.test(s)) fail(`${f}: stores the token`);
 }
@@ -63,9 +68,9 @@ for (const pinFile of all.filter((f) => /^vendor\/[^/]+\/VENDOR\.json$/.test(f))
     const got = createHash('sha256').update(readFileSync(join(DIR, path))).digest('hex').slice(0, 40);
     if (got !== want) fail(`${path}: does not match its pin: vendored code must not be edited`);
   }
-  for (const f of all.filter((x) => x.startsWith(base) && x.endsWith('.js'))) if (!pinned.has(f)) fail(`${f}: vendored but not pinned in ${pinFile}`);
+  for (const f of all.filter((x) => x.startsWith(base) && /\.m?js$/.test(x))) if (!pinned.has(f)) fail(`${f}: vendored but not pinned in ${pinFile}`);
 }
-for (const f of all.filter((x) => x.startsWith('vendor/') && x.endsWith('.js'))) if (!all.some((p) => /VENDOR\.json$/.test(p) && f.startsWith(p.replace(/VENDOR\.json$/, '')))) fail(`${f}: vendored with no VENDOR.json`);
+for (const f of all.filter((x) => x.startsWith('vendor/') && /\.m?js$/.test(x))) if (!all.some((p) => /VENDOR\.json$/.test(p) && f.startsWith(p.replace(/VENDOR\.json$/, '')))) fail(`${f}: vendored with no VENDOR.json`);
 
 if (problems.length) { console.error(problems.join('\n')); console.error(`FAILED: ${problems.length} problem(s)`); process.exit(1); }
 console.log(`OK (${files.filter((n) => n.endsWith('.html')).length} app pages, ${files.filter((n) => n.endsWith('.js')).length} scripts, ${all.filter((n) => n.startsWith('vendor/') && n.endsWith('.js')).length} vendored scripts pinned)`);
