@@ -10,5 +10,5 @@
   },
   "repository": "https://github.com/AgentiCCells/AgentiCCells__Cell__Email",
   "live_address": "https://email-cell.agenticcells.site",
-  "version_from": "/version.json"
+  "version_from": "https://email-cell.agenticcells.site/version.json"
 }
