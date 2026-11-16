@@ -6,6 +6,21 @@ Dinis's word, 16 November 2026: "Can you add the website to Google OAuth details
 
 A proposal to use a browser client instead (the site itself as the gateway, no server) is on [the browser gateway page](browser-gateway.md); until Dinis approves it, the values below stand.
 
+## What is configured (16 November 2026)
+
+| Item | Value |
+|---|---|
+| Project | RiskMandate |
+| Branding | done by Dinis |
+| Audience | Internal (riskmandate.ai Workspace accounts only) |
+| Client | `email-cell-browser`, Web application |
+| Client id | `235486550409-67qqf0j65poc62fbm2in7jbceci3sv5k.apps.googleusercontent.com` (public by nature: a browser client's id is in its page) |
+| Authorised JavaScript origin | `https://email-cell.agenticcells.site` |
+| Redirect URIs | none (pop-up sign-in) |
+| Scope, Gmail API enabled | to confirm with Dinis |
+
+The Web client follows [the browser gateway proposal](browser-gateway.md). Nothing in this repository requests a token yet: that waits for Dinis to approve the proposal's policy change.
+
 ## The values, in one table
 
 | Where in the console | Field | Value |
