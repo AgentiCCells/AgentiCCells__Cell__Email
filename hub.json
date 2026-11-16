@@ -1,10 +1,13 @@
 {
   "schema": "hub.json (draft)",
   "name": "Email AgenticCell",
-  "what_it_does": "Explains the email agentic cell (not built yet), where one gateway agent alone holds the Google token and people and agents work on a signed twin of the mailbox in an SGit vault.",
+  "what_it_does": "The email agentic cell: one gateway agent alone holds the Google token, and people and agents work on a signed twin of the mailbox in an SGit vault. The plan, the Agent Behaviour Policy, and the twin schema, signed lanes, email policy checker and inbound firewall, built and tested against a simulated mailbox only.",
   "owner": "AgentiCCells",
-  "team": "factory@AgentiCCells.dinis, instructed by Dinis Cruz",
-  "licence": { "code": "Apache-2.0", "text": "CC BY 4.0" },
+  "team": "cell.email@AgentiCCells.dinis (conductor), instructed by Dinis Cruz; site made by factory@AgentiCCells.dinis",
+  "licence": {
+    "code": "Apache-2.0",
+    "text": "CC BY 4.0"
+  },
   "repository": "https://github.com/AgentiCCells/AgentiCCells__Cell__Email",
   "live_address": "https://email-cell.agenticcells.site",
   "version_from": "/version.json"

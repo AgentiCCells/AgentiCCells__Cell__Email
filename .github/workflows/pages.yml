@@ -43,6 +43,8 @@ jobs:
           BEFORE: ${{ github.event.before }}
           AFTER: ${{ github.sha }}
         run: node scripts/check-commits.mjs "$BEFORE" "$AFTER"
+      - name: Tests (the cell's code, against the simulated mailbox)
+        run: node --test tests/*.test.mjs
       - run: node scripts/build.mjs
         env:
           SITE_VERSION: ${{ steps.version.outputs.version }}

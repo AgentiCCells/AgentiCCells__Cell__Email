@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Email AgenticCell</title>
-<meta name="description" content="The email agentic cell: one gateway agent alone touches Gmail; people and agents work on a signed, encrypted twin of the mailbox in a vault. Not built yet.">
+<meta name="description" content="The email agentic cell: one gateway agent alone touches Gmail; people and agents work on a signed, encrypted twin of the mailbox in a vault. The plan, the policy, and the parts built against a simulated mailbox.">
 <style>
 :root{--bg:#fbf7f0;--fg:#222;--muted:#666;--line:#ddd2c0;--box:#fff;--accent:#8a4b12;--warn-bg:#fff1d6;--warn-line:#e0b25c}
 @media(prefers-color-scheme:dark){:root{--bg:#17140f;--fg:#eee;--muted:#aaa;--line:#3b342a;--box:#211d17;--accent:#e9a866;--warn-bg:#2c2416;--warn-line:#7a5b25}}
@@ -23,7 +23,6 @@ a{color:var(--accent)}
 .cards li{background:var(--box);border:1px solid var(--line);border-radius:6px;padding:.7rem .9rem}
 .cards b{display:block}
 ol.alt li{margin-bottom:.4rem}
-.placeholder{color:var(--muted);font-style:italic}
 nav.links a{margin-right:1rem}
 footer{margin-top:3rem;border-top:1px solid var(--line);padding-top:1rem}
 </style>
@@ -34,12 +33,15 @@ footer{margin-top:3rem;border-top:1px solid var(--line);padding-top:1rem}
 <p class="lead">One gateway agent alone touches Gmail. People and agents work on a signed, encrypted twin of the mailbox, kept in an SGit vault.</p>
 
 <div class="status" role="note">
-<strong>Status: not built yet.</strong>
-This page explains the design described in the article <a href="https://newsroom.sgit.ai/articles/the-email-agentic-cell.html">The email agentic cell</a> on the SGit newsroom. Nothing on this page is running. A dedicated session will build the cell in this repository; this page will change as parts of it become real.
+<strong>Status: a plan, with the first parts built against a simulated mailbox.</strong>
+Built and tested (16 November 2026, 44 tests): the twin's schema, signed lane entries and their checks, the email policy checker, the inbound firewall and a first policy simulator. All of it runs on made-up messages only. Nothing touches a real mailbox: that needs a Google OAuth app in testing and an sgit vault, which Dinis Cruz has not yet been asked to grant. See <a href="plan/needs.html">what each step needs</a>.
 </div>
 
-<nav class="links" aria-label="Related sites">
-<a href="https://newsroom.sgit.ai/articles/the-email-agentic-cell.html">Read the article</a>
+<nav class="links" aria-label="Pages">
+<a href="plan/index.html">The plan</a>
+<a href="abp/cell-email.html">Agent Behaviour Policy</a>
+<a href="https://github.com/AgentiCCells/AgentiCCells__Cell__Email">Code</a>
+<a href="https://newsroom.sgit.ai/articles/the-email-agentic-cell.html">The article</a>
 <a href="https://riskmandate.ai">RiskMandate</a>
 <a href="https://agenticcells.site">AgentiCCells</a>
 </nav>
@@ -71,39 +73,39 @@ This page explains the design described in the article <a href="https://newsroom
 
 <h2 id="flows">The four flows</h2>
 <ul class="cards">
-<li><b>Actions</b>Has its own signed append lane.</li>
-<li><b>Approvals</b>Has its own signed append lane.</li>
-<li><b>Reads</b>Has its own signed append lane.</li>
-<li><b>Outbox</b>Has its own signed append lane. Only the gateway agent holds the token that reaches Gmail.</li>
+<li><b>Connect</b>The user picks a tier on Google's own consent screen: metadata, read, compose, send. <span class="muted">Plan.</span></li>
+<li><b>Receive</b>Gmail nudges the gateway; it reads the history, writes the twin, and the firewall writes a cleaned copy. <span class="muted">Firewall and twin built (simulation).</span></li>
+<li><b>Work together</b>People and agents read the twin and propose on the actions lane; every read is a signed receipt. <span class="muted">Lanes built (simulation).</span></li>
+<li><b>Send</b>A person signs, or a signed automation allows; the gateway checks the email policy, sends, and writes the outbox. <span class="muted">Decision built (simulation); sending is a plan.</span></li>
 </ul>
-<p class="placeholder">Placeholder: the step-by-step detail of each flow will be taken from the article when the cell is built.</p>
+<p><a href="plan/architecture.html">The architecture in full</a> · <a href="plan/twin.html">the twin's vault layout</a> · <a href="plan/lanes.html">the lanes</a></p>
 
 <h2 id="altitudes">Behaviour policies at five altitudes</h2>
-<p>The rules about what the cell may do are set at five levels:</p>
 <ol class="alt">
-<li><b>The OAuth grant</b>: what Google allows the token to do at all.</li>
-<li><b>The token holder</b>: the gateway agent, the only one that holds the token.</li>
-<li><b>Per-agent rights</b>: what each agent working on the twin may do.</li>
-<li><b>What an email may be</b>: rules on the mail itself.</li>
-<li><b>Who approves</b>: which people or agents must agree before something happens.</li>
+<li><b>The OAuth grant</b>: which Gmail scopes the user gave. Enforced by Google. <span class="muted">Plan.</span></li>
+<li><b>Who holds the token</b>: one gateway agent. <span class="muted">Plan.</span></li>
+<li><b>What each agent may do</b>: read, propose, approve or send, per agent and key, checked on the lanes. <span class="muted">Built (simulation).</span></li>
+<li><b>What an email may be</b>: recipients, languages, templates, attachments, rates, first contact or reply, data loss. <span class="muted">Built (simulation).</span></li>
+<li><b>Who approves</b>: a person for consequential sends, a signed automation for routine ones; first contacts always a person. <span class="muted">Built (simulation) for the decision.</span></li>
 </ol>
+<p>The checker can say what today's connectors cannot: <em>this agent may send a reply in Portuguese to an existing correspondent, using this template, but never a first contact.</em> <a href="plan/policy.html">The policy in full</a>.</p>
 
-<h2 id="features">Features</h2>
-<p>The article lists fifteen features. Among them:</p>
-<ul>
-<li>a shared inbox with roles</li>
-<li>an inbound firewall</li>
-<li>a calendar twin</li>
-<li>a kill switch</li>
-</ul>
-<p class="placeholder">Placeholder: the full list of fifteen features is in the <a href="https://newsroom.sgit.ai/articles/the-email-agentic-cell.html">article</a> and will be added here.</p>
+<h2 id="features">The fifteen features</h2>
+<p>In build order, those that protect us first: the inbound firewall, data-loss checks, a kill switch, a shared inbox with roles, a policy simulator, templates and voice, approve anywhere, follow-ups, signed outbound mail, vault links, time travel, synthetic recipients, inbox analytics, a calendar twin, and more than Gmail. Five are partly built against the simulated mailbox. <a href="plan/features.html">Each feature and where it stands</a>.</p>
 
 <h2 id="build-order">Build order</h2>
-<p>The cell starts with our own inboxes, under RiskMandate's Google project, with the project in testing.</p>
-<p class="placeholder">Placeholder: later steps of the build order will be added from the article.</p>
+<ol class="alt">
+<li>Our own inboxes first: the OAuth app in testing, under RiskMandate's Google project; the gateway and the twin; one mailbox.</li>
+<li>The lanes and the signatures.</li>
+<li>The email policy, checked before every send.</li>
+<li>The CRM app's email component, on the twin.</li>
+<li>The first automated sends, under a signed policy.</li>
+<li>Then the cell, offered to teams, with verification when it leaves testing.</li>
+</ol>
+<p><a href="plan/needs.html">What each step needs from Dinis</a>: the Google OAuth app in testing, its scopes, a Pub/Sub topic, and the sgit vault (the factory skipped it; the cell has no sgit credential yet).</p>
 
 <footer>
-<p class="muted">Version __VERSION__ · Made by the <a href="https://github.com/AgentiCCells/AgentiCCells__Site__Factory">AgentiCCells site factory</a> · Code Apache-2.0, text CC BY 4.0.</p>
+<p class="muted">Version __VERSION__ · Made by the <a href="https://github.com/AgentiCCells/AgentiCCells__Site__Factory">AgentiCCells site factory</a>, built by cell.email@AgentiCCells.dinis · Code Apache-2.0, text CC BY 4.0.</p>
 </footer>
 </main>
 </body>
