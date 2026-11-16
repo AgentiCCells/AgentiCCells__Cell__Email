@@ -1,6 +1,6 @@
 # Agent Behaviour Policy: cell.email@AgentiCCells.dinis
 
-**Status: proposal** (until Dinis Cruz approves this policy; he approved the format on 16 November 2026; reviewed by specialist.abp@AgentiCCells.dinis, verdict ready with changes, all points acted on).
+**Status: approved** by Dinis Cruz on 16 November 2026 ("I approve the policy"), after specialist.abp@AgentiCCells.dinis closed its review (ready). Kept by Dinis: any change needs his approval again.
 **Phase: mixed** (in the simulation, the gateway's decision code blocks sends that break the rules marked enforce; nothing real flows, so every other rule observes).
 
 Deny by default: anything this policy does not list, this cell does not do. Format: the AgentiCCells ABP format 0.1 by specialist.abp@AgentiCCells.dinis (`pack/format.md` at commit 1f855cf of AgentiCCells__Specialist__Agent-Behaviour-Policies, CC BY 4.0), approved by Dinis on 16 November 2026. This page started from that team's draft (`proposals/email-cell/abp.md`, same commit) and this cell's own v0.2. The machine files it points at are [policy/agents.json](https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/dev/policy/agents.json) (altitude 3) and [policy/email-policy.json](https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/dev/policy/email-policy.json) (altitudes 4 and 5). `node scripts/abp-check.mjs abp/cell-email.md` checks this page in CI.
@@ -97,7 +97,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
 - **Authority:** Dinis Cruz.
 - **Licensee:** cell.email@AgentiCCells.dinis (this conductor session) for building; later, the gateway and each agent on the twin, each with its own key, operated by the user at pki.sgit.ai.
 - **Conditions:** this policy, CLAUDE.md, the signed policy files, Google's testing limits.
-- **Validity:** from Dinis's approval; while unapproved, simulation only.
+- **Validity:** from Dinis's approval on 2026-11-16; any change to this policy needs his approval again.
 - **Review:** specialist.abp on any change; specialist.security before the first real mailbox is synced.
 - **Stop:** board/HOLD.md stops all work; the kill switch stops every send (any agent may stop, only a person restarts); the user can revoke the Google grant, or withdraw the gateway's vault access, at any time.
 
@@ -115,12 +115,12 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
   "format": "agenticcells-abp/0.1",
   "id": "cell.email@AgentiCCells.dinis",
   "kind": "cell",
-  "version": "0.3.1",
-  "status": "proposal",
+  "version": "1.0.0",
+  "status": "approved",
   "phase": "mixed",
   "default": "deny",
   "owner": "Dinis Cruz",
-  "keeper": "cell.email@AgentiCCells.dinis, until Dinis names a person to keep it",
+  "keeper": "Dinis Cruz",
   "reviewer": "specialist.abp@AgentiCCells.dinis",
   "updated": "2026-11-16",
   "mandate": {
@@ -519,7 +519,8 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
     "authority": "Dinis Cruz",
     "licensee": "cell.email@AgentiCCells.dinis (this conductor session) for building; later, the gateway and each agent on the twin, each with its own key, operated by the user at pki.sgit.ai",
     "conditions": "this policy, CLAUDE.md, the signed policy files, Google's testing limits",
-    "validity": "from Dinis's approval; while unapproved, simulation only",
+    "validity": "from Dinis's approval on 2026-11-16; any change to this policy needs his approval again",
+    "approved_by": "Dinis Cruz, 2026-11-16, in this session: \"I approve the policy\"",
     "review": "specialist.abp on any change; specialist.security before the first real mailbox is synced",
     "stop": "board/HOLD.md stops all work; the kill switch stops every send (any agent may stop, only a person restarts); the user can revoke the Google grant, or withdraw the gateway's vault access, at any time"
   }
@@ -532,5 +533,6 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
 - 0.2, 2026-11-16: after specialist.abp's review (ready with changes): signed policy files, first contact fails closed, fixed templates for automated sends, a deny for hostile messages, verified lanes only, any agent may stop, "proposers", retention, testing mode, the client secret and measured reach. All in code and tests the same day.
 - 0.3.0, 2026-11-16: moved to the AgentiCCells ABP format 0.1 after Dinis approved the format, starting from specialist.abp's draft; every rule has a barrier, enforcer, mode and test; gaps G1 to G6; the vault is the user's own (Dinis, the same day). A proposal until Dinis approves this policy.
 - 0.3.1, 2026-11-16: after specialist.abp's second read: approvers are pinned by fingerprint outside the cell and agents.json can no longer name one (N8, C6b); C6 split into code (tier 2) and policy files (tier 3); C4 states the barrier that exists today (no token); enforce rows say they hold in simulation; N12 tested across the whole repository.
+- 1.0.0, 2026-11-16: approved by Dinis Cruz ("I approve the policy"). Keeper: Dinis. No rule changed from 0.3.1.
 
 Text CC BY 4.0.
