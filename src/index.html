@@ -4,14 +4,107 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Email AgenticCell</title>
-<meta name="description" content="The email agentic cell: one gateway agent alone touches Gmail; people and agents work on a signed, encrypted twin of the mailbox in a vault.">
-<style>body{margin:0;font:18px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;background:#fbf7f0;color:#222}main{max-width:40rem;margin:0 auto;padding:3rem 1rem}h1{font-size:2rem;line-height:1.2}.muted{color:#666;font-size:.9rem}@media(prefers-color-scheme:dark){body{background:#17140f;color:#eee}.muted{color:#aaa}}</style>
+<meta name="description" content="The email agentic cell: one gateway agent alone touches Gmail; people and agents work on a signed, encrypted twin of the mailbox in a vault. Not built yet.">
+<style>
+:root{--bg:#fbf7f0;--fg:#222;--muted:#666;--line:#ddd2c0;--box:#fff;--accent:#8a4b12;--warn-bg:#fff1d6;--warn-line:#e0b25c}
+@media(prefers-color-scheme:dark){:root{--bg:#17140f;--fg:#eee;--muted:#aaa;--line:#3b342a;--box:#211d17;--accent:#e9a866;--warn-bg:#2c2416;--warn-line:#7a5b25}}
+*{box-sizing:border-box}
+body{margin:0;font:18px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--fg)}
+main{max-width:44rem;margin:0 auto;padding:3rem 1rem}
+h1{font-size:2.1rem;line-height:1.2;margin-bottom:.4rem}
+h2{font-size:1.35rem;margin-top:2.6rem;border-bottom:1px solid var(--line);padding-bottom:.3rem}
+a{color:var(--accent)}
+.lead{font-size:1.15rem}
+.status{background:var(--warn-bg);border:1px solid var(--warn-line);border-radius:6px;padding:.8rem 1rem;margin:1.5rem 0}
+.status strong{display:block}
+.muted{color:var(--muted);font-size:.9rem}
+.diagram{background:var(--box);border:1px solid var(--line);border-radius:6px;padding:1rem;overflow-x:auto;font:14px/1.4 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(12rem,1fr));gap:.8rem;padding:0;list-style:none}
+.cards li{background:var(--box);border:1px solid var(--line);border-radius:6px;padding:.7rem .9rem}
+.cards b{display:block}
+ol.alt li{margin-bottom:.4rem}
+.placeholder{color:var(--muted);font-style:italic}
+nav.links a{margin-right:1rem}
+footer{margin-top:3rem;border-top:1px solid var(--line);padding-top:1rem}
+</style>
 </head>
 <body>
 <main>
 <h1>Email AgenticCell</h1>
-<p>The email agentic cell: one gateway agent alone touches Gmail; people and agents work on a signed, encrypted twin of the mailbox in a vault.</p>
+<p class="lead">One gateway agent alone touches Gmail. People and agents work on a signed, encrypted twin of the mailbox, kept in an SGit vault.</p>
+
+<div class="status" role="note">
+<strong>Status: not built yet.</strong>
+This page explains the design described in the article <a href="https://newsroom.sgit.ai/articles/the-email-agentic-cell.html">The email agentic cell</a> on the SGit newsroom. Nothing on this page is running. A dedicated session will build the cell in this repository; this page will change as parts of it become real.
+</div>
+
+<nav class="links" aria-label="Related sites">
+<a href="https://newsroom.sgit.ai/articles/the-email-agentic-cell.html">Read the article</a>
+<a href="https://riskmandate.ai">RiskMandate</a>
+<a href="https://agenticcells.site">AgentiCCells</a>
+</nav>
+
+<h2 id="architecture">Architecture</h2>
+<p>The cell is built around a single rule: only one agent, the gateway, holds the Google token. No other agent and no person's tools talk to Gmail directly.</p>
+<ul>
+<li><b>The gateway agent</b> is the only holder of the Google token, so it is the only way in and out of Gmail.</li>
+<li><b>The digital twin</b> is a copy of the mailbox kept in an SGit vault. People and agents read and work on the twin, not on Gmail.</li>
+<li><b>Signed append lanes</b> carry everything that happens: actions, approvals, reads and the outbox. Each lane only grows, and every entry is signed by whoever wrote it.</li>
+</ul>
+<div class="diagram" role="img" aria-label="Diagram: Gmail connects only to the gateway agent; the gateway agent connects to the mailbox twin in an SGit vault; people and agents work on the twin through four signed lanes: actions, approvals, reads and outbox.">  Gmail (Google)
+      |
+      |  the only Google token
+      v
+  Gateway agent
+      |
+      v
+  Mailbox twin (SGit vault, signed, encrypted)
+      |
+      +-- actions lane    (signed, append only)
+      +-- approvals lane  (signed, append only)
+      +-- reads lane      (signed, append only)
+      +-- outbox lane     (signed, append only)
+      |
+      v
+  People and agents
+</div>
+
+<h2 id="flows">The four flows</h2>
+<ul class="cards">
+<li><b>Actions</b>Has its own signed append lane.</li>
+<li><b>Approvals</b>Has its own signed append lane.</li>
+<li><b>Reads</b>Has its own signed append lane.</li>
+<li><b>Outbox</b>Has its own signed append lane. Only the gateway agent holds the token that reaches Gmail.</li>
+</ul>
+<p class="placeholder">Placeholder: the step-by-step detail of each flow will be taken from the article when the cell is built.</p>
+
+<h2 id="altitudes">Behaviour policies at five altitudes</h2>
+<p>The rules about what the cell may do are set at five levels:</p>
+<ol class="alt">
+<li><b>The OAuth grant</b>: what Google allows the token to do at all.</li>
+<li><b>The token holder</b>: the gateway agent, the only one that holds the token.</li>
+<li><b>Per-agent rights</b>: what each agent working on the twin may do.</li>
+<li><b>What an email may be</b>: rules on the mail itself.</li>
+<li><b>Who approves</b>: which people or agents must agree before something happens.</li>
+</ol>
+
+<h2 id="features">Features</h2>
+<p>The article lists fifteen features. Among them:</p>
+<ul>
+<li>a shared inbox with roles</li>
+<li>an inbound firewall</li>
+<li>a calendar twin</li>
+<li>a kill switch</li>
+</ul>
+<p class="placeholder">Placeholder: the full list of fifteen features is in the <a href="https://newsroom.sgit.ai/articles/the-email-agentic-cell.html">article</a> and will be added here.</p>
+
+<h2 id="build-order">Build order</h2>
+<p>The cell starts with our own inboxes, under RiskMandate's Google project, with the project in testing.</p>
+<p class="placeholder">Placeholder: later steps of the build order will be added from the article.</p>
+
+<footer>
 <p class="muted">Version __VERSION__ · Made by the <a href="https://github.com/AgentiCCells/AgentiCCells__Site__Factory">AgentiCCells site factory</a> · Code Apache-2.0, text CC BY 4.0.</p>
+</footer>
 </main>
 </body>
 </html>

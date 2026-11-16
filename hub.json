@@ -1,7 +1,7 @@
 {
   "schema": "hub.json (draft)",
   "name": "Email AgenticCell",
-  "what_it_does": "The email agentic cell: one gateway agent alone touches Gmail; people and agents work on a signed, encrypted twin of the mailbox in a vault.",
+  "what_it_does": "Explains the email agentic cell (not built yet), where one gateway agent alone holds the Google token and people and agents work on a signed twin of the mailbox in an SGit vault.",
   "owner": "AgentiCCells",
   "team": "factory@AgentiCCells.dinis, instructed by Dinis Cruz",
   "licence": { "code": "Apache-2.0", "text": "CC BY 4.0" },
