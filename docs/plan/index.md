@@ -11,7 +11,10 @@ Source: the brief is Dinis Cruz's article [The email agentic cell](https://newsr
 3. [The lanes](lanes.md): actions, approvals, reads and the outbox, each entry signed.
 4. [The policy at five altitudes](policy.md): from the OAuth grant to what one email may say.
 5. [The fifteen features, in order](features.md): what each one is and where it stands.
-6. [What each build step needs from Dinis](needs.md): the Google OAuth app in testing, its scopes, the sgit vault.
+6. [What each build step needs from Dinis](needs.md): the Google OAuth app in testing, its scopes, and the user's own vault.
+7. [Google OAuth setup](google-oauth.md): every value for Dinis to enter in the Google Cloud console.
+
+The draft [privacy policy](../pages/privacy.md) is the link the consent screen needs.
 
 The cell's own Agent Behaviour Policy is [abp/cell-email](../../abp/cell-email.md).
 
@@ -28,5 +31,5 @@ The cell's own Agent Behaviour Policy is [abp/cell-email](../../abp/cell-email.m
 | Inbound firewall: cleaned copy, links, hidden text, likely prompt injections | built (simulation) | `cell/firewall/clean.mjs` |
 | Tests: 53, run with `node --test tests/*.test.mjs` | passing on 16 November 2026 | `tests/` |
 | The gateway's Gmail sync and send | plan: needs the Google OAuth app | |
-| The twin in an sgit vault | plan: needs a vault and an sgit credential | |
+| The twin in the user's own vault | plan: the user creates it through pki.sgit.ai and grants the gateway an access key | |
 | Agent keys held and rotated | plan: needs the vault | |

@@ -1,6 +1,6 @@
 # The twin's vault layout
 
-**Status: the schema is built (simulation)** in `cell/twin/schema.mjs` and tested on the simulated mailbox. **The vault is a plan:** the site factory skipped it, and the cell has no sgit credential yet. [Back to the plan](index.md).
+**Status: the schema is built (simulation)** in `cell/twin/schema.mjs` and tested on the simulated mailbox. **The vault is the user's:** the user creates it through pki.sgit.ai and grants the gateway an access key. The twin is the user's capture of their own mailbox, and so also its backup: if Gmail is lost or the account closed, the user still holds every message, versioned. The cell keeps no copy. [Back to the plan](index.md).
 
 Version 1 was agreed with the CRM app's session (`crm.ios@sgit.dinis`) on 16 November 2026. The CRM joins people on the address, lowercased and trimmed; no CRM id is kept in the twin. Fields are snake_case, dates ISO 8601 UTC, ids strings, and every file carries its `schema` so a client can refuse a version it does not know.
 

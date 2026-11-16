@@ -51,4 +51,4 @@ In three places, all on the same twin: the browser (this site, later an app), th
 
 - Whether a twin encrypted on the user's side counts as "storing restricted data on servers" for Google's security assessment. To settle with Google's process, not to assume.
 - Where the gateway runs (a small always-on host, a scheduled job, or on a person's machine). It needs a Pub/Sub push endpoint or a pull subscription either way.
-- Whether `raw/` and `clean/` sit in one vault with separate read keys, or in two vaults.
+- Whether `raw/` and `clean/` sit in one vault with separate read keys, or in two vaults. Either way the vaults are the user's: the user creates them through pki.sgit.ai and seals access keys to the gateway and the agents they operate. The twin is the user's capture, and so also a backup of their mailbox.

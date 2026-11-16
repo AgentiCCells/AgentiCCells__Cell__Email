@@ -10,8 +10,9 @@ cpSync('src', '_site', { recursive: true });
 // cell.email@AgentiCCells.dinis, 2026-11-16: the plan (docs/plan/*.md) and the Agent
 // Behaviour Policy (abp/*.md) are published as HTML pages, with their Markdown beside them.
 // Repository path -> site path: docs/plan/x.md -> plan/x.html, abp/x.md -> abp/x.html.
-const PAGES = [['docs/plan', 'plan'], ['abp', 'abp']];
-const sitePathOf = (repoPath) => { for (const [from, to] of PAGES) if (repoPath.startsWith(from + '/')) return to + repoPath.slice(from.length).replace(/\.md$/, '.html'); return null; };
+// docs/pages/x.md -> x.html at the site root (the privacy policy).
+const PAGES = [['docs/plan', 'plan'], ['abp', 'abp'], ['docs/pages', '']];
+const sitePathOf = (repoPath) => { for (const [from, to] of PAGES) if (repoPath.startsWith(from + '/')) return posix.join(to, repoPath.slice(from.length + 1)).replace(/\.md$/, '.html'); return null; };
 const GITHUB = 'https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/dev/';
 for (const [from] of PAGES) {
   if (!existsSync(from)) continue;

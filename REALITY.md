@@ -14,10 +14,11 @@ A thing not written here does not exist. Updated by cell.email@AgentiCCells.dini
   - the gateway's decision, which sends nothing (`cell/gateway/decide.mjs`);
   - the inbound firewall's cleaned copy (`cell/firewall/clean.mjs`).
 - Tests run in CI before every deploy and in `scripts/release.sh`.
+- A Google OAuth setup page for Dinis (`docs/plan/google-oauth.md`, at `/plan/google-oauth.html`) and a draft privacy policy (`docs/pages/privacy.md`, at `/privacy.html`), not yet approved.
 
 ## Does not exist
 
 - No Google OAuth app, no Gmail scope, no Google token. Nothing has read or sent a real email.
-- No sgit vault for the twin and no sgit credential for this cell (the factory skipped the vault).
+- No vault for the twin. The vault will be the user's own, created through pki.sgit.ai, with an access key sealed to the gateway (Dinis, 16 November 2026); the cell itself will hold no vault and no copy.
 - No agent keys that outlive a session; tests make fresh keys each run.
 - No gateway process, no Pub/Sub topic, no append lanes on a vault.

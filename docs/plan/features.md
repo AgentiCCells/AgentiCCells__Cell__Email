@@ -14,7 +14,7 @@
 | 8 | **Follow-ups that run themselves.** "No reply in five days" becomes a drafted nudge, waiting for approval. | 4 | plan. The correspondents index already shows who has not answered. |
 | 9 | **Signed outbound mail.** Every email carries its agent's and person's signature, a QR code and a page to check it. | 5 | plan. Needs agent keys in the vault. |
 | 10 | **Vault links, not attachments.** A file goes as a link to an encrypted vault, revocable, with signed reads. | 5 | the policy already refuses attachments; the links are a plan. |
-| 11 | **Time travel.** See the inbox as it was on any day; replay who read, proposed, approved and sent what. | 5 | plan. Comes from the vault's history and the lanes. |
+| 11 | **Time travel, and a backup.** See the inbox as it was on any day; replay who read, proposed, approved and sent what. Because the vault is the user's own capture, it is also a versioned backup of the mailbox. | 5 | plan. Comes from the vault's history and the lanes. |
 | 12 | **Synthetic recipients.** Drafts go first to synthetic people who read, answer and push back. | 5 | plan. The simulated mailbox is a start. |
 | 13 | **Inbox analytics.** Who waits on whom, how long replies take, which introductions went nowhere. | 6 | plan. |
 | 14 | **A calendar twin.** The same pattern for Google Calendar. | 6 | plan. Needs a calendar scope. |

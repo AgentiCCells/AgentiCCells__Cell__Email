@@ -34,12 +34,13 @@ footer{margin-top:3rem;border-top:1px solid var(--line);padding-top:1rem}
 
 <div class="status" role="note">
 <strong>Status: a plan, with the first parts built against a simulated mailbox.</strong>
-Built and tested (16 November 2026, 53 tests): the twin's schema, signed lane entries and their checks, the email policy checker, the inbound firewall and a first policy simulator. All of it runs on made-up messages only. Nothing touches a real mailbox: that needs a Google OAuth app in testing and an sgit vault, which Dinis Cruz has not yet been asked to grant. See <a href="plan/needs.html">what each step needs</a>.
+Built and tested (16 November 2026, 53 tests): the twin's schema, signed lane entries and their checks, the email policy checker, the inbound firewall and a first policy simulator. All of it runs on made-up messages only. Nothing touches a real mailbox yet: that needs a Google OAuth app in testing (<a href="plan/google-oauth.html">the values to configure</a>) and the user's own vault, created through pki.sgit.ai. See <a href="plan/needs.html">what each step needs</a>.
 </div>
 
 <nav class="links" aria-label="Pages">
 <a href="plan/index.html">The plan</a>
 <a href="abp/cell-email.html">Agent Behaviour Policy</a>
+<a href="privacy.html">Privacy (draft)</a>
 <a href="https://github.com/AgentiCCells/AgentiCCells__Cell__Email">Code</a>
 <a href="https://newsroom.sgit.ai/articles/the-email-agentic-cell.html">The article</a>
 <a href="https://riskmandate.ai">RiskMandate</a>
@@ -102,7 +103,7 @@ Built and tested (16 November 2026, 53 tests): the twin's schema, signed lane en
 <li>The first automated sends, under a signed policy.</li>
 <li>Then the cell, offered to teams, with verification when it leaves testing.</li>
 </ol>
-<p><a href="plan/needs.html">What each step needs from Dinis</a>: the Google OAuth app in testing, its scopes, a Pub/Sub topic, and the sgit vault (the factory skipped it; the cell has no sgit credential yet).</p>
+<p><a href="plan/needs.html">What each step needs from Dinis</a>: the Google OAuth app in testing (<a href="plan/google-oauth.html">setup values</a>), its scopes, and the user's own vault. The vault belongs to the user, who creates it through pki.sgit.ai and grants the gateway an access key: the twin is the user's capture of their mailbox, and so also its backup. We keep no copy.</p>
 
 <footer>
 <p class="muted">Version __VERSION__ · Made by the <a href="https://github.com/AgentiCCells/AgentiCCells__Site__Factory">AgentiCCells site factory</a>, built by cell.email@AgentiCCells.dinis · Code Apache-2.0, text CC BY 4.0.</p>
