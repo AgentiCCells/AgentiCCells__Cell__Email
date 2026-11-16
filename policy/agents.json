@@ -1,6 +1,6 @@
 {
   "schema": "cell.agents/1",
-  "status": "proposal: altitude 3 of the email policy. Names are roles; keys are bound in team/keys or the vault, never here.",
+  "status": "proposal: altitude 3 of the email policy. Names agents only. Approvers (people who approve and start the gateway) are never named here: the gateway's operator pins them by key fingerprint outside the repository and the vault. Keys are bound in the registry, never here.",
   "agents": {
     "gateway.email@AgentiCCells.dinis": {
       "role": "gateway"
@@ -16,9 +16,6 @@
     },
     "crm.email@AgentiCCells.dinis": {
       "role": "crm"
-    },
-    "person:owner": {
-      "role": "approver"
     },
     "person:assistant": {
       "role": "drafter"
@@ -112,32 +109,6 @@
         ]
       },
       "twin": [
-        "clean"
-      ]
-    },
-    "approver": {
-      "about": "A person. Approves or rejects actions, and owns the kill switch.",
-      "lanes": {
-        "actions": [
-          "propose.reply",
-          "propose.send",
-          "propose.label",
-          "propose.archive",
-          "propose.forward",
-          "withdraw"
-        ],
-        "approvals": [
-          "approve",
-          "reject",
-          "gateway.stop",
-          "gateway.start"
-        ],
-        "reads": [
-          "read"
-        ]
-      },
-      "twin": [
-        "raw",
         "clean"
       ]
     }

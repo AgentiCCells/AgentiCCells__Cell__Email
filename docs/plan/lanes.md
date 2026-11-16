@@ -7,7 +7,7 @@
 | Lane | Entry types | Who writes |
 |---|---|---|
 | actions | `propose.reply`, `propose.send`, `propose.label`, `propose.archive`, `propose.forward`, `withdraw` | drafter, triage, crm agents and people, by role |
-| approvals | `approve`, `reject`, `gateway.stop`, `gateway.start` | people; any cell agent may also write `gateway.stop` |
+| approvals | `approve`, `reject`, `gateway.stop`, `gateway.start` | approvers, pinned by key fingerprint outside the cell; any cell agent may also write `gateway.stop` |
 | reads | `read` | anyone who reads the twin: a receipt per message read |
 | outbox | `sent`, `refused`, `failed` | the gateway only |
 

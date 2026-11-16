@@ -6,16 +6,17 @@ import { check } from '../policy/checker.mjs';
 import { verifyPolicy } from '../policy/signed.mjs';
 import { entryHash, gatewayStopped, isVerifiedMerge } from '../lanes/entry.mjs';
 
-// merged: the result of mergeLanes(chains, registry, agents), and nothing else: the send path
-// refuses lanes that were not verified in that exact merge (review point e).
-// ctx: { policy, agents, registry, signatures: { policy, agents }, twin, now }.
-// Both policy files must be signed by a person with the approver role (review point a).
+// merged: the result of mergeLanes(chains, registry, agents, approvers), and nothing else: the
+// send path refuses lanes that were not verified in that exact merge (review point e).
+// ctx: { policy, agents, registry, approvers, signatures: { policy, agents }, twin, now }.
+// approvers: { [author]: keyId }, pinned by the gateway's operator outside the repository and
+// the vault. Both policy files must be signed by a pinned approver (review point a, second read 1).
 // Returns one row per proposal not yet in the outbox.
 export function decide(merged, ctx) {
   if (!isVerifiedMerge(merged)) throw new Error('decide: the lanes were not verified by mergeLanes with the agents file; nothing may be sent');
   const policyProblems = [
-    ...verifyPolicy(ctx.policy, ctx.signatures?.policy, { name: 'email-policy.json', registry: ctx.registry, agents: ctx.agents }),
-    ...verifyPolicy(ctx.agents, ctx.signatures?.agents, { name: 'agents.json', registry: ctx.registry, agents: ctx.agents }),
+    ...verifyPolicy(ctx.policy, ctx.signatures?.policy, { name: 'email-policy.json', registry: ctx.registry, approvers: ctx.approvers }),
+    ...verifyPolicy(ctx.agents, ctx.signatures?.agents, { name: 'agents.json', registry: ctx.registry, approvers: ctx.approvers }),
   ];
   const order = merged.order;
   const stopped = gatewayStopped(order);

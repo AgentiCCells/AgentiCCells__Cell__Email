@@ -108,8 +108,21 @@ export function verifyChain(chain, registry) {
 const VERIFIED = new WeakSet();
 export const isVerifiedMerge = (r) => VERIFIED.has(r) && r.ok === true;
 
-export function mergeLanes(chains, registry, agents) {
+// What a person who approves may write. Approvers are not named in agents.json (which the
+// cell itself can edit): they are pinned by fingerprint, out of band, by the gateway's
+// operator (review by specialist.abp, second read, point 1).
+export const APPROVER_LANES = {
+  actions: ['propose.reply', 'propose.send', 'propose.label', 'propose.archive', 'propose.forward', 'withdraw'],
+  approvals: ['approve', 'reject', 'gateway.stop', 'gateway.start'],
+  reads: ['read'],
+};
+
+// approvers: { [author]: keyId } pinned outside the repository and the vault.
+// A merge counts as verified only with both agents and approvers given.
+export function mergeLanes(chains, registry, agents, approvers) {
   const errors = chains.flatMap((c) => verifyChain(c, registry));
+  if (agents) for (const [id, a] of Object.entries(agents.agents || {})) if (a.role === 'approver' || agents.roles?.[a.role]?.lanes?.approvals?.some((t) => t !== 'gateway.stop')) errors.push(`agents.json: ${id} may approve or start the gateway; approvers are pinned outside the cell, never named in agents.json`);
+  for (const [id, fp] of Object.entries(approvers || {})) if (registry[id] && keyId(registry[id]) !== fp) errors.push(`approver ${id}: the registered key is not the pinned one`);
   const all = chains.flat();
   const byHash = new Map(all.map((e) => [entryHash(e), e]));
   const order = [...all].sort((a, b) => Date.parse(a.at) - Date.parse(b.at)
@@ -118,7 +131,7 @@ export function mergeLanes(chains, registry, agents) {
   for (const e of order) {
     const where = `${e.lane}/${e.author}#${e.seq}`;
     if (agents) {
-      const allowed = allowedTypes(agents, e.author, e.lane);
+      const allowed = allowedTypes(agents, e.author, e.lane, approvers);
       if (!allowed.includes(e.type)) errors.push(`${where}: ${e.author} may not write ${e.type} on ${e.lane} (altitude 3)`);
     }
     for (const r of e.refs) {
@@ -139,12 +152,13 @@ export function mergeLanes(chains, registry, agents) {
       if (!approvals.length && !policy) errors.push(`${where}: sent without an approval or a policy allow`);
     }
   }
-  const result = Object.freeze({ ok: errors.length === 0 && !!agents, errors: Object.freeze(errors), order: Object.freeze(order.map((e) => Object.freeze(e))) });
+  const result = Object.freeze({ ok: errors.length === 0 && !!agents && !!approvers, errors: Object.freeze(errors), order: Object.freeze(order.map((e) => Object.freeze(e))) });
   if (result.ok) VERIFIED.add(result);
   return result;
 }
 
-export function allowedTypes(agents, author, lane) {
+export function allowedTypes(agents, author, lane, approvers) {
+  if (approvers?.[author]) return APPROVER_LANES[lane] || [];
   const a = agents.agents[author];
   if (!a) return [];
   return agents.roles[a.role]?.lanes?.[lane] || [];

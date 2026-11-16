@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { buildMailbox } from '../sim/build-mailbox.mjs';
 import { loadTwin } from '../cell/twin/schema.mjs';
-import { newKeyPair } from '../cell/lanes/entry.mjs';
+import { newKeyPair, keyId } from '../cell/lanes/entry.mjs';
 
 export const root = new URL('..', import.meta.url).pathname;
 export const policy = () => JSON.parse(readFileSync(join(root, 'policy/email-policy.json'), 'utf8'));
@@ -22,4 +22,9 @@ export function keys(names) {
   const signers = {}, registry = {};
   for (const n of names) { signers[n] = newKeyPair(); registry[n] = signers[n].publicKeyPem; }
   return { signers, registry };
+}
+
+// Approvers pinned by fingerprint, as the gateway's operator will supply them out of band.
+export function pins(registry, ids = ['person:owner']) {
+  return Object.fromEntries(ids.filter((id) => registry[id]).map((id) => [id, keyId(registry[id])]));
 }

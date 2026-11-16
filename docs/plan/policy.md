@@ -37,7 +37,7 @@ See the table in [abp/cell-email](../../abp/cell-email.md) and `policy/agents.js
 | Kill switch | the gateway is stopped | |
 | Proposer | the proposer is not listed in `proposers` | |
 | Firewall | an agent answers a message marked hostile that no person has read | |
-| Signed policy | the policy file or `agents.json` is not signed by a person with the approver role, or changed since (in `decide`) | |
+| Signed policy | the policy file or `agents.json` is not signed by an approver pinned by key fingerprint outside the repository and the vault, or changed since (in `decide`); `agents.json` can never name an approver | |
 | Recipients | not in an allowed domain or on the allow list; on the deny list; too many; any bcc | a reply adds someone not in the thread |
 | First contact or reply | | any recipient has never written from an address that passed DMARC; or the twin's sync is older than `max_sync_lag_minutes` (fail closed) |
 | Language | not an allowed language; declared language differs from what the text reads as | the language cannot be confirmed |

@@ -1,6 +1,7 @@
 // Signed policy files (review by specialist.abp@AgentiCCells.dinis, 16 November 2026, point a).
-// The gateway refuses to act on policy/agents.json or the email policy unless a person with
-// the approver role signed that exact content. Until this runs on the real files, the lane
+// The gateway refuses to act on policy/agents.json or the email policy unless a pinned
+// approver signed that exact content. Approvers are pinned by key fingerprint outside
+// anything the cell writes (second read, point 1): agents.json can never make one. Until this runs on the real files, the lane
 // checks are a setting, not a boundary. The signature is a detached object kept beside the
 // file in the vault (never committed here: signatures trip the leak scan).
 import { createHash, sign, verify } from 'node:crypto';
@@ -16,14 +17,16 @@ export function signPolicy(obj, { name, author, at }, signer) {
 }
 
 // Returns a list of problems; empty means the policy file may be used.
-export function verifyPolicy(obj, s, { name, registry, agents }) {
+// approvers: { [author]: keyId }, pinned by the gateway's operator out of band.
+export function verifyPolicy(obj, s, { name, registry, approvers }) {
   if (!s) return [`${name}: not signed`];
   const e = [];
   if (s.schema !== 'policy.signature/1') e.push(`${name}: signature schema is not policy.signature/1`);
   if (s.file !== name) e.push(`${name}: the signature is for ${s.file}`);
   if (s.digest !== digest(obj)) e.push(`${name}: the file changed after it was signed`);
-  const role = agents?.agents?.[s.author]?.role;
-  if (role !== 'approver' || !String(s.author).startsWith('person:')) e.push(`${name}: signed by ${s.author}, who is not a person with the approver role`);
+  const pinned = approvers?.[s.author];
+  if (!pinned) e.push(`${name}: signed by ${s.author}, who is not a pinned approver`);
+  else if (pinned !== s.key) e.push(`${name}: signed with a key that is not the approver's pinned key`);
   const pem = registry[s.author];
   if (!pem) e.push(`${name}: signer has no registered key`);
   else if (keyId(pem) !== s.key) e.push(`${name}: signed with a key that is not the signer's`);

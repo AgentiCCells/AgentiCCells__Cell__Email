@@ -44,11 +44,12 @@ What this cell and its conductor session can actually do today, measured where p
 | Id | Capability | Target | Tier | Undo | Decision | Barrier | Enforcer | Mode | Test |
 |---|---|---|---|---|---|---|---|---|---|
 | C1 | `read.message.tenant` | the twin's cleaned copy (clean/), for the cell's agents | 1 | no | allow | setting | vault access keys the user seals per agent (plan); in the simulation, policy/agents.json lists clean/ only | observe | every read is a signed entry on the reads lane; agents' keys open clean/ only |
-| C2 | `propose.action.tenant` | the actions lane: reply, send, label, archive | 2 | yes | allow | setting | mergeLanes rejects an entry type the author's role in the signed agents.json does not allow | enforce | tests/lanes.test.mjs, triage may not propose a reply |
+| C2 | `propose.action.tenant` | the actions lane: reply, send, label, archive | 2 | yes | allow | setting | mergeLanes rejects an entry type the author's role in the signed agents.json does not allow | enforce | in simulation, tests/lanes.test.mjs, triage may not propose a reply |
 | C3 | `apply.label.tenant` | labels and archive in Gmail, through the gateway | 3 | yes | plan-apply | boundary | only the gateway holds the Google token (plan) | observe | each outbox entry matches an approved proposal |
-| C4 | `send.message.world` | an email to anyone, through the gateway only | 4 | no | draft | boundary | only the gateway holds the token; decide() requires verified lanes, signed policy files, a person's approval or a signed automation, and a passing email policy check | enforce | tests/lanes.test.mjs and tests/policy.test.mjs; on a real mailbox, every outbox entry has an approval or automation and a policy result |
+| C4 | `send.message.world` | an email to anyone, through the gateway only | 4 | no | draft | boundary | today, no Google token exists, so nothing can send; when N1 moves, only the gateway holds the token, and decide() requires verified lanes, policy files signed by a pinned approver, a person's approval or a signed automation, and a passing email policy check | enforce | no token in any key inventory today; in simulation, tests/lanes.test.mjs and tests/policy.test.mjs; on a real mailbox, every outbox entry has an approval or automation and a policy result |
 | C5 | `authenticate-as.credential.tenant` | the Google OAuth client secret and refresh token | 3 | with-effort | deny | boundary | Dinis registers the app and keeps the secret only where the gateway runs | observe | key inventory: one holder, not the build session |
-| C6 | `push.code.project` | this repository's dev branch (code, plan, site, policy files) | 3 | with-effort | plan-apply | setting | release gates in CI (tests, validator, leak scan, Agent trailer, this policy's check) before deploy; policy files only count when a person signs them | enforce | the Pages workflow run for each push |
+| C6 | `push.code.project` | this repository's dev branch: code, plan and site | 2 | with-effort | allow | setting | release gates in CI (tests, validator, leak scan, Agent trailer, this policy's check) before deploy | enforce | the Pages workflow run for each push |
+| C6b | `change.policy.project` | the policy files (agents.json, email-policy.json) the gateway acts on | 3 | with-effort | plan-apply | setting | the cell can edit the files (the plan); they take effect only when an approver pinned by fingerprint outside the cell signs them (the apply); agents.json can never name an approver | enforce | in simulation, tests/lanes.test.mjs: unsigned, changed, or signed by an unpinned person |
 | C7 | `message.agent.tenant` | other agents' sessions, for requests inside this brief | 2 | no | allow | expectation | none beyond this policy | observe | the session's transcript |
 | C8 | `write.vault.tenant` | the user's twin vault, by the gateway, with the access key the user sealed to it | 3 | with-effort | plan-apply | boundary | the user creates the vault and decides which agent keys may open it (pki.sgit.ai); vault history keeps every version | observe | the vault's commit history; the user's record links to the gateway agent |
 | C9 | `create.record.world` | a calendar invitation (calendar twin, feature 14) | 4 | with-effort | deny | expectation | not built; no calendar scope | observe | no calendar scope in the grant |
@@ -60,17 +61,17 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
 | Id | Never | Barrier | Enforcer | Mode | Test |
 |---|---|---|---|---|---|
 | N1 | Any agent but the gateway holds the Google token | boundary | where the key lives (plan) | observe | key inventory |
-| N2 | Send a first contact without a person's signature | setting | checker.mjs holds every first contact, fail closed on a late sync or a From that failed DMARC | enforce | tests/policy.test.mjs, first contact cases |
-| N3 | Send while the kill switch is on | setting | checker.mjs denies while gateway.stop is the last stop or start on the approvals lane | enforce | tests/lanes.test.mjs, nothing while stopped |
-| N4 | Let a secret, key or private note leave in an email | setting | checker.mjs runs the leak scan's shapes and the policy's private markers | enforce | tests/policy.test.mjs, a planted fake token is denied |
+| N2 | Send a first contact without a person's signature | setting | checker.mjs holds every first contact, fail closed on a late sync or a From that failed DMARC | enforce | in simulation, tests/policy.test.mjs, first contact cases |
+| N3 | Send while the kill switch is on | setting | checker.mjs denies while gateway.stop is the last stop or start on the approvals lane | enforce | in simulation, tests/lanes.test.mjs, nothing while stopped |
+| N4 | Let a secret, key or private note leave in an email | setting | checker.mjs runs the leak scan's shapes and the policy's private markers | enforce | in simulation, tests/policy.test.mjs, a planted fake token is denied |
 | N5 | Let an agent read the raw message | setting | the firewall writes clean/, the only copy agents' keys open (plan for the keys) | observe | agents' access keys open clean/ only; hidden text never appears in clean/ (tests/firewall.test.mjs) |
-| N6 | Let an agent answer a hostile message that no person has read | setting | checker.mjs denies unless a person's read receipt is on the reads lane | enforce | tests/policy.test.mjs, hostile message case |
-| N7 | Send automatically any text an agent wrote after reading an email | setting | checker.mjs, an automation needs a template with no free slots and a clean cited message | enforce | tests/policy.test.mjs, free-text and not-clean cases |
-| N8 | Act on a policy file that no person signed | setting | decide() refuses every send unless both policy files carry a person approver's signature over their exact content | enforce | tests/lanes.test.mjs, unsigned or changed policy files |
-| N9 | Approve one's own proposal | setting | mergeLanes rejects an approval signed by the proposer | enforce | tests/lanes.test.mjs, self-approval case |
+| N6 | Let an agent answer a hostile message that no person has read | setting | checker.mjs denies unless a person's read receipt is on the reads lane | enforce | in simulation, tests/policy.test.mjs, hostile message case |
+| N7 | Send automatically any text an agent wrote after reading an email | setting | checker.mjs, an automation needs a template with no free slots and a clean cited message | enforce | in simulation, tests/policy.test.mjs, free-text and not-clean cases |
+| N8 | Act on a policy file that no person signed | setting | decide() refuses every send unless both policy files carry the signature of an approver pinned by fingerprint outside the repository and the vault, over their exact content | enforce | in simulation, tests/lanes.test.mjs: unsigned, changed, signed by an unpinned person, or with a swapped key |
+| N9 | Approve one's own proposal | setting | mergeLanes rejects an approval signed by the proposer | enforce | in simulation, tests/lanes.test.mjs, self-approval case |
 | N10 | Keep a copy of a user's mail outside the user's own vault | expectation | none: the design writes only to the user's vault, and the cell holds no vault | observe | our accounts and vaults hold no twin |
 | N11 | Send an email or contact a person or a company from the build session | expectation | none: the session has no mail credential, and CLAUDE.md forbids it | observe | the session's transcript; the outbox holds nothing from it |
-| N12 | Put a real mailbox or real personal data in this public repository | expectation | none for personal data; the leak scan catches secret shapes only | observe | tests/twin.test.mjs checks every simulated address is at a reserved example domain |
+| N12 | Put a real mailbox or real personal data in this public repository | expectation | none for personal data; the leak scan catches secret shapes only | observe | tests/repo.test.mjs checks every address in every tracked file is at a reserved domain, an agent name or a listed public service |
 | N13 | Let the build session see the OAuth client secret or a refresh token | expectation | Dinis keeps the secret where only the gateway reads it | observe | the session's transcript and environment hold no Google secret |
 | N14 | Leave Google's testing mode or ask for verification without Dinis | expectation | none | observe | Google Cloud console state |
 | N15 | Create a session or a scheduled task without Dinis | expectation | none, the tools are present in this session | observe | list_sessions and list_triggers show none made by this session |
@@ -114,7 +115,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
   "format": "agenticcells-abp/0.1",
   "id": "cell.email@AgentiCCells.dinis",
   "kind": "cell",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "status": "proposal",
   "phase": "mixed",
   "default": "deny",
@@ -231,7 +232,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "barrier": "setting",
       "enforcer": "mergeLanes rejects an entry type the author's role in the signed agents.json does not allow",
       "mode": "enforce",
-      "test": "tests/lanes.test.mjs, triage may not propose a reply"
+      "test": "in simulation, tests/lanes.test.mjs, triage may not propose a reply"
     },
     {
       "id": "C3",
@@ -253,9 +254,9 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "undo": "no",
       "decision": "draft",
       "barrier": "boundary",
-      "enforcer": "only the gateway holds the token; decide() requires verified lanes, signed policy files, a person's approval or a signed automation, and a passing email policy check",
+      "enforcer": "today, no Google token exists, so nothing can send; when N1 moves, only the gateway holds the token, and decide() requires verified lanes, policy files signed by a pinned approver, a person's approval or a signed automation, and a passing email policy check",
       "mode": "enforce",
-      "test": "tests/lanes.test.mjs and tests/policy.test.mjs; on a real mailbox, every outbox entry has an approval or automation and a policy result"
+      "test": "no token in any key inventory today; in simulation, tests/lanes.test.mjs and tests/policy.test.mjs; on a real mailbox, every outbox entry has an approval or automation and a policy result"
     },
     {
       "id": "C5",
@@ -272,14 +273,26 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
     {
       "id": "C6",
       "capability": "push.code.project",
-      "target": "this repository's dev branch (code, plan, site, policy files)",
+      "target": "this repository's dev branch: code, plan and site",
+      "tier": 2,
+      "undo": "with-effort",
+      "decision": "allow",
+      "barrier": "setting",
+      "enforcer": "release gates in CI (tests, validator, leak scan, Agent trailer, this policy's check) before deploy",
+      "mode": "enforce",
+      "test": "the Pages workflow run for each push"
+    },
+    {
+      "id": "C6b",
+      "capability": "change.policy.project",
+      "target": "the policy files (agents.json, email-policy.json) the gateway acts on",
       "tier": 3,
       "undo": "with-effort",
       "decision": "plan-apply",
       "barrier": "setting",
-      "enforcer": "release gates in CI (tests, validator, leak scan, Agent trailer, this policy's check) before deploy; policy files only count when a person signs them",
+      "enforcer": "the cell can edit the files (the plan); they take effect only when an approver pinned by fingerprint outside the cell signs them (the apply); agents.json can never name an approver",
       "mode": "enforce",
-      "test": "the Pages workflow run for each push"
+      "test": "in simulation, tests/lanes.test.mjs: unsigned, changed, or signed by an unpinned person"
     },
     {
       "id": "C7",
@@ -333,7 +346,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "barrier": "setting",
       "enforcer": "checker.mjs holds every first contact, fail closed on a late sync or a From that failed DMARC",
       "mode": "enforce",
-      "test": "tests/policy.test.mjs, first contact cases"
+      "test": "in simulation, tests/policy.test.mjs, first contact cases"
     },
     {
       "id": "N3",
@@ -341,7 +354,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "barrier": "setting",
       "enforcer": "checker.mjs denies while gateway.stop is the last stop or start on the approvals lane",
       "mode": "enforce",
-      "test": "tests/lanes.test.mjs, nothing while stopped"
+      "test": "in simulation, tests/lanes.test.mjs, nothing while stopped"
     },
     {
       "id": "N4",
@@ -349,7 +362,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "barrier": "setting",
       "enforcer": "checker.mjs runs the leak scan's shapes and the policy's private markers",
       "mode": "enforce",
-      "test": "tests/policy.test.mjs, a planted fake token is denied"
+      "test": "in simulation, tests/policy.test.mjs, a planted fake token is denied"
     },
     {
       "id": "N5",
@@ -365,7 +378,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "barrier": "setting",
       "enforcer": "checker.mjs denies unless a person's read receipt is on the reads lane",
       "mode": "enforce",
-      "test": "tests/policy.test.mjs, hostile message case"
+      "test": "in simulation, tests/policy.test.mjs, hostile message case"
     },
     {
       "id": "N7",
@@ -373,15 +386,15 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "barrier": "setting",
       "enforcer": "checker.mjs, an automation needs a template with no free slots and a clean cited message",
       "mode": "enforce",
-      "test": "tests/policy.test.mjs, free-text and not-clean cases"
+      "test": "in simulation, tests/policy.test.mjs, free-text and not-clean cases"
     },
     {
       "id": "N8",
       "rule": "Act on a policy file that no person signed",
       "barrier": "setting",
-      "enforcer": "decide() refuses every send unless both policy files carry a person approver's signature over their exact content",
+      "enforcer": "decide() refuses every send unless both policy files carry the signature of an approver pinned by fingerprint outside the repository and the vault, over their exact content",
       "mode": "enforce",
-      "test": "tests/lanes.test.mjs, unsigned or changed policy files"
+      "test": "in simulation, tests/lanes.test.mjs: unsigned, changed, signed by an unpinned person, or with a swapped key"
     },
     {
       "id": "N9",
@@ -389,7 +402,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "barrier": "setting",
       "enforcer": "mergeLanes rejects an approval signed by the proposer",
       "mode": "enforce",
-      "test": "tests/lanes.test.mjs, self-approval case"
+      "test": "in simulation, tests/lanes.test.mjs, self-approval case"
     },
     {
       "id": "N10",
@@ -413,7 +426,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "barrier": "expectation",
       "enforcer": "none for personal data; the leak scan catches secret shapes only",
       "mode": "observe",
-      "test": "tests/twin.test.mjs checks every simulated address is at a reserved example domain"
+      "test": "tests/repo.test.mjs checks every address in every tracked file is at a reserved domain, an agent name or a listed public service"
     },
     {
       "id": "N13",
@@ -518,5 +531,6 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
 - 0.1, 2026-11-16: first draft by cell.email@AgentiCCells.dinis, deny by default, in the cell's own layout.
 - 0.2, 2026-11-16: after specialist.abp's review (ready with changes): signed policy files, first contact fails closed, fixed templates for automated sends, a deny for hostile messages, verified lanes only, any agent may stop, "proposers", retention, testing mode, the client secret and measured reach. All in code and tests the same day.
 - 0.3.0, 2026-11-16: moved to the AgentiCCells ABP format 0.1 after Dinis approved the format, starting from specialist.abp's draft; every rule has a barrier, enforcer, mode and test; gaps G1 to G6; the vault is the user's own (Dinis, the same day). A proposal until Dinis approves this policy.
+- 0.3.1, 2026-11-16: after specialist.abp's second read: approvers are pinned by fingerprint outside the cell and agents.json can no longer name one (N8, C6b); C6 split into code (tier 2) and policy files (tier 3); C4 states the barrier that exists today (no token); enforce rows say they hold in simulation; N12 tested across the whole repository.
 
 Text CC BY 4.0.
