@@ -15,6 +15,7 @@ Start with [the architecture diagrams](../../src/architecture.html): what is on 
 5. [The fifteen features, in order](features.md): what each one is and where it stands.
 6. [What each build step needs from Dinis](needs.md): the Google OAuth app in testing, its scopes, and the user's own vault.
 7. [Google OAuth setup](google-oauth.md): every value for Dinis to enter in the Google Cloud console.
+8. [The browser as the gateway](browser-gateway.md): a proposal for a full twin with only the website and vaults, with the policy and OAuth changes it needs.
 
 The draft [privacy policy](../pages/privacy.md) is the link the consent screen needs.
 

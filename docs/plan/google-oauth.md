@@ -4,6 +4,8 @@
 
 Dinis's word, 16 November 2026: "Can you add the website to Google OAuth details for me to configure?"
 
+A proposal to use a browser client instead (the site itself as the gateway, no server) is on [the browser gateway page](browser-gateway.md); until Dinis approves it, the values below stand.
+
 ## The values, in one table
 
 | Where in the console | Field | Value |
