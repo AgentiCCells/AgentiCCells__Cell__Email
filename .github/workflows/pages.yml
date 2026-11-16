@@ -45,6 +45,8 @@ jobs:
         run: node scripts/check-commits.mjs "$BEFORE" "$AFTER"
       - name: Tests (the cell's code, against the simulated mailbox)
         run: node --test tests/*.test.mjs
+      - name: Agent Behaviour Policy in the AgentiCCells format
+        run: node scripts/abp-check.mjs abp/cell-email.md
       - run: node scripts/build.mjs
         env:
           SITE_VERSION: ${{ steps.version.outputs.version }}
