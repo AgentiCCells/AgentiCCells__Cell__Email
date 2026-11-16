@@ -11,6 +11,7 @@
 //   attachments/<attachment-id>.json          twin.attachment/1  metadata; the bytes sit beside it
 //   attachments/<attachment-id>.bin
 //   index/correspondents.json                 twin.correspondents/1  derived, rebuildable
+//   index/syncs/<yyyymmddThhmmssZ>.json       twin.sync/1      change feed: one file per sync
 // Agents get the read key for clean/ only; raw/ is for the gateway, the firewall and people.
 import { readFileSync, readdirSync, statSync, existsSync } from 'node:fs';
 import { join, relative } from 'node:path';
@@ -92,6 +93,19 @@ export function checkLabels(l) {
     if (typeof x.id !== 'string' || typeof x.name !== 'string') e.push(`labels: ${JSON.stringify(x)} needs id and name`);
     if (!['system', 'user', 'cell'].includes(x.type)) e.push(`labels: ${x.id} type must be system, user or cell`);
   }
+  return e;
+}
+
+// The change feed (asked for by crm.ios@sgit.dinis, 16 November 2026): one file per sync,
+// so a client reads only what is new instead of walking raw/ or diffing commits.
+export const syncFileName = (syncedAt) => syncedAt.replace(/[-:]/g, '').replace(/\.\d+Z$/, 'Z') + '.json';
+export function checkSync(s) {
+  const e = [];
+  const w = `sync ${s?.synced_at}`;
+  if (s?.schema !== 'twin.sync/1') e.push(`${w}: schema is not twin.sync/1`);
+  if (typeof s?.cursor !== 'string') e.push(`${w}: cursor must be a string`);
+  if (!iso(s?.synced_at)) e.push(`${w}: synced_at must be ISO 8601 UTC`);
+  for (const k of ['added_messages', 'changed_threads']) if (!Array.isArray(s?.[k]) || s[k].some((x) => typeof x !== 'string')) e.push(`${w}: ${k} must be a list of ids`);
   return e;
 }
 
@@ -180,8 +194,17 @@ export function loadTwin(root) {
     if (!messages.has(c.id)) errors.push(`clean ${c.id}: no raw message`);
     clean.set(c.id, c);
   }
+  const syncs = [];
+  for (const p of walk(join(root, 'index/syncs')).filter((f) => f.endsWith('.json')).sort()) {
+    const s = readJson(p);
+    errors.push(...checkSync(s));
+    if (!p.endsWith('/' + syncFileName(s.synced_at || ''))) errors.push(`sync ${s.synced_at}: file name should be ${syncFileName(s.synced_at || '')}`);
+    for (const id of s.added_messages || []) if (!messages.has(id)) errors.push(`sync ${s.synced_at}: added message ${id} is not in raw/`);
+    for (const id of s.changed_threads || []) if (!threads.has(id)) errors.push(`sync ${s.synced_at}: changed thread ${id} has no file`);
+    syncs.push(s);
+  }
   const correspondents = buildCorrespondents([...messages.values()], mailbox.address);
   const idxPath = join(root, 'index/correspondents.json');
   if (existsSync(idxPath) && JSON.stringify(readJson(idxPath)) !== JSON.stringify(correspondents)) errors.push('index/correspondents.json is stale: rebuild it');
-  return { root, mailbox, labels, messages, threads, attachments, clean, correspondents, errors };
+  return { root, mailbox, labels, messages, threads, attachments, clean, correspondents, syncs, errors };
 }

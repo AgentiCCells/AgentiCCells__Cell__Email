@@ -25,7 +25,10 @@ export function decide(order, ctx) {
     else if (result.decision === 'deny') action = 'refuse';
     else if (result.decision === 'allow' || approved) action = 'send';
     else action = 'wait for a person';
-    rows.push({ action: h, by: a.author, approved_by: approved?.author || null, action_now: action, policy: result });
+    // client_ref: an opaque string a client (the CRM: its draft id) puts on a proposal; the
+    // gateway copies it into the outbox entry so the client can match the result.
+    const clientRef = typeof a.body.client_ref === 'string' ? a.body.client_ref : null;
+    rows.push({ action: h, client_ref: clientRef, by: a.author, approved_by: approved?.author || null, action_now: action, policy: result });
   }
   return { stopped, rows };
 }

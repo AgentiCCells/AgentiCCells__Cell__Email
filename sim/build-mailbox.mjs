@@ -9,7 +9,7 @@ import { join, dirname } from 'node:path';
 import { createHash } from 'node:crypto';
 import { fileURLToPath } from 'node:url';
 import { MAILBOX, LABELS, MESSAGES, ATTACHMENTS } from './messages.mjs';
-import { messagePath, buildCorrespondents } from '../cell/twin/schema.mjs';
+import { messagePath, buildCorrespondents, syncFileName } from '../cell/twin/schema.mjs';
 import { clean } from '../cell/firewall/clean.mjs';
 
 const put = (p, v) => { mkdirSync(dirname(p), { recursive: true }); writeFileSync(p, typeof v === 'string' || Buffer.isBuffer(v) ? v : JSON.stringify(v, null, 2) + '\n'); };
@@ -81,6 +81,20 @@ export function buildMailbox(out) {
     });
   }
   put(join(out, 'index/correspondents.json'), buildCorrespondents(messages, MAILBOX.address));
+  // Two simulated syncs: everything up to 10 November, then the rest.
+  const cut = Date.parse('2026-11-10T00:00:00Z');
+  const syncs = [
+    { synced_at: '2026-11-10T00:00:00Z', list: messages.filter((m) => Date.parse(m.date) < cut) },
+    { synced_at: '2026-11-16T12:00:00Z', list: messages.filter((m) => Date.parse(m.date) >= cut) },
+  ];
+  let cursor = 1000;
+  for (const s of syncs) {
+    cursor += s.list.length;
+    put(join(out, 'index/syncs', syncFileName(s.synced_at)), {
+      schema: 'twin.sync/1', cursor: String(cursor - 1), synced_at: s.synced_at,
+      added_messages: s.list.map((m) => m.id), changed_threads: [...new Set(s.list.map((m) => m.thread))].sort(),
+    });
+  }
   return out;
 }
 

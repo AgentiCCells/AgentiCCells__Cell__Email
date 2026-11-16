@@ -33,7 +33,7 @@
 
 | Need | Why |
 |---|---|
-| The twin format agreed with `crm.ios@sgit.dinis` | Proposed on 16 November 2026; waiting for its answer. |
+| The twin format agreed with `crm.ios@sgit.dinis` | Agreed on 16 November 2026 (v1, with a change feed and client references). |
 | Read access for the CRM app to `clean/`, not `raw/` | Agents and apps read the cleaned copy. |
 
 ## Step 5: the first automated sends

@@ -31,10 +31,16 @@ Who may write which type is altitude 3 of the policy, in `policy/agents.json`.
 }
 ```
 
-- **Signed.** `sig` is an Ed25519 signature over the canonical JSON of the entry without `sig` (keys sorted, no spaces, integers only).
+- **Signed.** `sig` is an Ed25519 signature, base64url without padding, over the canonical JSON of the entry without `sig`, as UTF-8. Canonical JSON: object keys sorted by code unit (all keys are ASCII), no whitespace, strings escaped as JavaScript's `JSON.stringify` does (quote, backslash and control characters only; slash not escaped; non-ASCII emitted as is), integers only, `null` kept, absent fields left out.
+- **Key id.** `key` is `ed25519:` and the hex SHA-256 of the public key's SPKI DER (for a raw 32-byte key, the prefix `302a300506032b6570032100` and the 32 bytes).
+- **Entry hash.** `sha256:` and the hex SHA-256 of the canonical JSON of the whole entry, `sig` included. `prev` and `refs` use it.
 - **Chained.** Each author keeps one chain per lane: `seq` counts 1, 2, 3, and `prev` is the hash of the author's previous entry. An entry cannot be removed, reordered or changed without the check failing. No commit per click: a chain is appended to, and committed in batches.
 - **Keys come from the registry, never from the entry.** `key` must match the author's registered public key (in `team/keys/` or the vault).
 - **References** point at other entries by lane, author, seq and hash.
+
+## Client references
+
+A client may put an opaque `client_ref` string on a `propose.send` or `propose.reply` body (the CRM puts its draft id there). The gateway copies it into the outbox entry, so the client can match the result to its draft without the twin knowing the client's ids. Asked for by the CRM, 16 November 2026; carried by `decide` today, the outbox writer is not built.
 
 ## What the checks catch
 

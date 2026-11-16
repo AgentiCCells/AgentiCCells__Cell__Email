@@ -106,13 +106,15 @@ test('the kill switch: the last stop or start wins', () => {
 test('the gateway decides: auto-send under policy, wait for a person, refuse', () => {
   const { signers, registry } = keys([D, O]);
   const a = [];
-  append(a, { lane: 'actions', author: D, type: 'propose.reply', body: { email: ruiReply() }, at: '2026-11-16T10:00:00Z' }, signers[D]);
+  append(a, { lane: 'actions', author: D, type: 'propose.reply', body: { email: ruiReply(), client_ref: 'crm-draft-1' }, at: '2026-11-16T10:00:00Z' }, signers[D]);
   append(a, { lane: 'actions', author: D, type: 'propose.reply', body: { email: jo() }, at: '2026-11-16T10:01:00Z' }, signers[D]);
   append(a, { lane: 'actions', author: D, type: 'propose.reply', body: { email: { ...jo(), bcc: ['sam@example.com'] } }, at: '2026-11-16T10:02:00Z' }, signers[D]);
   const { order } = mergeLanes([a], registry, agents());
   const out = decide(order, { policy: policy(), twin: simTwin(), now: '2026-11-16T12:00:00Z' });
   assert.deepEqual(out.rows.map((r) => r.action_now), ['send', 'wait for a person', 'refuse']);
   assert.equal(out.rows[0].policy.automation, 'auto-reply-pt-confirm');
+  assert.equal(out.rows[0].client_ref, 'crm-draft-1');
+  assert.equal(out.rows[1].client_ref, null);
 });
 
 test('the gateway sends a held email once a person approves, and nothing while stopped', () => {

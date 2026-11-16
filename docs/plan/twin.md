@@ -2,7 +2,7 @@
 
 **Status: the schema is built (simulation)** in `cell/twin/schema.mjs` and tested on the simulated mailbox. **The vault is a plan:** the site factory skipped it, and the cell has no sgit credential yet. [Back to the plan](index.md).
 
-The format is being agreed with the CRM app's session (`crm.ios@sgit.dinis`); this is version 1 as proposed on 16 November 2026.
+Version 1 was agreed with the CRM app's session (`crm.ios@sgit.dinis`) on 16 November 2026. The CRM joins people on the address, lowercased and trimmed; no CRM id is kept in the twin. Fields are snake_case, dates ISO 8601 UTC, ids strings, and every file carries its `schema` so a client can refuse a version it does not know.
 
 ## Layout
 
@@ -16,6 +16,7 @@ twin/
   attachments/<attachment-id>.json       twin.attachment/1    metadata
   attachments/<attachment-id>.bin                             the bytes
   index/correspondents.json              twin.correspondents/1  derived, rebuildable
+  index/syncs/<yyyymmddThhmmssZ>.json    twin.sync/1          change feed, one file per sync
 ```
 
 - **One file per message**, filed by year and month so no folder grows without limit. A message never changes after it is written, except its labels; a label change is a new commit, so the vault's history is the twin's time travel.
@@ -24,6 +25,9 @@ twin/
 - **Labels are data**: system labels from Gmail, the user's own, and `cell/...` labels the cell adds (for example `cell/needs-reply`, `cell/quarantine`). A label change in Gmail is synced in; a label change by the cell is proposed on the actions lane and sent by the gateway.
 - **Attachments** keep their bytes beside a metadata file with size and SHA-256, so the loader can tell if one was changed.
 - **The correspondents index** records, per address, how often they wrote to us and we to them. The policy uses it to tell a first contact from a reply. It is derived from `raw/`; the loader fails if it is stale.
+
+- **The change feed** (asked for by the CRM): each sync writes `{cursor, synced_at, added_messages, changed_threads}`, so a client reads only what is new instead of walking `raw/` or diffing commits on a phone.
+- **Who reads `raw/`:** the gateway, the firewall, and people, including a person's own app (the CRM app reads `raw/` for its person and `clean/` for anything an agent sees). Whether `raw/` and `clean/` are two vaults with their own read keys or one is undecided until the vault exists; the proposal is two vaults.
 
 ## A message (twin.message/1)
 

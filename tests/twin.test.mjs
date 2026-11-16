@@ -42,6 +42,15 @@ test('the correspondents index tells who has written to us', () => {
   assert.equal(c['kim@example.com'].outbound, 1);
 });
 
+test('the change feed lists every message once, in two syncs', () => {
+  const t = simTwin();
+  assert.equal(t.syncs.length, 2);
+  const ids = t.syncs.flatMap((s) => s.added_messages);
+  assert.equal(ids.length, MESSAGES.length);
+  assert.equal(new Set(ids).size, MESSAGES.length);
+  assert.ok(t.syncs[1].changed_threads.includes('t-0002'));
+});
+
 test('schema checks catch a broken message', () => {
   const m = structuredClone(simTwin().messages.get('m-0001'));
   m.from.address = 'not-an-address';

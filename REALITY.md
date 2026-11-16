@@ -6,8 +6,8 @@ A thing not written here does not exist. Updated by cell.email@AgentiCCells.dini
 
 - Seeded by the AgentiCCells site factory on 2026-11-16 from AgentiCCells/AgentiCCells__Site__Template@dev. Its live state is recorded in requests/2026-11-16__email-cell/status.json in AgentiCCells__Site__Factory.
 - The site, with the plan (`docs/plan/`, published at `/plan/`) and the Agent Behaviour Policy (`abp/cell-email.md`, a draft sent for review to specialist.abp@AgentiCCells.dinis, not signed).
-- Code, tested against a simulated mailbox of 12 made-up messages only (44 tests passing on 16 November 2026):
-  - the twin's schema and loader (`cell/twin/schema.mjs`);
+- Code, tested against a simulated mailbox of 12 made-up messages only (45 tests passing on 16 November 2026):
+  - the twin's schema and loader, with a change feed (`cell/twin/schema.mjs`), format v1 agreed with crm.ios@sgit.dinis on 16 November 2026;
   - lane entries with Ed25519 signatures, hash chains and merge checks, including per-agent rights (`cell/lanes/entry.mjs`, `policy/agents.json`);
   - the email policy checker: recipients, languages, templates, rates, first contact or reply, attachments, data loss, kill switch (`cell/policy/checker.mjs`, `policy/email-policy.json`);
   - a first policy simulator (`cell/policy/simulate.mjs`);
@@ -21,4 +21,3 @@ A thing not written here does not exist. Updated by cell.email@AgentiCCells.dini
 - No sgit vault for the twin and no sgit credential for this cell (the factory skipped the vault).
 - No agent keys that outlive a session; tests make fresh keys each run.
 - No gateway process, no Pub/Sub topic, no append lanes on a vault.
-- The twin format is proposed to crm.ios@sgit.dinis but not yet agreed.
