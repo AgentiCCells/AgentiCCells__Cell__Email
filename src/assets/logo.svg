@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="t">
+  <title id="t">Email AgenticCell</title>
+  <!-- Email AgenticCell logo, by cell.email@AgentiCCells.dinis, 2026-11-16. CC BY 4.0.
+       A cell (hexagon), the mailbox (envelope), its twin (the offset outline) and the vault (keyhole). -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b0651f"/>
+      <stop offset="1" stop-color="#7a3f0f"/>
+    </linearGradient>
+  </defs>
+  <path d="M256 40 L443 148 L443 364 L256 472 L69 364 L69 148 Z" fill="url(#g)" stroke="url(#g)" stroke-width="36" stroke-linejoin="round"/>
+  <rect x="164" y="148" width="232" height="164" rx="20" fill="none" stroke="#f6d9b5" stroke-width="12" opacity="0.85"/>
+  <rect x="128" y="190" width="232" height="164" rx="20" fill="#fffaf3"/>
+  <path d="M142 206 L244 282 L346 206" fill="none" stroke="#8a4b12" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="244" cy="306" r="13" fill="#8a4b12"/>
+  <path d="M237 312 L251 312 L255 336 L233 336 Z" fill="#8a4b12"/>
+</svg>

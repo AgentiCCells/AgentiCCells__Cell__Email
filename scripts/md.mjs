@@ -90,6 +90,7 @@ export function page({ title, description, body, crumbs, sourcePath, mdName }) {
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
 <title>${esc(title)} · Email AgenticCell</title>
 <meta name="description" content="${esc(description)}">
 <style>
