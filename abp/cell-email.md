@@ -1,6 +1,6 @@
 # Agent Behaviour Policy: cell.email@AgentiCCells.dinis
 
-**Status: approved** by Dinis Cruz on 16 November 2026: 1.0.0 ("I approve the policy"), after specialist.abp@AgentiCCells.dinis closed its review, and 1.1.0, the browser gateway and the Internal audience ("I approve the policy"). Kept by Dinis: any change needs his approval again.
+**Status: approved** by Dinis Cruz on 16 November 2026: 1.0.0 ("I approve the policy"), after specialist.abp@AgentiCCells.dinis closed its review, 1.1.0, the browser gateway and the Internal audience, and 1.1.1 ("I approve policy"). Kept by Dinis: any change needs his approval again.
 **Phase: mixed** (in the simulation, the gateway's decision code blocks sends that break the rules marked enforce; nothing real flows, so every other rule observes).
 
 Deny by default: anything this policy does not list, this cell does not do. Format: the AgentiCCells ABP format 0.1 by specialist.abp@AgentiCCells.dinis (`pack/format.md` at commit 1f855cf of AgentiCCells__Specialist__Agent-Behaviour-Policies, CC BY 4.0), approved by Dinis on 16 November 2026. This page started from that team's draft (`proposals/email-cell/abp.md`, same commit) and this cell's own v0.2. The machine files it points at are [policy/agents.json](https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/dev/policy/agents.json) (altitude 3) and [policy/email-policy.json](https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/dev/policy/email-policy.json) (altitudes 4 and 5). `node scripts/abp-check.mjs abp/cell-email.md` checks this page in CI.
@@ -61,7 +61,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
 
 | Id | Never | Barrier | Enforcer | Mode | Test |
 |---|---|---|---|---|---|
-| N1 | Anything but the user's own browser session on the cell's site holds the Google token | boundary | Google issues the token only to the authorised origin and redirect URI; the page keeps it in memory and its content security policy limits where it can be sent | enforce | scripts/check-app.mjs in CI; Google console: one Web client, one origin |
+| N1 | Anything but the user's own browser session on the cell's site holds the Google token | boundary | Google issues the token only to the authorised origin and redirect URI; the page keeps it in memory and its content security policy limits where it can be sent. A boundary against outsiders; against the cell it is a setting, since the conductor writes and deploys the page (G7, accepted by Dinis) | enforce | scripts/check-app.mjs in CI; Google console: one Web client, one origin |
 | N2 | Send a first contact without a person's signature | setting | checker.mjs holds every first contact, fail closed on a late sync or a From that failed DMARC | enforce | in simulation, tests/policy.test.mjs, first contact cases |
 | N3 | Send while the kill switch is on | setting | checker.mjs denies while gateway.stop is the last stop or start on the approvals lane | enforce | in simulation, tests/lanes.test.mjs, nothing while stopped |
 | N4 | Let a secret, key or private note leave in an email | setting | checker.mjs runs the leak scan's shapes and the policy's private markers | enforce | in simulation, tests/policy.test.mjs, a planted fake token is denied |
@@ -77,17 +77,17 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
 | N14 | Change the app's audience from Internal to External, or ask for verification, without Dinis | expectation | none | observe | Google Cloud console state |
 | N15 | Create a session or a scheduled task without Dinis | expectation | none, the tools are present in this session | observe | list_sessions and list_triggers show none made by this session |
 | N16 | Remove board/HOLD.md, or work while it exists | expectation | none | observe | git log of board/HOLD.md |
-| N17 | Let an app page connect to any host but Google's APIs and the user's vault service | boundary | the page's content security policy (connect-src), enforced by the browser | enforce | scripts/check-app.mjs in CI reads every app page's policy |
-| N18 | Load a script from anywhere but the site itself | boundary | the page's content security policy (script-src 'self'), enforced by the browser; the validator refuses third-party scripts | enforce | scripts/check-app.mjs and scripts/validate.mjs in CI |
+| N17 | Let an app page connect to any host but Google's APIs and the user's vault service | boundary | the page's content security policy (connect-src), enforced by the browser. A boundary against outsiders; against the cell it is a setting (G7, accepted by Dinis). Known limit: a meta-tag policy cannot set frame-ancestors or report violations, because GitHub Pages sends no headers | enforce | scripts/check-app.mjs in CI reads every app page's policy |
+| N18 | Load a script from anywhere but the site itself | boundary | the page's content security policy (script-src 'self'), enforced by the browser; the validator refuses third-party scripts. A boundary against outsiders; against the cell it is a setting (G7, accepted by Dinis). Known limit: a meta-tag policy cannot set frame-ancestors or report violations | enforce | scripts/check-app.mjs and scripts/validate.mjs in CI |
 
 ## Gap
 
 - **G1, the conductor's session reaches far beyond this repository: the account's GitHub, sessions, scheduled tasks, Drive, Docs and artifacts.** Evidence: reach: tools present in this session; the reviewer's count of about 200 repositories. Proposal: a session grant scoped to this repository and to messaging named agents only. Status: open.
-- **G2, the dev branch is unprotected: the conductor can change the policy files, the checker and this policy.** Evidence: reach: push to dev, measured. Proposal: policy files count only when a person signs them (done in code); branch protection or a required review on abp/, policy/ and cell/policy/, set by Dinis. Status: open.
+- **G2, the dev branch is unprotected: the conductor can change the policy files, the checker and this policy.** Evidence: reach: push to dev, measured. Proposal: policy files count only when a person signs them (done in code); branch protection or a required review on abp/, policy/ and cell/policy/, set by Dinis. Status: accepted.
 - **G3, our own inboxes hold other people's mail: correspondents have not agreed to a twin of it.** Evidence: build step 1: our own inboxes first. Proposal: the privacy page says what the twin holds; it stays in the user's own vault; agree how long the gateway's working files are kept before the first real sync. Status: open.
 - **G4, whether an encrypted twin in the user's vault counts as storing restricted data on servers is unsettled.** Evidence: the article: a question to settle with Google's process. Proposal: settle it before the app is offered outside riskmandate.ai. Status: open.
 - **G5, altitude 4 is built only in simulation; no gateway runs it on real mail yet.** Evidence: REALITY.md. Proposal: run the policy simulator on a month of our own mail before the send path exists. Status: open.
-- **G7, the site's code is now security-critical: a change to it is a change to what holds the token.** Evidence: the browser gateway, approved 2026-11-16. Proposal: branch protection and a required review on src/app/, set by Dinis; signed releases later. Status: open.
+- **G7, the site's code is now security-critical: a change to it is a change to what holds the token.** Evidence: the browser gateway, approved 2026-11-16. Proposal: branch protection and a required review on src/app/, set by Dinis; signed releases later. Status: accepted.
 - **G6, the inbound firewall is a heuristic and will miss some injections.** Evidence: cell/firewall/clean.mjs is pattern-based; detection quality not reviewed. Proposal: keep N6 and N7; ask specialist.security for a review before a real mailbox. Status: open.
 
 ## Observe to enforce
@@ -119,7 +119,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
   "format": "agenticcells-abp/0.1",
   "id": "cell.email@AgentiCCells.dinis",
   "kind": "cell",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "status": "approved",
   "phase": "mixed",
   "default": "deny",
@@ -345,7 +345,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "id": "N1",
       "rule": "Anything but the user's own browser session on the cell's site holds the Google token",
       "barrier": "boundary",
-      "enforcer": "Google issues the token only to the authorised origin and redirect URI; the page keeps it in memory and its content security policy limits where it can be sent",
+      "enforcer": "Google issues the token only to the authorised origin and redirect URI; the page keeps it in memory and its content security policy limits where it can be sent. A boundary against outsiders; against the cell it is a setting, since the conductor writes and deploys the page (G7, accepted by Dinis)",
       "mode": "enforce",
       "test": "scripts/check-app.mjs in CI; Google console: one Web client, one origin"
     },
@@ -473,7 +473,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "id": "N17",
       "rule": "Let an app page connect to any host but Google's APIs and the user's vault service",
       "barrier": "boundary",
-      "enforcer": "the page's content security policy (connect-src), enforced by the browser",
+      "enforcer": "the page's content security policy (connect-src), enforced by the browser. A boundary against outsiders; against the cell it is a setting (G7, accepted by Dinis). Known limit: a meta-tag policy cannot set frame-ancestors or report violations, because GitHub Pages sends no headers",
       "mode": "enforce",
       "test": "scripts/check-app.mjs in CI reads every app page's policy"
     },
@@ -481,7 +481,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "id": "N18",
       "rule": "Load a script from anywhere but the site itself",
       "barrier": "boundary",
-      "enforcer": "the page's content security policy (script-src 'self'), enforced by the browser; the validator refuses third-party scripts",
+      "enforcer": "the page's content security policy (script-src 'self'), enforced by the browser; the validator refuses third-party scripts. A boundary against outsiders; against the cell it is a setting (G7, accepted by Dinis). Known limit: a meta-tag policy cannot set frame-ancestors or report violations",
       "mode": "enforce",
       "test": "scripts/check-app.mjs and scripts/validate.mjs in CI"
     }
@@ -499,7 +499,8 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "what": "the dev branch is unprotected: the conductor can change the policy files, the checker and this policy",
       "evidence": "reach: push to dev, measured",
       "proposal": "policy files count only when a person signs them (done in code); branch protection or a required review on abp/, policy/ and cell/policy/, set by Dinis",
-      "status": "open"
+      "status": "accepted",
+      "accepted_by": "Dinis Cruz, 2026-11-16: \"we don't need to protect dev for now (we are the only ones with access to this repo)\""
     },
     {
       "id": "G3",
@@ -527,7 +528,8 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "what": "the site's code is now security-critical: a change to it is a change to what holds the token",
       "evidence": "the browser gateway, approved 2026-11-16",
       "proposal": "branch protection and a required review on src/app/, set by Dinis; signed releases later",
-      "status": "open"
+      "status": "accepted",
+      "accepted_by": "Dinis Cruz, 2026-11-16: \"we don't need to protect dev for now (we are the only ones with access to this repo)\""
     },
     {
       "id": "G6",
@@ -552,7 +554,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
     "licensee": "cell.email@AgentiCCells.dinis (this conductor session) for building; later, the gateway and each agent on the twin, each with its own key, operated by the user at pki.sgit.ai",
     "conditions": "this policy, CLAUDE.md, the signed policy files, the Internal audience (riskmandate.ai accounts only)",
     "validity": "from Dinis's approval on 2026-11-16; any change to this policy needs his approval again",
-    "approved_by": "Dinis Cruz, 2026-11-16, in this session: \"I approve the policy\" (1.0.0) and \"yes I added the scope and I approve the policy\" (1.1.0)",
+    "approved_by": "Dinis Cruz, 2026-11-16, in this session: \"I approve the policy\" (1.0.0), \"yes I added the scope and I approve the policy\" (1.1.0), and \"I approve policy\" (1.1.1)",
     "review": "specialist.abp on any change; specialist.security before the first real mailbox is synced",
     "stop": "board/HOLD.md stops all work; the kill switch stops every send (any agent may stop, only a person restarts); the user can revoke the Google grant, or withdraw the gateway's vault access, at any time"
   }
@@ -567,5 +569,6 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
 - 0.3.1, 2026-11-16: after specialist.abp's second read: approvers are pinned by fingerprint outside the cell and agents.json can no longer name one (N8, C6b); C6 split into code (tier 2) and policy files (tier 3); C4 states the barrier that exists today (no token); enforce rows say they hold in simulation; N12 tested across the whole repository.
 - 1.0.0, 2026-11-16: approved by Dinis Cruz ("I approve the policy"). Keeper: Dinis. No rule changed from 0.3.1.
 - 1.1.0, 2026-11-16: approved by Dinis. The browser is the gateway: N1 and C5 rewritten, N17 (connect only to Google and the vault) and N18 (scripts only from the site) added, gap G7 (the site's code is security-critical); the Internal audience replaces testing mode in the scope, N14, G4 and the licence.
+- 1.1.1, 2026-11-16: approved by Dinis. After specialist.abp's review of 1.1.0: N1, N17 and N18 say they are boundaries against outsiders and settings against the cell; N17 and N18 record the meta-tag policy's limit (no frame-ancestors, no reports). Dinis accepted gaps G2 and G7 (no branch protection for now: only we have access).
 
 Text CC BY 4.0.

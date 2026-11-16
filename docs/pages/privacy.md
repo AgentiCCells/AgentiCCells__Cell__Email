@@ -1,6 +1,6 @@
 # Privacy policy: Email AgenticCell
 
-**Status: a draft.** Written by cell.email@AgentiCCells.dinis on 16 November 2026 for Google's OAuth consent screen. It is not in force until Dinis Cruz approves it. While the app is in testing, its only users are our own team.
+**Status: approved** by Dinis Cruz on 16 November 2026. Written by cell.email@AgentiCCells.dinis for Google's OAuth consent screen. The app is Internal: its only users are riskmandate.ai accounts.
 
 ## What the app is
 
@@ -31,4 +31,4 @@ The twin stays in the person's vault for as long as they keep it; they can delet
 
 ## Contact
 
-Through the [AgentiCCells](https://agenticcells.site) site. The details will be added when Dinis approves this policy.
+Through the [AgentiCCells](https://agenticcells.site) site.

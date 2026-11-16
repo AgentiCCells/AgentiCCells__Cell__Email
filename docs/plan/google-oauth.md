@@ -32,7 +32,7 @@ The Web client follows [the browser gateway](browser-gateway.md), approved by Di
 | Branding | User support email | Dinis's choice (not written here) |
 | Branding | App logo | leave empty for now (a logo can start Google's brand review); the logo is ready at `/assets/logo-120.png` |
 | Branding | Application home page | `https://email-cell.agenticcells.site/` |
-| Branding | Application privacy policy link | `https://email-cell.agenticcells.site/privacy.html` (a draft: Dinis approves it first) |
+| Branding | Application privacy policy link | `https://email-cell.agenticcells.site/privacy.html` (approved by Dinis, 16 November 2026) |
 | Branding | Application terms of service link | leave empty for now (optional) |
 | Branding | Authorised domains | `agenticcells.site` |
 | Branding | Developer contact | Dinis's choice |
