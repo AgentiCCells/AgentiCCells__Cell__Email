@@ -1,0 +1,49 @@
+{
+  "schema": "email.policy/1",
+  "status": "SIMULATION and proposal: the policy for the simulated mailbox only. The real policy is written with Dinis, signed, and kept in the vault.",
+  "default": "deny",
+  "senders": ["drafter.email@AgentiCCells.dinis", "person:owner", "person:assistant"],
+  "allow_forward": false,
+  "recipients": {
+    "max": 3,
+    "allow_bcc": false,
+    "allow_domains": ["example.com", "example.net"],
+    "allow_addresses": [],
+    "deny_domains": ["helpdesk.invalid"],
+    "deny_addresses": ["news@example.com"]
+  },
+  "languages": ["en", "pt", "es"],
+  "require_template": false,
+  "max_slot_length": 400,
+  "attachments": { "allow_mime": [] },
+  "dlp_markers": ["\\[private\\]", "\\[internal\\]", "private note"],
+  "rates": { "per_day": 20, "per_agent_per_day": 10, "per_recipient_per_day": 2 },
+  "templates": {
+    "reply-pt-confirm": {
+      "language": "pt",
+      "subject": "Re: {{subject}}",
+      "text": "Olá {{name}},\n\nObrigado pela mensagem. {{message}}\n\nCumprimentos,\n{{signer}}"
+    },
+    "reply-en-confirm": {
+      "language": "en",
+      "subject": "Re: {{subject}}",
+      "text": "Hi {{name}},\n\nThank you for your message. {{message}}\n\nBest regards,\n{{signer}}"
+    },
+    "followup-en": {
+      "language": "en",
+      "subject": "Re: {{subject}}",
+      "text": "Hello {{name}},\n\nI am following up on my email of {{date}}. {{message}}\n\nKind regards,\n{{signer}}"
+    }
+  },
+  "automations": [
+    {
+      "id": "auto-reply-pt-confirm",
+      "about": "The drafter may send a reply in Portuguese to an existing correspondent, using this template, but never a first contact.",
+      "agents": ["drafter.email@AgentiCCells.dinis"],
+      "kinds": ["reply"],
+      "languages": ["pt"],
+      "templates": ["reply-pt-confirm"],
+      "first_contact": false
+    }
+  ]
+}

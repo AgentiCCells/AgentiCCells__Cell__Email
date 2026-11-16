@@ -1,0 +1,49 @@
+{
+  "schema": "cell.agents/1",
+  "status": "proposal: altitude 3 of the email policy. Names are roles; keys are bound in team/keys or the vault, never here.",
+  "agents": {
+    "gateway.email@AgentiCCells.dinis": { "role": "gateway" },
+    "firewall.email@AgentiCCells.dinis": { "role": "firewall" },
+    "triage.email@AgentiCCells.dinis": { "role": "triage" },
+    "drafter.email@AgentiCCells.dinis": { "role": "drafter" },
+    "crm.email@AgentiCCells.dinis": { "role": "crm" },
+    "person:owner": { "role": "approver" },
+    "person:assistant": { "role": "drafter" }
+  },
+  "roles": {
+    "gateway": {
+      "about": "Holds the Google token. Syncs in, sends approved actions, writes the outbox.",
+      "lanes": { "outbox": ["sent", "refused", "failed"], "reads": ["read"] },
+      "twin": ["raw", "clean"]
+    },
+    "firewall": {
+      "about": "Reads raw messages and writes the cleaned copy. Proposes nothing.",
+      "lanes": { "reads": ["read"] },
+      "twin": ["raw", "clean"]
+    },
+    "triage": {
+      "about": "Reads cleaned copies, proposes labels and archiving.",
+      "lanes": { "actions": ["propose.label", "propose.archive", "withdraw"], "reads": ["read"] },
+      "twin": ["clean"]
+    },
+    "drafter": {
+      "about": "Reads cleaned copies, proposes replies and new emails.",
+      "lanes": { "actions": ["propose.reply", "propose.send", "withdraw"], "reads": ["read"] },
+      "twin": ["clean"]
+    },
+    "crm": {
+      "about": "Reads cleaned copies and links them to people in the CRM. Proposes labels only.",
+      "lanes": { "actions": ["propose.label"], "reads": ["read"] },
+      "twin": ["clean"]
+    },
+    "approver": {
+      "about": "A person. Approves or rejects actions, and owns the kill switch.",
+      "lanes": {
+        "actions": ["propose.reply", "propose.send", "propose.label", "propose.archive", "propose.forward", "withdraw"],
+        "approvals": ["approve", "reject", "gateway.stop", "gateway.start"],
+        "reads": ["read"]
+      },
+      "twin": ["raw", "clean"]
+    }
+  }
+}
