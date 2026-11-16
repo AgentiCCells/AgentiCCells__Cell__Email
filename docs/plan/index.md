@@ -6,6 +6,8 @@ Source: the brief is Dinis Cruz's article [The email agentic cell](https://newsr
 
 ## The pages
 
+Start with [the architecture diagrams](../../src/architecture.html): what is on the website, what goes in the user's vault, and how the twin works.
+
 1. [Architecture](architecture.md): one gateway, a twin, many hands, and the four flows.
 2. [The twin's vault layout](twin.md): one file per message, threads, labels, attachments, the cleaned copy.
 3. [The lanes](lanes.md): actions, approvals, reads and the outbox, each entry signed.

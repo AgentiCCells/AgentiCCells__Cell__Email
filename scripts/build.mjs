@@ -11,7 +11,7 @@ cpSync('src', '_site', { recursive: true });
 // Behaviour Policy (abp/*.md) are published as HTML pages, with their Markdown beside them.
 // Repository path -> site path: docs/plan/x.md -> plan/x.html, abp/x.md -> abp/x.html.
 // docs/pages/x.md -> x.html at the site root (the privacy policy).
-const PAGES = [['docs/plan', 'plan'], ['abp', 'abp'], ['docs/pages', '']];
+const PAGES = [['docs/plan', 'plan'], ['abp', 'abp'], ['docs/pages', ''], ['src', '']]; // src/ holds no .md; listed so links to its pages map to the site
 const sitePathOf = (repoPath) => { for (const [from, to] of PAGES) if (repoPath.startsWith(from + '/')) return posix.join(to, repoPath.slice(from.length + 1)).replace(/\.md$/, '.html'); return null; };
 const GITHUB = 'https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/dev/';
 for (const [from] of PAGES) {

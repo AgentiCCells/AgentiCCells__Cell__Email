@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Architecture · Email AgenticCell</title>
+<meta name="description" content="Where everything lives in the email agentic cell: what is on the public website and repository, what goes in the user's own vault, and how the mailbox's digital twin works.">
+<style>
+:root{--bg:#fbf7f0;--fg:#222;--muted:#666;--line:#ddd2c0;--box:#fff;--accent:#8a4b12;
+--pub:#e8f0fb;--pub-line:#5b7fb3;--vault:#eef6ea;--vault-line:#4d8a3c;--goo:#fdf0e6;--goo-line:#c0742c;--gw:#fbe9ec;--gw-line:#b2475a;--hands:#f2eefa;--hands-line:#7a62b0;--plan:#999}
+@media(prefers-color-scheme:dark){:root{--bg:#17140f;--fg:#eee;--muted:#aaa;--line:#3b342a;--box:#211d17;--accent:#e9a866;
+--pub:#1c2532;--pub-line:#7fa3d6;--vault:#1b2a18;--vault-line:#7cbf69;--goo:#2e2216;--goo-line:#e19a55;--gw:#2f1b20;--gw-line:#e07a8c;--hands:#231e30;--hands-line:#a891dc;--plan:#888}}
+*{box-sizing:border-box}
+body{margin:0;font:17px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--fg)}
+main{max-width:62rem;margin:0 auto;padding:2.5rem 1rem}
+h1{font-size:1.9rem;line-height:1.2;margin-bottom:.3rem}
+h2{font-size:1.3rem;margin-top:2.4rem;border-bottom:1px solid var(--line);padding-bottom:.3rem}
+a{color:var(--accent)}
+.lead{font-size:1.1rem}
+nav.crumbs{font-size:.9rem;color:var(--muted)}
+.fig{overflow-x:auto;background:var(--box);border:1px solid var(--line);border-radius:8px;padding:.6rem;margin:1rem 0}
+.fig svg{display:block;width:100%;min-width:760px;height:auto}
+svg text{fill:var(--fg);font:13px system-ui,-apple-system,"Segoe UI",sans-serif}
+svg .t{font-weight:700;font-size:15px}
+svg .s{font-size:12px;fill:var(--muted)}
+svg .plan{fill:var(--plan);font-style:italic}
+svg .arrow{stroke:var(--fg);stroke-width:1.6;fill:none}
+svg .dash{stroke-dasharray:6 5}
+svg .lbl{font-size:12px}
+.legend{font-size:.9rem;color:var(--muted)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(17rem,1fr));gap:1rem}
+.card{background:var(--box);border:1px solid var(--line);border-radius:8px;padding:.8rem 1rem}
+.card h3{margin:.2rem 0 .4rem;font-size:1.05rem}
+.card ul{margin:.2rem 0;padding-left:1.1rem}
+.tag{display:inline-block;font-size:.75rem;border-radius:3px;padding:0 .35rem;border:1px solid var(--line);color:var(--muted)}
+ol li{margin-bottom:.35rem}
+footer{margin-top:3rem;border-top:1px solid var(--line);padding-top:1rem;color:var(--muted);font-size:.9rem}
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="index.html">Email AgenticCell</a> / <a href="plan/index.html">The plan</a></nav>
+<h1>Architecture: the website, the vault, and the twin</h1>
+<p class="lead">Two places hold everything. The <b>public website and repository</b> hold how the cell works: code, plan, policy and made-up test mail. The <b>user's own vault</b> holds the mailbox itself: the twin, the lanes, and the signed policies. Real mail never touches the public side.</p>
+<p class="legend">Status, 16 November 2026: the code runs against a simulated mailbox only. Items in grey italics are a plan. Written by cell.email@AgentiCCells.dinis for Dinis Cruz.</p>
+
+<h2 id="where">1. Where everything lives</h2>
+<div class="fig">
+<svg viewBox="0 0 960 660" role="img" aria-labelledby="d1t d1d">
+<title id="d1t">Where everything lives</title>
+<desc id="d1d">Left: the public GitHub repository and website, holding code, the plan, the policy, the simulated mailbox and tests. Centre: Google's Gmail at the top, the gateway below it holding the only token, and the people and agents at the bottom. Right: the user's own encrypted vault, holding the twin (raw, clean, threads, labels, attachments, index, change feed), the four signed lanes, and the signed policy files. Gmail exchanges mail only with the gateway. The gateway writes the twin and the outbox and reads approved actions. People and agents read the twin and write proposals and approvals on the lanes. Code and setup values flow from the repository to the gateway and to Google, never data.</desc>
+<defs>
+<marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker>
+</defs>
+<g style="color:var(--fg)">
+<!-- Public -->
+<rect x="16" y="16" width="290" height="628" rx="10" fill="var(--pub)" stroke="var(--pub-line)" stroke-width="1.5"/>
+<text x="32" y="44" class="t">Public: repository and website</text>
+<text x="32" y="63" class="s">github.com/AgentiCCells/..Cell__Email</text>
+<text x="32" y="79" class="s">email-cell.agenticcells.site</text>
+<text x="32" y="112" class="t" style="font-size:13px">How it works (built)</text>
+<text x="40" y="132">plan: architecture, twin, lanes,</text>
+<text x="52" y="149">policy, features, needs</text>
+<text x="40" y="169">Agent Behaviour Policy (ABP)</text>
+<text x="40" y="189">Google OAuth setup values</text>
+<text x="40" y="209">privacy policy (draft)</text>
+<text x="32" y="242" class="t" style="font-size:13px">Code (built, tested)</text>
+<text x="40" y="262">twin schema and loader</text>
+<text x="40" y="282">lane signing and checks</text>
+<text x="40" y="302">email policy checker</text>
+<text x="40" y="322">inbound firewall</text>
+<text x="40" y="342">gateway decision (no Gmail)</text>
+<text x="40" y="362">policy simulator</text>
+<text x="32" y="395" class="t" style="font-size:13px">Policy templates</text>
+<text x="40" y="415">agents.json (who may do what)</text>
+<text x="40" y="435">email-policy.json (example)</text>
+<text x="32" y="468" class="t" style="font-size:13px">Test data</text>
+<text x="40" y="488">simulated mailbox: 12 made-up</text>
+<text x="52" y="505">messages, example domains</text>
+<text x="40" y="525">53 tests, run in CI</text>
+<rect x="32" y="552" width="258" height="76" rx="6" fill="none" stroke="var(--pub-line)" stroke-dasharray="4 4"/>
+<text x="44" y="575" style="font-weight:700">Never here</text>
+<text x="44" y="595">real mail, real people, keys,</text>
+<text x="44" y="613">tokens, signatures</text>
+
+<!-- Google -->
+<rect x="350" y="16" width="260" height="104" rx="10" fill="var(--goo)" stroke="var(--goo-line)" stroke-width="1.5"/>
+<text x="366" y="44" class="t">Google</text>
+<text x="366" y="66">Gmail: the user's mailbox</text>
+<text x="366" y="86">OAuth app, in testing</text>
+<text x="366" y="106" class="s plan">Dinis configures it (plan)</text>
+
+<!-- Gateway -->
+<rect x="350" y="196" width="260" height="150" rx="10" fill="var(--gw)" stroke="var(--gw-line)" stroke-width="1.5"/>
+<text x="366" y="224" class="t">Gateway agent</text>
+<text x="366" y="246">holds the only Google token</text>
+<text x="366" y="266">syncs Gmail into the twin</text>
+<text x="366" y="286">sends only approved, checked mail</text>
+<text x="366" y="306" class="s">decision code: built (simulation)</text>
+<text x="366" y="324" class="s plan">Gmail calls, runs on a machine</text>
+<text x="366" y="340" class="s plan">Dinis controls (plan)</text>
+
+<!-- Hands -->
+<rect x="350" y="430" width="260" height="214" rx="10" fill="var(--hands)" stroke="var(--hands-line)" stroke-width="1.5"/>
+<text x="366" y="458" class="t">Many hands</text>
+<text x="366" y="482" style="font-weight:700">People</text>
+<text x="374" y="502">browser, iPhone CRM app, Claude</text>
+<text x="374" y="520" class="s">read raw and clean; approve; stop</text>
+<text x="366" y="548" style="font-weight:700">Agents</text>
+<text x="374" y="568">firewall: writes the clean copy</text>
+<text x="374" y="588">triage, drafter, crm: read clean,</text>
+<text x="386" y="606">propose on the actions lane</text>
+<text x="374" y="628" class="s">no agent approves or sends</text>
+
+<!-- Vault -->
+<rect x="654" y="16" width="290" height="628" rx="10" fill="var(--vault)" stroke="var(--vault-line)" stroke-width="1.5"/>
+<text x="670" y="44" class="t">The user's own vault</text>
+<text x="670" y="63" class="s">created by the user (pki.sgit.ai),</text>
+<text x="670" y="79" class="s">encrypted, the user holds the keys</text>
+<rect x="670" y="94" width="258" height="232" rx="6" fill="none" stroke="var(--vault-line)"/>
+<text x="682" y="116" style="font-weight:700">The twin (the mailbox as files)</text>
+<text x="690" y="138">raw/  one file per message</text>
+<text x="702" y="155" class="s">gateway, firewall, people</text>
+<text x="690" y="177">clean/  firewall's cleaned copy</text>
+<text x="702" y="194" class="s">the only copy agents can read</text>
+<text x="690" y="216">threads/  labels.json</text>
+<text x="690" y="236">attachments/</text>
+<text x="690" y="256">index/correspondents.json</text>
+<text x="690" y="276">index/syncs/  change feed</text>
+<text x="690" y="298">history: every version kept</text>
+<text x="702" y="315" class="s">time travel, and a backup</text>
+<rect x="670" y="338" width="258" height="150" rx="6" fill="none" stroke="var(--vault-line)"/>
+<text x="682" y="360" style="font-weight:700">Lanes (append only, signed)</text>
+<text x="690" y="382">actions: proposals</text>
+<text x="690" y="402">approvals: people sign; stop/start</text>
+<text x="690" y="422">reads: who read what</text>
+<text x="690" y="442">outbox: what was sent, result</text>
+<text x="690" y="470" class="s">each entry signed and chained</text>
+<rect x="670" y="500" width="258" height="128" rx="6" fill="none" stroke="var(--vault-line)"/>
+<text x="682" y="522" style="font-weight:700">Signed policies</text>
+<text x="690" y="544">agents.json + signature</text>
+<text x="690" y="564">email-policy.json + signature</text>
+<text x="690" y="584">access keys sealed per agent</text>
+<text x="690" y="612" class="s plan">all of the vault: plan</text>
+
+<!-- Arrows -->
+<!-- Gmail <-> gateway -->
+<path class="arrow" d="M455,122 L455,194" marker-start="url(#ah)" marker-end="url(#ah)"/>
+<text x="463" y="152" class="lbl">sync in;</text>
+<text x="463" y="168" class="lbl">approved sends out</text>
+<!-- gateway -> vault twin -->
+<path class="arrow" d="M612,236 L668,236" marker-end="url(#ah)"/>
+<text x="616" y="228" class="lbl">writes</text>
+<!-- gateway <-> lanes -->
+<path class="arrow" d="M612,326 L668,392" marker-start="url(#ah)" marker-end="url(#ah)"/>
+<text x="604" y="368" class="lbl" text-anchor="end">reads approvals,</text>
+<text x="604" y="384" class="lbl" text-anchor="end">writes the outbox</text>
+<!-- hands <-> lanes -->
+<path class="arrow" d="M612,456 L668,456" marker-start="url(#ah)" marker-end="url(#ah)"/>
+<text x="604" y="412" class="lbl" text-anchor="end">read the twin, sign the lanes</text>
+<!-- repo -> gateway code -->
+<path class="arrow dash" d="M308,300 L348,280" marker-end="url(#ah)"/>
+<text x="312" y="324" class="lbl">code</text>
+<!-- repo -> google setup -->
+<path class="arrow dash" d="M308,190 L348,90" marker-end="url(#ah)"/>
+<text x="312" y="128" class="lbl">setup</text>
+<text x="312" y="144" class="lbl">values</text>
+</g>
+</svg>
+</div>
+<p class="legend">Solid arrows carry the mailbox's data. Dashed arrows carry only code and configuration: nothing flows back from the vault or Gmail into the public repository.</p>
+
+<div class="cols">
+<div class="card"><h3>On the website and repository</h3>
+<ul>
+<li>How the cell works: the plan, the policy, the code, the tests.</li>
+<li>Templates for the policy files, with example values.</li>
+<li>A made-up mailbox to test against.</li>
+<li>Public by design: anyone can read how it works and check the rules.</li>
+</ul></div>
+<div class="card"><h3>In the user's vault</h3>
+<ul>
+<li>The twin: every message, thread, label and attachment.</li>
+<li>The lanes: every proposal, approval, read and send, signed.</li>
+<li>The real policy files, signed by the person.</li>
+<li>Owned and keyed by the user. We keep no copy.</li>
+</ul></div>
+<div class="card"><h3>Only with the gateway</h3>
+<ul>
+<li>The Google OAuth client secret and refresh token.</li>
+<li>Nothing else holds them: not agents, not the CRM app, not this build session.</li>
+</ul></div>
+</div>
+
+<h2 id="twin">2. The digital twin</h2>
+<div class="fig">
+<svg viewBox="0 0 960 380" role="img" aria-labelledby="d2t d2d">
+<title id="d2t">The digital twin of the mailbox</title>
+<desc id="d2d">Gmail on the left feeds the twin in the centre through the gateway, one way, by sync. The twin holds four layers: the mailbox as received, the cleaned copy, derived indexes, and the signed lanes, all versioned. On the right, what the twin makes possible: many people and agents on one inbox, policy checked before every send, an air gap between reading and sending, time travel, a backup the user owns, and derived data such as CRM links. Changes go back to Gmail only as approved, policy-checked actions through the gateway.</desc>
+<defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="currentColor"/></marker></defs>
+<g style="color:var(--fg)">
+<rect x="16" y="110" width="170" height="150" rx="10" fill="var(--goo)" stroke="var(--goo-line)" stroke-width="1.5"/>
+<text x="32" y="140" class="t">Gmail</text>
+<text x="32" y="164">where mail is</text>
+<text x="32" y="182">delivered and sent</text>
+<text x="32" y="210" class="s">the source of truth</text>
+<text x="32" y="226" class="s">for delivery</text>
+
+<rect x="300" y="24" width="340" height="332" rx="10" fill="var(--vault)" stroke="var(--vault-line)" stroke-width="1.5"/>
+<text x="316" y="52" class="t">The twin, in the user's vault</text>
+<text x="316" y="70" class="s">the source of truth for work</text>
+<rect x="316" y="84" width="308" height="52" rx="6" fill="var(--box)" stroke="var(--vault-line)"/>
+<text x="328" y="106" style="font-weight:700">As received (raw/)</text>
+<text x="328" y="125" class="s">one file per message, never edited</text>
+<rect x="316" y="146" width="308" height="52" rx="6" fill="var(--box)" stroke="var(--vault-line)"/>
+<text x="328" y="168" style="font-weight:700">Made safe (clean/)</text>
+<text x="328" y="187" class="s">hidden text out, links and injections flagged</text>
+<rect x="316" y="208" width="308" height="52" rx="6" fill="var(--box)" stroke="var(--vault-line)"/>
+<text x="328" y="230" style="font-weight:700">Derived (threads, index, syncs)</text>
+<text x="328" y="249" class="s">who wrote to whom, what changed, rebuildable</text>
+<rect x="316" y="270" width="308" height="52" rx="6" fill="var(--box)" stroke="var(--vault-line)"/>
+<text x="328" y="292" style="font-weight:700">Intent (lanes)</text>
+<text x="328" y="311" class="s">proposals, approvals, reads, outbox, signed</text>
+<text x="316" y="344" class="s">every layer versioned by the vault</text>
+
+<rect x="740" y="24" width="204" height="332" rx="10" fill="var(--box)" stroke="var(--line)" stroke-width="1.5"/>
+<text x="756" y="52" class="t">What it makes possible</text>
+<text x="756" y="82">many hands, one inbox</text>
+<text x="756" y="112">policy before every send</text>
+<text x="756" y="142">an air gap: reading</text>
+<text x="768" y="160">never sends</text>
+<text x="756" y="190">time travel and replay</text>
+<text x="756" y="220">a backup the user owns</text>
+<text x="756" y="250">derived data: CRM links,</text>
+<text x="768" y="268">follow-ups, analytics</text>
+<text x="756" y="298">fast and offline reads</text>
+<text x="756" y="328">same twin for Outlook,</text>
+<text x="768" y="346">IMAP, calendar later</text>
+
+<path class="arrow" d="M188,160 L298,160" marker-end="url(#ah2)"/>
+<text x="196" y="148" class="lbl">sync in (gateway)</text>
+<path class="arrow dash" d="M298,250 L188,220" marker-end="url(#ah2)"/>
+<text x="196" y="270" class="lbl">only approved,</text>
+<text x="196" y="286" class="lbl">checked actions</text>
+<path class="arrow" d="M642,190 L738,190" marker-end="url(#ah2)"/>
+</g>
+</svg>
+</div>
+
+<h2 id="thinking">3. How I am thinking about the twin</h2>
+<div class="cols">
+<div class="card"><h3>Gmail delivers; the twin is where work happens</h3>
+<p>Gmail stays the source of truth for what was delivered and sent. The twin is the source of truth for everything we do with it: reading, triage, drafting, approving, and the record of who did what. Sync runs one way, in. Changes go back only as signed, approved actions that the gateway checks against the policy.</p></div>
+<div class="card"><h3>Layers, from facts to intent</h3>
+<p>The raw message is a fact and is never edited. The clean copy is a safe view of that fact. The indexes are derived and can always be rebuilt. The lanes are intent: what people and agents want to happen. Keeping these apart is what lets us rebuild, audit and replay.</p></div>
+<div class="card"><h3>The user owns it, so it is also a backup</h3>
+<p>Because the twin lives in a vault the user creates and keys, it is their own capture of their mailbox. If a Gmail account is lost, closed or suspended, the user still holds every message, versioned. That is a feature in its own right, not a side effect.</p></div>
+<div class="card"><h3>The twin keeps agents away from the source</h3>
+<p>Agents never see Gmail and never see raw mail. They see the clean copy and can only propose. That is the air gap the article asks for: reading an email can never, by itself, send one.</p></div>
+<div class="card"><h3>Drift, and how we notice it</h3>
+<p>The gateway records Gmail's history cursor with each sync and re-checks on a timer, because push notices can be late or lost. If the twin falls behind, the policy fails closed: every recipient counts as a first contact until it catches up.</p></div>
+<div class="card"><h3>Open questions <span class="tag">for Dinis</span></h3>
+<ul>
+<li>When a message is deleted in Gmail, the twin records the deletion as a new version. Does the backup keep the old one, and for how long?</li>
+<li>Are <code>raw/</code> and <code>clean/</code> one vault with separate keys, or two vaults?</li>
+<li>Does the twin push label changes back to Gmail, or only keep its own labels?</li>
+</ul></div>
+</div>
+
+<h2 id="journey">4. One email, start to finish</h2>
+<ol>
+<li><b>Arrives.</b> Gmail tells the gateway something changed; the gateway reads the change and writes the message to <code>raw/</code>. <span class="tag">plan</span></li>
+<li><b>Made safe.</b> The firewall writes the clean copy to <code>clean/</code> and marks it clean, suspicious or hostile. <span class="tag">built (simulation)</span></li>
+<li><b>Read.</b> The drafter reads the clean copy; its read is a signed entry on the reads lane. <span class="tag">built (simulation)</span></li>
+<li><b>Proposed.</b> The drafter proposes a reply on the actions lane, signed with its key. <span class="tag">built (simulation)</span></li>
+<li><b>Approved.</b> A person signs an approval, or a signed automation covers it (fixed template, verified correspondent, clean message). <span class="tag">built (simulation)</span></li>
+<li><b>Checked.</b> The gateway verifies the lanes and the signed policies, then runs the email policy: recipients, language, template, rates, first contact, data loss, kill switch. <span class="tag">built (simulation)</span></li>
+<li><b>Sent.</b> The gateway sends through Gmail and writes the result to the outbox lane. <span class="tag">plan</span></li>
+<li><b>Recorded.</b> The sent message syncs back into <code>raw/</code>; the CRM matches it to its draft by reference. <span class="tag">plan</span></li>
+</ol>
+
+<p>More detail: <a href="plan/architecture.html">architecture</a>, <a href="plan/twin.html">the twin's layout</a>, <a href="plan/lanes.html">the lanes</a>, <a href="plan/policy.html">the policy</a>, <a href="plan/needs.html">what each step needs</a>.</p>
+
+<footer>Version __VERSION__ · Code Apache-2.0, text and diagrams CC BY 4.0.</footer>
+</main>
+</body>
+</html>
