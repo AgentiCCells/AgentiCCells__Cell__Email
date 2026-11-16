@@ -150,15 +150,61 @@ $('copy-key-code').addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(publicCode(await identity())); $('copy-key-code').textContent = 'Copied'; } catch { $('copy-key-code').textContent = 'Could not copy'; }
 });
 
-$('open-sealed').addEventListener('click', async () => {
+async function openSealedText(text) {
   const status = $('sealed-status');
   try {
-    const r = await openSealed(await identity(), $('sealed-in').value, TRUSTED);
-    $('sealed-in').value = '';
-    if (!r.vaultKeys.length) { status.textContent = `Opened a message from ${r.from}, but it holds no vault key.`; return; }
-    for (const v of r.vaultKeys) await keep(await identity(), 'vault:' + v.id, v.key);
-    status.textContent = `From ${r.from}, signature checked: the key of vault${r.vaultKeys.length > 1 ? 's' : ''} ${r.vaultKeys.map((v) => v.id).join(', ')}, now kept in this browser, sealed to the page's key.`;
+    const id = await identity();
+    const r = await openSealed(id, text, TRUSTED);
+    const got = [];
+    for (const v of r.vaultKeys) { await keep(id, 'vault:' + v.id, v.key); got.push(`the key of vault ${v.id}`); }
+    if (r.grant) { await keep(id, 'sgsend:token', r.grant.token); accessToken = r.grant.token; $('token').placeholder = 'kept in this browser'; got.push('an SG/Send access token'); }
+    status.textContent = got.length
+      ? `From ${r.from}, signature checked: ${got.join(' and ')}, now kept in this browser, sealed to the page's key.`
+      : `Opened a message from ${r.from}, but it holds no vault key or access token.`;
   } catch (e) { status.textContent = `Not opened: ${e.message}.`; }
+}
+
+$('open-sealed').addEventListener('click', async () => { await openSealedText($('sealed-in').value); $('sealed-in').value = ''; });
+
+// QR codes, from an image or the camera, read with jsQR (vendored).
+function decodeImage(source, w, h) {
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d', { willReadFrequently: true }); g.drawImage(source, 0, 0, w, h);
+  const d = g.getImageData(0, 0, w, h);
+  const found = window.jsQR(d.data, w, h, { inversionAttempts: 'attemptBoth' });
+  return found ? found.data : null;
+}
+
+$('scan-file').addEventListener('change', async (ev) => {
+  const f = ev.target.files[0]; ev.target.value = '';
+  if (!f) return;
+  try {
+    const bmp = await createImageBitmap(f);
+    const scale = Math.min(1, 1600 / Math.max(bmp.width, bmp.height));
+    const text = decodeImage(bmp, Math.round(bmp.width * scale), Math.round(bmp.height * scale));
+    if (!text) { $('sealed-status').textContent = 'No QR code found in that image. Try a sharper or larger screenshot.'; return; }
+    await openSealedText(text);
+  } catch (e) { $('sealed-status').textContent = `Could not read the image: ${e.message}.`; }
+});
+
+let scanning = null;
+$('scan-camera').addEventListener('click', async () => {
+  const video = $('scan-video');
+  if (scanning) { scanning.getTracks().forEach((t) => t.stop()); scanning = null; video.hidden = true; $('scan-camera').textContent = 'Scan with the camera'; return; }
+  try {
+    scanning = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+    video.srcObject = scanning; video.hidden = false; await video.play();
+    $('scan-camera').textContent = 'Stop the camera';
+    const tick = async () => {
+      if (!scanning) return;
+      if (video.videoWidth) {
+        const text = decodeImage(video, video.videoWidth, video.videoHeight);
+        if (text) { scanning.getTracks().forEach((t) => t.stop()); scanning = null; video.hidden = true; $('scan-camera').textContent = 'Scan with the camera'; await openSealedText(text); return; }
+      }
+      requestAnimationFrame(tick);
+    };
+    tick();
+  } catch (e) { $('sealed-status').textContent = `No camera: ${e.message}. Choose an image instead.`; scanning = null; }
 });
 
 // ------------------------------------------------------------ the outreach outbox

@@ -69,10 +69,14 @@
 <div id="key-qr" class="qr"></div>
 <p><button id="copy-key-code" class="secondary" type="button">Copy the key as text</button></p>
 </div>
-<h3>Open a sealed vault key</h3>
-<p class="muted">Paste the sealed code (m1..., a pki.sgit.ai link, or the QR code's text). Only codes signed by a trusted sender are accepted: <span id="trusted-list"></span>.</p>
+<h3>Show the page a sealed QR code</h3>
+<p class="muted">A vault key or an access token, sealed to this page's key. Only codes signed by a trusted sender are accepted: <span id="trusted-list"></span>.</p>
+<p><button id="scan-camera" type="button">Scan with the camera</button> <label class="button secondary">Choose a QR image or screenshot<input id="scan-file" type="file" accept="image/*" hidden></label></p>
+<video id="scan-video" playsinline muted hidden></video>
+<details><summary>Or paste the code as text</summary>
 <p><textarea id="sealed-in" rows="3" cols="50" spellcheck="false" autocomplete="off"></textarea></p>
 <p><button id="open-sealed" type="button">Open</button></p>
+</details>
 <p id="sealed-status" role="status"></p>
 </div>
 
@@ -109,6 +113,7 @@
 <script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--sync.js?v=__VERSION__"></script>
 <script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--history.js?v=__VERSION__"></script>
 <script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--branches.js?v=__VERSION__"></script>
+<script defer src="vendor/jsqr/1.4.0/jsQR.js?v=__VERSION__"></script>
 <script type="module" src="connect.js?v=__VERSION__"></script>
 </body>
 </html>

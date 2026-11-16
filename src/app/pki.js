@@ -108,7 +108,10 @@ export async function openSealed(id, text, trusted) {
     if (msg.sig && (await verifyMessage(msg, signer.bundle)) !== true) throw new Error('the message\'s signature does not check');
   }
   const body = msg && msg.kind === KIND ? [msg.text, ...(msg.files || []).filter((f) => /^text\//.test(f.type)).map((f) => atob(f.data))].join('\n') : opened.text || '';
-  return { from: signer.label, msg, vaultKeys: findVaultKeys(body) };
+  // An SG/Send access token, handed over in pki.sgit.ai's grant field, for the vault service only.
+  const g = msg && msg.kind === KIND && msg.grant;
+  const grant = g && g.service === 'sg-send' && typeof g.token === 'string' && /^https:\/\/dev\.send\.sgraph\.ai\/?$/.test(g.endpoint || 'https://dev.send.sgraph.ai') ? { token: g.token, name: g.name || '' } : null;
+  return { from: signer.label, msg, vaultKeys: findVaultKeys(body), grant };
 }
 
 // Secrets kept sealed to the page's own key, under a name (for example "vault:outbox").
