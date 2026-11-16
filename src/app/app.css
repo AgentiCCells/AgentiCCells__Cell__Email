@@ -9,21 +9,20 @@ nav{font-size:.9rem;color:var(--muted)}
 .box{background:var(--box);border:1px solid var(--line);border-radius:8px;padding:1rem 1.2rem;margin:1.2rem 0}
 button{font:inherit;padding:.6rem 1.1rem;border-radius:6px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer}
 button.secondary{background:transparent;color:var(--accent)}
-#status{color:var(--ok);min-height:1.6em}
-#error{color:var(--err)}
 dl{display:grid;grid-template-columns:max-content 1fr;gap:.3rem 1rem;margin:0}
 dt{color:var(--muted)}
 dd{margin:0;font-variant-numeric:tabular-nums}
 .muted{color:var(--muted);font-size:.9rem}
 input[type=password],select{font:inherit;padding:.4rem .5rem;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg);max-width:100%}
-#new-key code{word-break:break-all}
 h2{font-size:1.2rem;margin-top:0}
-.qr svg{width:min(320px,100%);height:auto;background:#fff;padding:6px;border-radius:6px}
+.qr svg{display:block;width:100%;height:auto;background:#fff;padding:6px;border-radius:6px}
 textarea{font:14px ui-monospace,Menlo,monospace;width:100%;max-width:40rem;padding:.4rem;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--fg)}
 h3{font-size:1.05rem;margin-top:1.4rem}
 #outbox-list li{margin-bottom:.4rem}
-label.button{display:inline-block;font:inherit;padding:.6rem 1.1rem;border-radius:6px;border:1px solid var(--accent);color:var(--accent);cursor:pointer}
-#scan-video{width:min(360px,100%);border-radius:6px;margin:.5rem 0}
 details{margin:.6rem 0}
-.kept{background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:.5rem .7rem}
 button.link{background:none;border:0;padding:0;color:var(--accent);text-decoration:underline;cursor:pointer;font:inherit}
+#status:has(#who:empty){display:none}
+.pair{display:grid;grid-template-columns:repeat(auto-fit,minmax(15rem,1fr));gap:1rem;margin:1.2rem 0 .4rem}
+#drop{width:100%;max-width:none;min-height:15rem;height:100%;border:2px dashed var(--line);border-radius:8px;padding:1rem;font-size:15px;resize:none}
+#drop.over,#drop:focus{border-color:var(--accent);outline:none}
+details ul{padding-left:1.2rem}
