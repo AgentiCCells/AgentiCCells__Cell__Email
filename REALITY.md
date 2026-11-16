@@ -14,7 +14,7 @@ A thing not written here does not exist. Updated by cell.email@AgentiCCells.dini
   - the gateway's decision, which sends nothing (`cell/gateway/decide.mjs`);
   - the inbound firewall's cleaned copy (`cell/firewall/clean.mjs`).
 - Tests run in CI before every deploy and in `scripts/release.sh`.
-- The browser gateway's test page, `/app/connect.html` (approved, abp/cell-email v1.1.0): signs in with Google's Web client (Internal audience, `gmail.metadata`), shows the mailbox's counts, stores nothing and connects only to Google; `scripts/check-app.mjs` checks its content security policy in CI. Checked end to end against a faked Google, not yet against the real one.
+- The browser gateway's test page, `/app/connect.html` (approved, abp/cell-email v1.1.0): signs in with Google's Web client (Internal audience, `gmail.metadata`), shows the mailbox's counts, stores nothing and connects only to Google; `scripts/check-app.mjs` checks its content security policy in CI. Checked end to end against a faked Google, and on 16 November 2026 (about 21:30 UTC) against the real one: Dinis connected a riskmandate.ai mailbox from his browser and the page read its counts and labels. That mailbox's address and counts are not recorded here (a public repository holds no real mailbox data).
 - A Google OAuth setup page for Dinis (`docs/plan/google-oauth.md`, at `/plan/google-oauth.html`) and a draft privacy policy (`docs/pages/privacy.md`, at `/privacy.html`), not yet approved.
 
 ## Does not exist

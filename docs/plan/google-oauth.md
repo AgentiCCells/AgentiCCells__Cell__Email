@@ -16,7 +16,7 @@ A proposal to use a browser client instead (the site itself as the gateway, no s
 | Client | `email-cell-browser`, Web application |
 | Client id | `235486550409-67qqf0j65poc62fbm2in7jbceci3sv5k.apps.googleusercontent.com` (public by nature: a browser client's id is in its page) |
 | Authorised JavaScript origin | `https://email-cell.agenticcells.site` |
-| Authorised redirect URI | `https://email-cell.agenticcells.site/app/connect.html`: **Dinis to add** (the page uses Google's redirect sign-in so that no Google script is loaded into it, rule N18) |
+| Authorised redirect URI | `https://email-cell.agenticcells.site/app/connect.html`, added by Dinis (the page uses Google's redirect sign-in so that no Google script is loaded into it, rule N18). First real sign-in worked on 16 November 2026. |
 | Gmail API | enabled by Dinis |
 | Scope | `gmail.metadata`, added by Dinis |
 

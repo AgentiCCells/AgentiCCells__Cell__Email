@@ -1,6 +1,6 @@
 # The browser as the gateway: a twin with only a website and vaults
 
-**Status: approved and started.** Dinis asked on 16 November 2026: "can we implement a full gmail twin and live site just using a website and vaults? (with PKI and OAuth)", created the Web client, and approved the policy change ("yes I added the scope and I approve the policy"): abp/cell-email v1.1.0. Built: the safety rails and the test page [/app/connect.html](../../src/app/connect.html). Not built: the vault sync. [Back to the plan](index.md).
+**Status: approved and started.** Dinis asked on 16 November 2026: "can we implement a full gmail twin and live site just using a website and vaults? (with PKI and OAuth)", created the Web client, and approved the policy change ("yes I added the scope and I approve the policy"): abp/cell-email v1.1.0. Built: the safety rails and the test page [/app/connect.html](../../src/app/connect.html), which made its first real connection on 16 November 2026 (a riskmandate.ai mailbox, `gmail.metadata`, from Dinis's browser). Not built: the vault sync, which needs the user's vault (pki.sgit.ai). [Back to the plan](index.md).
 
 ## The short answer
 
