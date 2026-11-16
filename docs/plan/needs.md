@@ -23,7 +23,7 @@ On the vault: Dinis, 16 November 2026: "The sgit vault, that should be created b
 |---|---|
 | Keys for each agent of the cell (gateway, firewall, triage, drafter, crm), registered at pki.sgit.ai as agents the user operates | Every lane entry is signed; keys must outlive a session, and the user's record must link to each agent for it to be trusted. |
 | Append lanes on the vault, and how lane tokens are sealed to each agent | The lane format is built; the storage is not. |
-| Who the approvers are, pinned by key fingerprint in the gateway's own configuration, supplied by Dinis out of band (for example from pki.sgit.ai) | Only people approve, and the cell must not be able to make an approver: `agents.json` names agents only. pki.sgit.ai keys are ECDSA P-256 and RSA, the lanes use Ed25519: which key signs lanes is open. |
+| Who the approvers are, pinned by key fingerprint in the gateway's own configuration, supplied by Dinis out of band (for example from pki.sgit.ai) | Only people approve, and the cell must not be able to make an approver: `agents.json` names agents only. pki.sgit.ai keys are ECDSA P-256 and RSA, the lanes use Ed25519. Proposal (specialist.abp, 16 November 2026): the approver's pki.sgit.ai key signs a short statement naming their Ed25519 lane key and its validity; the operator pins only the pki key, so lane keys can be rotated without re-pinning. Not built. |
 
 ## Step 3: the email policy
 
