@@ -5,7 +5,7 @@
 import { authUrl, newState, parseFragment } from './oauth.js?v=__VERSION__';
 import { HEADERS, syncPlan } from './twin.js?v=__VERSION__';
 import { createTwinVault, openTwinVault, displayKey, readState as readVaultState, readThreads, writeMany, publish, readJson, ensureLoaded } from './vault.js?v=__VERSION__';
-import { identity, publicCode, publicQrText, openSealed, keep, recall, forget, kept } from './pki.js?v=__VERSION__';
+import { identity, existingIdentity, publicCode, publicQrText, openSealed, keep, recall, forget, kept } from './pki.js?v=__VERSION__';
 import { TRUSTED } from './trusted.js?v=__VERSION__';
 import qrcode from './vendor/qrcode-generator/2.0.4/qrcode.mjs?v=__VERSION__';
 
@@ -41,7 +41,7 @@ async function load() {
     $('labels').textContent = `${list.length} (${list.filter((l) => l.type === 'system').length} system, ${list.filter((l) => l.type === 'user').length} yours)`;
     $('history').textContent = profile.historyId;
     $('result').hidden = false;
-    $('status').textContent = 'Connected. The token is in this tab\'s memory only and goes when you close it.';
+    $('status').textContent = 'Connected. The token is kept in this browser sealed to the page\'s key, and expires within the hour.';
     $('connect').hidden = true;
     $('revoke').hidden = false;
     $('vault-box').hidden = false;
@@ -63,6 +63,7 @@ $('revoke').addEventListener('click', async () => {
   if (!token) return;
   try { await fetch('https://oauth2.googleapis.com/revoke', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `token=${encodeURIComponent(token)}`, referrerPolicy: 'no-referrer' }); } catch { /* the token expires within the hour anyway */ }
   token = null; vault = null;
+  await forget('google:token').catch(() => {});
   $('result').hidden = true; $('vault-box').hidden = true; $('sync-box').hidden = true;
   $('revoke').hidden = true;
   $('connect').hidden = false;
@@ -81,6 +82,7 @@ $('open-vault').addEventListener('click', async () => {
   accessToken = $('token').value.trim() || accessToken;
   const status = $('vault-status');
   if (!accessToken) { status.textContent = 'The SG/Send access token is needed to write to a vault.'; return; }
+  await keep(await identity(), 'sgsend:token', accessToken);
   $('open-vault').disabled = true;
   status.textContent = create ? 'Creating your twin vault (deriving keys takes a second or two)...' : 'Opening your twin vault (deriving keys takes a second or two)...';
   try {
@@ -113,6 +115,7 @@ $('open-kept-twin').addEventListener('click', async () => {
   const status = $('vault-status');
   accessToken = $('token').value.trim() || accessToken;
   if (!accessToken) { status.textContent = 'Paste the SG/Send access token first: writing needs it.'; return; }
+  await keep(await identity(), 'sgsend:token', accessToken);
   status.textContent = 'Opening your kept twin vault...';
   try {
     const key = await recall(await identity(), 'vault:twin');
@@ -249,11 +252,33 @@ $('sync').addEventListener('click', async () => {
   } finally { $('sync').disabled = false; }
 });
 
-// Coming back from Google: take the token out of the address bar at once, then check it.
+// Coming back from Google: take the token out of the address bar at once, check it, and keep it
+// sealed to the page's key with its expiry. On a later load, a kept token that has not expired
+// reconnects without going to Google. The SG/Send token and the twin vault key come back the same
+// way. All are sealed to the page's non-extractable key (Dinis, 16 November 2026).
+async function resume() {
+  const id = await existingIdentity();
+  if (!id) return false;
+  const kt = await recall(id, 'sgsend:token').catch(() => null);
+  if (kt) { accessToken = kt; $('token').placeholder = 'kept in this browser'; }
+  const g = JSON.parse((await recall(id, 'google:token').catch(() => null)) || 'null');
+  if (!g || Date.now() > g.expires_at - 60000) return false;
+  token = g.token;
+  await load();
+  if (accessToken && (await kept('vault:twin'))) $('open-kept-twin').click();
+  return true;
+}
+
 const answer = parseFragment(location.hash, readState());
 if (!answer.none) {
   history.replaceState(null, '', location.pathname);
   writeState(null);
   if (answer.error) show('error', `Not connected: ${answer.error}.`);
-  else { token = answer.token; load(); }
+  else {
+    token = answer.token;
+    identity().then((id) => keep(id, 'google:token', JSON.stringify({ token: answer.token, expires_at: Date.now() + (answer.expiresIn || 3600) * 1000 }))).catch(() => {});
+    load().then(async () => { const id = await existingIdentity(); if (id && accessToken === '' ) { const kt = await recall(id, 'sgsend:token').catch(() => null); if (kt) accessToken = kt; } if (accessToken && (await kept('vault:twin'))) $('open-kept-twin').click(); });
+  }
+} else {
+  resume().then((ok) => { if (!ok) $('status').textContent = ''; });
 }

@@ -48,7 +48,7 @@ What this cell and its conductor session can actually do today, measured where p
 | C2 | `propose.action.tenant` | the actions lane: reply, send, label, archive | 2 | yes | allow | setting | mergeLanes rejects an entry type the author's role in the signed agents.json does not allow | enforce | in simulation, tests/lanes.test.mjs, triage may not propose a reply |
 | C3 | `apply.label.tenant` | labels and archive in Gmail, through the gateway | 3 | yes | plan-apply | boundary | only the gateway holds the Google token (plan) | observe | each outbox entry matches an approved proposal |
 | C4 | `send.message.world` | an email to anyone, through the gateway only | 4 | no | draft | boundary | today the grant is gmail.metadata only, so nothing can send; when the send scope is added, only the user's browser session holds the token, and decide() requires verified lanes, policy files signed by a pinned approver, a person's approval or a signed automation, and a passing email policy check | enforce | no token in any key inventory today; in simulation, tests/lanes.test.mjs and tests/policy.test.mjs; on a real mailbox, every outbox entry has an approval or automation and a policy result |
-| C5 | `authenticate-as.credential.tenant` | the Google access token in the user's browser, and the Web client's secret | 3 | with-effort | deny | boundary | the token is issued only to the site's origin and kept in page memory, never stored or sent anywhere but Google; the client secret is not used by the browser flow and not kept | observe | scripts/check-app.mjs: the app pages store nothing and connect only to Google; the session's transcript holds no secret |
+| C5 | `authenticate-as.credential.tenant` | the Google access token in the user's browser, and the Web client's secret | 3 | with-effort | deny | boundary | the token is issued only to the site's origin; it is kept in this browser only sealed to the page's non-extractable key (IndexedDB, with its expiry), never in clear and never sent anywhere but Google; Disconnect revokes and deletes it; the client secret is not used by the browser flow and not kept | observe | scripts/check-app.mjs: only pki.js stores anything, its key pairs are not extractable, and the pages connect only to Google and the vault service; a browser test checks the stored copy is ciphertext |
 | C6 | `push.code.project` | this repository's dev branch: code, plan and site | 2 | with-effort | allow | setting | release gates in CI (tests, validator, leak scan, Agent trailer, this policy's check) before deploy | enforce | the Pages workflow run for each push |
 | C6b | `change.policy.project` | the policy files (agents.json, email-policy.json) the gateway acts on | 3 | with-effort | plan-apply | setting | the cell can edit the files (the plan); they take effect only when an approver pinned by fingerprint outside the cell signs them (the apply); agents.json can never name an approver | enforce | in simulation, tests/lanes.test.mjs: unsigned, changed, or signed by an unpinned person |
 | C7 | `message.agent.tenant` | other agents' sessions, for requests inside this brief | 2 | no | allow | expectation | none beyond this policy | observe | the session's transcript |
@@ -61,7 +61,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
 
 | Id | Never | Barrier | Enforcer | Mode | Test |
 |---|---|---|---|---|---|
-| N1 | Anything but the user's own browser session on the cell's site holds the Google token | boundary | Google issues the token only to the authorised origin and redirect URI; the page keeps it in memory and its content security policy limits where it can be sent. A boundary against outsiders; against the cell it is a setting, since the conductor writes and deploys the page (G7, accepted by Dinis) | enforce | scripts/check-app.mjs in CI; Google console: one Web client, one origin |
+| N1 | Anything but the user's own browser session on the cell's site holds the Google token | boundary | Google issues the token only to the authorised origin and redirect URI; the page keeps it in memory, and in this browser only sealed to its own non-extractable key, and its content security policy limits where it can be sent. A boundary against outsiders; against the cell it is a setting, since the conductor writes and deploys the page (G7, accepted by Dinis) | enforce | scripts/check-app.mjs in CI; Google console: one Web client, one origin |
 | N2 | Send a first contact without a person's signature | setting | checker.mjs holds every first contact, fail closed on a late sync or a From that failed DMARC | enforce | in simulation, tests/policy.test.mjs, first contact cases |
 | N3 | Send while the kill switch is on | setting | checker.mjs denies while gateway.stop is the last stop or start on the approvals lane | enforce | in simulation, tests/lanes.test.mjs, nothing while stopped |
 | N4 | Let a secret, key or private note leave in an email | setting | checker.mjs runs the leak scan's shapes and the policy's private markers | enforce | in simulation, tests/policy.test.mjs, a planted fake token is denied |
@@ -119,7 +119,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
   "format": "agenticcells-abp/0.1",
   "id": "cell.email@AgentiCCells.dinis",
   "kind": "cell",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "status": "approved",
   "phase": "mixed",
   "default": "deny",
@@ -275,9 +275,9 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "undo": "with-effort",
       "decision": "deny",
       "barrier": "boundary",
-      "enforcer": "the token is issued only to the site's origin and kept in page memory, never stored or sent anywhere but Google; the client secret is not used by the browser flow and not kept",
+      "enforcer": "the token is issued only to the site's origin; it is kept in this browser only sealed to the page's non-extractable key (IndexedDB, with its expiry), never in clear and never sent anywhere but Google; Disconnect revokes and deletes it; the client secret is not used by the browser flow and not kept",
       "mode": "observe",
-      "test": "scripts/check-app.mjs: the app pages store nothing and connect only to Google; the session's transcript holds no secret"
+      "test": "scripts/check-app.mjs: only pki.js stores anything, its key pairs are not extractable, and the pages connect only to Google and the vault service; a browser test checks the stored copy is ciphertext"
     },
     {
       "id": "C6",
@@ -345,7 +345,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "id": "N1",
       "rule": "Anything but the user's own browser session on the cell's site holds the Google token",
       "barrier": "boundary",
-      "enforcer": "Google issues the token only to the authorised origin and redirect URI; the page keeps it in memory and its content security policy limits where it can be sent. A boundary against outsiders; against the cell it is a setting, since the conductor writes and deploys the page (G7, accepted by Dinis)",
+      "enforcer": "Google issues the token only to the authorised origin and redirect URI; the page keeps it in memory, and in this browser only sealed to its own non-extractable key, and its content security policy limits where it can be sent. A boundary against outsiders; against the cell it is a setting, since the conductor writes and deploys the page (G7, accepted by Dinis)",
       "mode": "enforce",
       "test": "scripts/check-app.mjs in CI; Google console: one Web client, one origin"
     },
@@ -554,7 +554,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
     "licensee": "cell.email@AgentiCCells.dinis (this conductor session) for building; later, the gateway and each agent on the twin, each with its own key, operated by the user at pki.sgit.ai",
     "conditions": "this policy, CLAUDE.md, the signed policy files, the Internal audience (riskmandate.ai accounts only)",
     "validity": "from Dinis's approval on 2026-11-16; any change to this policy needs his approval again",
-    "approved_by": "Dinis Cruz, 2026-11-16, in this session: \"I approve the policy\" (1.0.0), \"yes I added the scope and I approve the policy\" (1.1.0), and \"I approve policy\" (1.1.1)",
+    "approved_by": "Dinis Cruz, 2026-11-16, in this session: \"I approve the policy\" (1.0.0), \"yes I added the scope and I approve the policy\" (1.1.0), and \"I approve policy\" (1.1.1), and on keeping secrets sealed to the page's key: \"now that this page/site has a PKI nicely saved using web crypto, you have a good place to put the secrets right?\" (1.1.2)",
     "review": "specialist.abp on any change; specialist.security before the first real mailbox is synced",
     "stop": "board/HOLD.md stops all work; the kill switch stops every send (any agent may stop, only a person restarts); the user can revoke the Google grant, or withdraw the gateway's vault access, at any time"
   }
@@ -570,5 +570,6 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
 - 1.0.0, 2026-11-16: approved by Dinis Cruz ("I approve the policy"). Keeper: Dinis. No rule changed from 0.3.1.
 - 1.1.0, 2026-11-16: approved by Dinis. The browser is the gateway: N1 and C5 rewritten, N17 (connect only to Google and the vault) and N18 (scripts only from the site) added, gap G7 (the site's code is security-critical); the Internal audience replaces testing mode in the scope, N14, G4 and the licence.
 - 1.1.1, 2026-11-16: approved by Dinis. After specialist.abp's review of 1.1.0: N1, N17 and N18 say they are boundaries against outsiders and settings against the cell; N17 and N18 record the meta-tag policy's limit (no frame-ancestors, no reports). Dinis accepted gaps G2 and G7 (no branch protection for now: only we have access).
+- 1.1.2, 2026-11-16: Dinis's decision. The Google token, the SG/Send token and vault keys may be kept in the browser, only sealed to the page's own non-extractable key (C5, N1). No rule relaxed otherwise.
 
 Text CC BY 4.0.

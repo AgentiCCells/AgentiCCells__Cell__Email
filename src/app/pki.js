@@ -51,6 +51,9 @@ const get = (k) => idb('readonly', (s) => s.get(k));
 const put = (k, v) => idb('readwrite', (s) => s.put(v, k));
 const del = (k) => idb('readwrite', (s) => s.delete(k));
 
+// The identity if this browser already has one, without making one.
+export async function existingIdentity() { const have = await get(IDENTITY).catch(() => null); return have?.bundle && have.encrypt && have.sign ? have : null; }
+
 // The page's identity: { bundle, encrypt: CryptoKey (private, not extractable), sign: CryptoKey }.
 export async function identity(label = 'email-cell page, ' + location.host) {
   const have = await get(IDENTITY);

@@ -33,7 +33,7 @@
 
 <div class="box" id="vault-box" hidden>
 <h2>2. Your twin vault</h2>
-<p class="muted">Writing to a vault needs your SG/Send access token. Neither the token nor the vault key is stored: both stay in this tab's memory.</p>
+<p class="muted">Writing to a vault needs your SG/Send access token. Once entered, the token (and the vault key, if you tick the box) is kept in this browser sealed to the page's key, never in clear.</p>
 <p><label>SG/Send access token<br><input id="token" type="password" autocomplete="off" spellcheck="false" size="40"></label></p>
 <p><label><input type="radio" name="mode" value="open" checked> Open my twin vault</label> <label><input type="radio" name="mode" value="create"> Create a new one</label></p>
 <p id="key-row"><label>Vault key<br><input id="vault-key" type="password" autocomplete="off" spellcheck="false" size="40"></label></p>
@@ -87,12 +87,12 @@
 <h2>What this page does, and does not</h2>
 <ul>
 <li>It sends you to Google's own consent screen. Google returns a token to this page in the address bar's fragment, which browsers never send to a server; the page removes it at once.</li>
-<li>The Google token and the SG/Send access token stay in this tab's memory and are never stored.</li>
+<li>The Google token (with its expiry, about an hour) and the SG/Send access token are kept in this browser only sealed to the page's key, so a reload reconnects without asking again. Disconnect revokes the Google token and deletes it.</li>
 <li>The page keeps one key pair in this browser, with private halves that cannot be read or exported, and vault keys sealed to it, so only this browser can open them. Clearing the site's data deletes them.</li>
 <li>It reads your profile, your labels and, when you sync, each message's headers (from, to, subject, date, thread) and labels. No message body is read: the grant does not allow it. Nothing is ever written to Gmail.</li>
 <li>Sync writes the twin into <b>your</b> vault through sgit's own vault library, served from this site: one file per message, a cleaned copy for agents, threads, labels, a correspondents index and a change feed. Everything is encrypted in this browser before it leaves.</li>
 <li>The page can connect only to Google and to the vault service (<code>dev.send.sgraph.ai</code>), which stores ciphertext it cannot read.</li>
-<li>Disconnect revokes the token at Google. Closing the tab forgets it; it expires within an hour regardless.</li>
+<li>Disconnect revokes the Google token at Google and deletes the kept copy; it expires within an hour regardless.</li>
 <li>Run sync again later: it adds only the messages the vault does not have yet.</li>
 </ul>
 <p class="muted">Rules: <a href="../abp/cell-email.html">abp/cell-email</a>, N1, N17, N18. Version __VERSION__. Code Apache-2.0.</p>

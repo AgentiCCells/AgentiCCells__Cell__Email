@@ -14,6 +14,7 @@ export function newState(randomBytes) {
   return Array.from(randomBytes, (b) => b.toString(16).padStart(2, '0')).join('');
 }
 
+// No forced consent screen: once access is granted, Google returns at once.
 export function authUrl(state) {
   const q = new URLSearchParams({
     client_id: CLIENT_ID,
@@ -23,7 +24,6 @@ export function authUrl(state) {
     state,
     hd: HOSTED_DOMAIN,
     include_granted_scopes: 'false',
-    prompt: 'consent',
   });
   return `${AUTH_ENDPOINT}?${q}`;
 }
