@@ -81,8 +81,8 @@ $('open-vault').addEventListener('click', async () => {
   const create = document.querySelector('input[name=mode]:checked').value === 'create';
   accessToken = $('token').value.trim() || accessToken;
   const status = $('vault-status');
-  if (!accessToken) { status.textContent = 'The SG/Send access token is needed to write to a vault.'; return; }
-  await keep(await identity(), 'sgsend:token', accessToken);
+  if (!accessToken) { status.textContent = 'The SG/Send access token is needed first: show the page its sealed QR code (Keys, below), or paste it.'; return; }
+  await keep(await identity(), 'sgsend:token', accessToken); showKept();
   $('open-vault').disabled = true;
   status.textContent = create ? 'Creating your twin vault (deriving keys takes a second or two)...' : 'Opening your twin vault (deriving keys takes a second or two)...';
   try {
@@ -105,11 +105,16 @@ $('open-vault').addEventListener('click', async () => {
   } finally { $('open-vault').disabled = false; }
 });
 
+// Show only what is still needed: a kept token or vault key hides its field.
 async function showKept() {
-  const has = await kept('vault:twin').catch(() => false);
-  $('open-kept-twin').hidden = !has; $('forget-twin').hidden = !has;
+  const hasTwin = await kept('vault:twin').catch(() => false);
+  const hasToken = await kept('sgsend:token').catch(() => false);
+  $('twin-kept').hidden = !hasTwin; $('twin-choose').hidden = hasTwin;
+  $('token-kept').hidden = !hasToken; $('token-row').hidden = hasToken;
 }
 showKept();
+
+$('forget-token').addEventListener('click', async () => { await forget('sgsend:token'); accessToken = ''; showKept(); });
 
 $('open-kept-twin').addEventListener('click', async () => {
   const status = $('vault-status');
@@ -135,16 +140,18 @@ $('forget-twin').addEventListener('click', async () => {
 $('trusted-list').textContent = TRUSTED.map((t) => `${t.label} (${t.bundle.signing_fingerprint})`).join(', ');
 
 $('show-key').addEventListener('click', async () => {
-  $('show-key').disabled = true; $('show-key').textContent = 'Making or loading the key (the first time takes a few seconds)...';
+  $('show-key').disabled = true; $('key-fp').textContent = 'making or loading the key (the first time takes a few seconds)...'; $('key-out').hidden = false;
   try {
     const id = await identity();
     $('key-fp').textContent = id.bundle.signing_fingerprint;
     const qr = qrcode(0, 'L'); qr.addData(publicQrText(id)); qr.make();
     $('key-qr').innerHTML = qr.createSvgTag({ cellSize: 3, margin: 2, scalable: true });
     $('key-out').hidden = false;
-    $('show-key').textContent = 'This page\'s public key';
+    $('show-key').hidden = true;
   } catch (e) { $('show-key').textContent = `Could not make the key: ${e.message}`; }
 });
+
+$('show-key').click(); // the page's QR code, shown at once
 
 $('copy-key-code').addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(publicCode(await identity())); $('copy-key-code').textContent = 'Copied'; } catch { $('copy-key-code').textContent = 'Could not copy'; }
@@ -167,7 +174,9 @@ async function openSealedText(text, carried = false) {
     pendingSealed = null;
     const got = [];
     for (const v of r.vaultKeys) { await keep(id, 'vault:' + v.id, v.key); got.push(`the key of vault ${v.id}`); }
-    if (r.grant) { await keep(id, 'sgsend:token', r.grant.token); accessToken = r.grant.token; $('token').placeholder = 'kept in this browser'; got.push('an SG/Send access token'); }
+    if (r.grant) { await keep(id, 'sgsend:token', r.grant.token); accessToken = r.grant.token; got.push('an SG/Send access token'); }
+    showKept();
+    if (r.vaultKeys.some((v) => v.id === OUTBOX_VAULT)) $('open-outbox').click();
     status.textContent = got.length
       ? `From ${r.from}: ${got.join(' and ')}, now kept in this browser, sealed to the page's key.`
       : `Opened a message from ${r.from}, but it holds no vault key or access token.`;
@@ -309,6 +318,8 @@ $('sync').addEventListener('click', async () => {
     status.textContent = `Sync stopped: ${e.message}. Nothing half-written is published; press again to retry.`;
   } finally { $('sync').disabled = false; }
 });
+
+existingIdentity().then(async (id) => { if (id && (await kept('vault:' + OUTBOX_VAULT))) $('open-outbox').click(); });
 
 // Coming back from Google: take the token out of the address bar at once, check it, and keep it
 // sealed to the page's key with its expiry. On a later load, a kept token that has not expired

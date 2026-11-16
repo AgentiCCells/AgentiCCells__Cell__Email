@@ -33,12 +33,18 @@
 
 <div class="box" id="vault-box" hidden>
 <h2>2. Your twin vault</h2>
-<p class="muted">Writing to a vault needs your SG/Send access token. Once entered, the token (and the vault key, if you tick the box) is kept in this browser sealed to the page's key, never in clear.</p>
+<p id="token-kept" class="kept" hidden>SG/Send access token: kept in this browser, sealed to the page's key. <button id="forget-token" class="link" type="button">Forget</button></p>
+<div id="token-row">
+<p class="muted">Writing to a vault needs your SG/Send access token. Best: show the page a sealed QR code with it (Keys, below). Or paste it once; it is then kept sealed to the page's key.</p>
 <p><label>SG/Send access token<br><input id="token" type="password" autocomplete="off" spellcheck="false" size="40"></label></p>
-<p><label><input type="radio" name="mode" value="open" checked> Open my twin vault</label> <label><input type="radio" name="mode" value="create"> Create a new one</label></p>
-<p id="key-row"><label>Vault key<br><input id="vault-key" type="password" autocomplete="off" spellcheck="false" size="40"></label></p>
-<p><label><input type="checkbox" id="keep-twin" checked> Keep this vault key in this browser, sealed to the page's key</label></p>
-<p><button id="open-vault" type="button">Open vault</button> <button id="open-kept-twin" class="secondary" type="button" hidden>Open my kept twin vault</button> <button id="forget-twin" class="secondary" type="button" hidden>Forget the kept key</button></p>
+</div>
+<div id="twin-choose">
+<p><label><input type="radio" name="mode" value="create" checked> Create my twin vault</label> <label><input type="radio" name="mode" value="open"> I have a vault key</label></p>
+<p id="key-row" hidden><label>Vault key<br><input id="vault-key" type="password" autocomplete="off" spellcheck="false" size="40"></label></p>
+<input type="checkbox" id="keep-twin" checked hidden>
+<p><button id="open-vault" type="button">Create vault</button></p>
+</div>
+<p id="twin-kept" class="kept" hidden>Twin vault key: kept in this browser. <button id="open-kept-twin" class="link" type="button">Open</button> · <button id="forget-twin" class="link" type="button">Forget</button></p>
 <p id="vault-status" role="status"></p>
 <div id="new-key" hidden>
 <p><b>Save this vault key now</b>, in your password manager. It is the only way back into your twin: there is no reset. Anyone who has it can read and write the twin.</p>
@@ -63,7 +69,7 @@
 <div class="box" id="keys-box">
 <h2>Keys: this page's key, and sealed vault keys</h2>
 <p class="muted">This page has its own key pair, made in this browser. The private half cannot be read or exported, not even by the page; it stays in this browser. Someone can seal a vault key to the public half, and only this browser can open it.</p>
-<p><button id="show-key" type="button">Show this page's public key</button></p>
+<p><button id="show-key" type="button" hidden>Show this page's public key</button></p>
 <div id="key-out" hidden>
 <p>Fingerprint (signing): <code id="key-fp"></code></p>
 <div id="key-qr" class="qr"></div>
