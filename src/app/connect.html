@@ -70,7 +70,7 @@
 <p><button id="copy-key-code" class="secondary" type="button">Copy the key as text</button></p>
 </div>
 <h3>Show the page a sealed QR code</h3>
-<p class="muted">A vault key or an access token, sealed to this page's key. Only codes signed by a trusted sender are accepted: <span id="trusted-list"></span>.</p>
+<p class="muted">A vault key or an access token, sealed to this page's key. Codes signed by a trusted sender open at once (<span id="trusted-list"></span>); any other code asks you first.</p>
 <p><button id="scan-camera" type="button">Scan with the camera</button> <label class="button secondary">Choose a QR image or screenshot<input id="scan-file" type="file" accept="image/*" hidden></label></p>
 <video id="scan-video" playsinline muted hidden></video>
 <details><summary>Or paste the code as text</summary>
@@ -78,6 +78,7 @@
 <p><button id="open-sealed" type="button">Open</button></p>
 </details>
 <p id="sealed-status" role="status"></p>
+<p><button id="accept-carried" type="button" hidden>Accept: I brought this code myself</button></p>
 </div>
 
 <div class="box" id="outbox-box">

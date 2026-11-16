@@ -150,19 +150,31 @@ $('copy-key-code').addEventListener('click', async () => {
   try { await navigator.clipboard.writeText(publicCode(await identity())); $('copy-key-code').textContent = 'Copied'; } catch { $('copy-key-code').textContent = 'Could not copy'; }
 });
 
-async function openSealedText(text) {
+let pendingSealed = null;
+async function openSealedText(text, carried = false) {
   const status = $('sealed-status');
+  $('accept-carried').hidden = true;
   try {
     const id = await identity();
-    const r = await openSealed(id, text, TRUSTED);
+    const r = await openSealed(id, text, TRUSTED, { carried });
+    if (r.needsConfirm) {
+      pendingSealed = text;
+      status.textContent = r.signer ? `This code is signed by ${r.signer}, a key this page does not know.` : 'This code is not signed by anyone.';
+      status.textContent += ' Accept it only if you brought it here yourself, from a session or person you trust.';
+      $('accept-carried').hidden = false;
+      return;
+    }
+    pendingSealed = null;
     const got = [];
     for (const v of r.vaultKeys) { await keep(id, 'vault:' + v.id, v.key); got.push(`the key of vault ${v.id}`); }
     if (r.grant) { await keep(id, 'sgsend:token', r.grant.token); accessToken = r.grant.token; $('token').placeholder = 'kept in this browser'; got.push('an SG/Send access token'); }
     status.textContent = got.length
-      ? `From ${r.from}, signature checked: ${got.join(' and ')}, now kept in this browser, sealed to the page's key.`
+      ? `From ${r.from}: ${got.join(' and ')}, now kept in this browser, sealed to the page's key.`
       : `Opened a message from ${r.from}, but it holds no vault key or access token.`;
   } catch (e) { status.textContent = `Not opened: ${e.message}.`; }
 }
+
+$('accept-carried').addEventListener('click', async () => { if (pendingSealed) await openSealedText(pendingSealed, true); });
 
 $('open-sealed').addEventListener('click', async () => { await openSealedText($('sealed-in').value); $('sealed-in').value = ''; });
 

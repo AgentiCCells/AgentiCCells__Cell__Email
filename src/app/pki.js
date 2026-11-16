@@ -89,29 +89,32 @@ export async function unsealWith(privateKey, enc, signerBundles = []) {
   return out;
 }
 
-// Open a sealed code (m1 text, a pki.sgit.ai link, or the QR JSON) with the page's key. Only a
-// message signed by a trusted sender is accepted. Returns { from, msg, vaultKeys: [{ id, key }] }.
-export async function openSealed(id, text, trusted) {
+// Open a sealed code (m1 text, a pki.sgit.ai link, or the QR JSON) with the page's key. A message
+// signed by a trusted sender opens. An unsigned one, or one signed by a key the page does not
+// know, opens only with { carried: true }: the person confirms they brought the code themselves
+// (Dinis, 16 November 2026: "I'm acting like that sender by copying and pasting the QR codes").
+// Returns { from, msg, vaultKeys: [{ id, key }], grant }, or { needsConfirm, signer }.
+export async function openSealed(id, text, trusted, { carried = false } = {}) {
   const q = parseQrText(text);
   if (q.kind !== 'sealed') throw new Error('that is a public key, not a sealed message');
   const c = parseCode(q.code);
   if (c.to !== id.bundle.signing_fingerprint) throw new Error('sealed to another key, not this page\'s');
   const signer = trusted.find((t) => t.bundle.signing_fingerprint === c.signer);
-  if (!signer) throw new Error(c.signer ? `signed by ${c.signer}, which is not a trusted sender` : 'not signed: refused');
-  const opened = await unsealWith(id.encrypt, c.enc, [signer.bundle]);
-  if (opened.verified !== true) throw new Error('the envelope\'s signature does not check');
+  if (!signer && !carried) return { needsConfirm: true, signer: c.signer || null };
+  const opened = await unsealWith(id.encrypt, c.enc, signer ? [signer.bundle] : []);
+  if (signer && opened.verified !== true) throw new Error('the envelope\'s signature does not check');
   let msg = null;
   try { msg = JSON.parse(opened.text); } catch { /* sealed with sgit pki encrypt: plain text */ }
   if (msg && msg.kind === KIND) {
     const p = problems(msg, [id.bundle.signing_fingerprint]);
     if (p.length) throw new Error(p.join('; '));
-    if (msg.sig && (await verifyMessage(msg, signer.bundle)) !== true) throw new Error('the message\'s signature does not check');
+    if (signer && msg.sig && (await verifyMessage(msg, signer.bundle)) !== true) throw new Error('the message\'s signature does not check');
   }
   const body = msg && msg.kind === KIND ? [msg.text, ...(msg.files || []).filter((f) => /^text\//.test(f.type)).map((f) => atob(f.data))].join('\n') : opened.text || '';
   // An SG/Send access token, handed over in pki.sgit.ai's grant field, for the vault service only.
   const g = msg && msg.kind === KIND && msg.grant;
   const grant = g && g.service === 'sg-send' && typeof g.token === 'string' && /^https:\/\/dev\.send\.sgraph\.ai\/?$/.test(g.endpoint || 'https://dev.send.sgraph.ai') ? { token: g.token, name: g.name || '' } : null;
-  return { from: signer.label, msg, vaultKeys: findVaultKeys(body), grant };
+  return { from: signer ? signer.label + ', signature checked' : 'a code you brought yourself (not signed by a trusted sender)', msg, vaultKeys: findVaultKeys(body), grant };
 }
 
 // Secrets kept sealed to the page's own key, under a name (for example "vault:outbox").
