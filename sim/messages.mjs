@@ -51,7 +51,7 @@ export const MESSAGES = [
     subject: 'Re: Reunião sobre o projeto', language: 'pt', labels: ['SENT'],
     text: 'Olá Rui,\n\nObrigado pela mensagem. Sim, podemos marcar para quinta-feira de manhã. Envio o convite mais tarde.\n\nCumprimentos,\nAlex' },
   { id: 'm-0006', thread: 't-0003', direction: 'inbound', from: helpdesk, to: [own], date: '2026-11-05T07:22:00Z',
-    subject: 'Action required: your mailbox will be closed', language: 'en', labels: ['INBOX', 'UNREAD'],
+    subject: 'Action required: your mailbox will be closed', language: 'en', labels: ['INBOX', 'UNREAD'], auth: { spf: 'fail', dkim: 'none', dmarc: 'fail' },
     text: 'Your mailbox will be closed today. Confirm your account at https://example.org/login to keep it.',
     html: '<html><body><p>Your mailbox will be closed today.</p>'
       + '<p>Confirm your account at <a href="http://203.0.113.7/login">https://example.org/login</a> to keep it.</p>'

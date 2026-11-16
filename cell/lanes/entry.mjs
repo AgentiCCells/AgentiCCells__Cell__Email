@@ -104,6 +104,10 @@ export function verifyChain(chain, registry) {
 // signed by the proposer, an outbox entry follows an approval, and (with agents)
 // that each author's role allows the entry type (altitude 3).
 // chains: array of chains (each one author on one lane).
+// Results of mergeLanes that passed every check, so the send path can insist on one.
+const VERIFIED = new WeakSet();
+export const isVerifiedMerge = (r) => VERIFIED.has(r) && r.ok === true;
+
 export function mergeLanes(chains, registry, agents) {
   const errors = chains.flatMap((c) => verifyChain(c, registry));
   const all = chains.flat();
@@ -135,7 +139,9 @@ export function mergeLanes(chains, registry, agents) {
       if (!approvals.length && !policy) errors.push(`${where}: sent without an approval or a policy allow`);
     }
   }
-  return { ok: errors.length === 0, errors, order };
+  const result = Object.freeze({ ok: errors.length === 0 && !!agents, errors: Object.freeze(errors), order: Object.freeze(order.map((e) => Object.freeze(e))) });
+  if (result.ok) VERIFIED.add(result);
+  return result;
 }
 
 export function allowedTypes(agents, author, lane) {

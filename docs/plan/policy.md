@@ -35,20 +35,22 @@ See the table in [abp/cell-email](../../abp/cell-email.md) and `policy/agents.js
 | Rule | Deny when | Hold when |
 |---|---|---|
 | Kill switch | the gateway is stopped | |
-| Sender | the proposer is not a listed sender | |
+| Proposer | the proposer is not listed in `proposers` | |
+| Firewall | an agent answers a message marked hostile that no person has read | |
+| Signed policy | the policy file or `agents.json` is not signed by a person with the approver role, or changed since (in `decide`) | |
 | Recipients | not in an allowed domain or on the allow list; on the deny list; too many; any bcc | a reply adds someone not in the thread |
-| First contact or reply | | any recipient has never written to the mailbox |
+| First contact or reply | | any recipient has never written from an address that passed DMARC; or the twin's sync is older than `max_sync_lag_minutes` (fail closed) |
 | Language | not an allowed language; declared language differs from what the text reads as | the language cannot be confirmed |
 | Template | unknown; wrong language; slots missing; a slot holds a link or is too long; text is not the template with its slots filled | no template and the policy requires one |
 | Attachments | any file whose type the policy does not allow (send a vault link) | |
 | Data loss | a secret shape (the leak scan's) or a marked private note in the subject or body | |
 | Rates | over the daily total, per agent, or per recipient (from the outbox, last 24 hours) | |
 
-The simulated policy is `policy/email-policy.json`. It holds the article's example as an automation: *the drafter may send a reply in Portuguese to an existing correspondent, using this template, but never a first contact.*
+The simulated policy is `policy/email-policy.json`. It holds the article's example as an automation, tightened after the ABP review: *the drafter may send a reply in Portuguese to an existing, verified correspondent, using this fixed template, only to a message the firewall marked clean, but never a first contact.*
 
 ## Altitude 5: who approves
 
-If no rule denies or holds, the email may go only if a signed automation matches the proposer, the kind (reply or send), the language and the template, and every recipient has written before. Otherwise a person signs on the approvals lane. First contacts always need a person.
+If no rule denies or holds, the email may go only if a signed automation matches the proposer, the kind (reply or send), the language and the template, every recipient has written before from a verified address, the template has no free slots (`free_slots` empty: no text an agent wrote after reading an email), and the message answered is marked clean. Otherwise a person signs on the approvals lane. First contacts always need a person.
 
 ## The policy simulator
 

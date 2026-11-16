@@ -21,7 +21,9 @@ export function renderTemplate(tpl, slots) {
   return { subject: fill(tpl.subject), text: fill(tpl.text), missing: [...new Set(missing)] };
 }
 
-// ctx: { policy, twin: { mailbox, messages: Map, threads: Map, correspondents }, outbox: [{at, author, to}], stopped, now }
+// ctx: { policy, twin: { mailbox, messages: Map, threads: Map, clean: Map, correspondents }, outbox: [{at, author, to}],
+//        stopped, now, person_reads: Set of message ids a person has read (from the reads lane) }
+const isPerson = (author) => author.startsWith('person:');
 export function check(p, ctx) {
   const { policy, twin } = ctx;
   const reasons = [];
@@ -35,7 +37,7 @@ export function check(p, ctx) {
   if (ctx.stopped) deny('kill switch', 'the gateway is stopped; a person must start it again');
 
   // Who may propose at all (altitude 3 is enforced on the lanes; repeated here so the simulator sees it).
-  if (!policy.senders?.includes(p.author)) deny('sender', `${p.author} may not propose emails under this policy`);
+  if (!policy.proposers?.includes(p.author)) deny('proposer', `${p.author} may not propose emails under this policy`);
   if (!['reply', 'send', 'forward'].includes(p.kind)) deny('kind', `unknown kind ${p.kind}`);
   if (p.kind === 'forward' && !policy.allow_forward) deny('kind', 'forwarding is not allowed by this policy');
 
@@ -53,8 +55,19 @@ export function check(p, ctx) {
   }
 
   // First contact or reply. A recipient who has never written to us is a first contact.
-  const known = (a) => (twin.correspondents.correspondents[a]?.inbound || 0) > 0;
+  // Fail closed: only mail whose From passed DMARC counts, and if the twin's sync is behind,
+  // nobody counts as a correspondent (a lost push must not turn a first contact into a reply).
+  const lagMin = policy.max_sync_lag_minutes ?? 0;
+  const syncedAt = Date.parse(twin.mailbox?.sync?.synced_at || '');
+  const stale = !(now - syncedAt <= lagMin * 60000);
+  if (stale) hold('first contact', `the twin was last synced ${twin.mailbox?.sync?.synced_at || 'never'}, more than ${lagMin} minutes ago: every recipient is treated as a first contact`);
+  const known = (a) => !stale && (twin.correspondents.correspondents[a]?.inbound_verified || 0) > 0;
   const firstContacts = recipients.filter((a) => !known(a));
+
+  // The message being answered: a hostile one is not used by an agent until a person has read it.
+  const cited = p.in_reply_to ? twin.clean?.get(p.in_reply_to) : null;
+  const citedVerdict = p.in_reply_to ? (cited?.verdict || 'unknown') : null;
+  if (citedVerdict === 'hostile' && !isPerson(p.author) && !ctx.person_reads?.has(p.in_reply_to)) deny('firewall', `${p.in_reply_to} is marked hostile by the inbound firewall and no person has read it`);
   if (p.kind === 'reply') {
     const parent = twin.messages.get(p.in_reply_to);
     if (!parent) deny('reply', `in_reply_to ${p.in_reply_to} is not a message in the twin`);
@@ -66,7 +79,7 @@ export function check(p, ctx) {
       if (!/^re:/i.test(p.subject)) hold('reply', 'a reply\'s subject should start with Re:');
     }
   }
-  if (firstContacts.length) hold('first contact', `${firstContacts.join(', ')} never wrote to this mailbox: a person approves every first contact`);
+  if (firstContacts.length && !stale) hold('first contact', `${firstContacts.join(', ')} never wrote to this mailbox from a verified address: a person approves every first contact`);
 
   // Language: allowed, declared, and what the text actually reads as.
   const languages = policy.languages || [];
@@ -119,10 +132,15 @@ export function check(p, ctx) {
   // Altitude 5: may this go without a person? Only under a matching automation.
   let automation = null;
   if (!reasons.length) {
+    // An automated send carries no text an agent wrote after reading an email: the template must
+    // have no free slots, and the message it answers must be clean.
+    const freeSlots = template?.free_slots || [];
     automation = (policy.automations || []).find((x) => x.agents.includes(p.author) && x.kinds.includes(p.kind)
-      && x.languages.includes(p.language) && (!x.templates || (p.template && x.templates.includes(p.template.id)))
-      && (x.first_contact === true ? true : firstContacts.length === 0)) || null;
-    if (!automation) hold('approval', 'no signed automation covers this email: a person approves it');
+      && x.languages.includes(p.language) && p.template && x.templates.includes(p.template.id)
+      && firstContacts.length === 0) || null;
+    if (automation && freeSlots.length) { hold('approval', `template ${p.template.id} has free text (${freeSlots.join(', ')}): a person approves it`); automation = null; }
+    else if (automation && p.in_reply_to && citedVerdict !== 'clean') { hold('approval', `${p.in_reply_to} is ${citedVerdict} by the inbound firewall: a person approves the reply`); automation = null; }
+    else if (!automation) hold('approval', 'no signed automation covers this email: a person approves it');
   }
   const decision = reasons.some((x) => x.level === 'deny') ? 'deny' : reasons.length ? 'hold' : 'allow';
   return { decision, reasons, first_contact: firstContacts, automation: automation?.id || null };

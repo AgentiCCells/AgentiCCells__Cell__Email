@@ -34,7 +34,7 @@ footer{margin-top:3rem;border-top:1px solid var(--line);padding-top:1rem}
 
 <div class="status" role="note">
 <strong>Status: a plan, with the first parts built against a simulated mailbox.</strong>
-Built and tested (16 November 2026, 45 tests): the twin's schema, signed lane entries and their checks, the email policy checker, the inbound firewall and a first policy simulator. All of it runs on made-up messages only. Nothing touches a real mailbox: that needs a Google OAuth app in testing and an sgit vault, which Dinis Cruz has not yet been asked to grant. See <a href="plan/needs.html">what each step needs</a>.
+Built and tested (16 November 2026, 53 tests): the twin's schema, signed lane entries and their checks, the email policy checker, the inbound firewall and a first policy simulator. All of it runs on made-up messages only. Nothing touches a real mailbox: that needs a Google OAuth app in testing and an sgit vault, which Dinis Cruz has not yet been asked to grant. See <a href="plan/needs.html">what each step needs</a>.
 </div>
 
 <nav class="links" aria-label="Pages">
@@ -88,7 +88,7 @@ Built and tested (16 November 2026, 45 tests): the twin's schema, signed lane en
 <li><b>What an email may be</b>: recipients, languages, templates, attachments, rates, first contact or reply, data loss. <span class="muted">Built (simulation).</span></li>
 <li><b>Who approves</b>: a person for consequential sends, a signed automation for routine ones; first contacts always a person. <span class="muted">Built (simulation) for the decision.</span></li>
 </ol>
-<p>The checker can say what today's connectors cannot: <em>this agent may send a reply in Portuguese to an existing correspondent, using this template, but never a first contact.</em> <a href="plan/policy.html">The policy in full</a>.</p>
+<p>The checker can say what today's connectors cannot: <em>this agent may send a reply in Portuguese to an existing correspondent, using this template, but never a first contact.</em> After the policy review, an automatic send also needs a verified sender, a fixed template with no free text, and a message the firewall marked clean. <a href="plan/policy.html">The policy in full</a>.</p>
 
 <h2 id="features">The fifteen features</h2>
 <p>In build order, those that protect us first: the inbound firewall, data-loss checks, a kill switch, a shared inbox with roles, a policy simulator, templates and voice, approve anywhere, follow-ups, signed outbound mail, vault links, time travel, synthetic recipients, inbox analytics, a calendar twin, and more than Gmail. Five are partly built against the simulated mailbox. <a href="plan/features.html">Each feature and where it stands</a>.</p>

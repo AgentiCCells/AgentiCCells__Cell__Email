@@ -7,7 +7,7 @@
 | Lane | Entry types | Who writes |
 |---|---|---|
 | actions | `propose.reply`, `propose.send`, `propose.label`, `propose.archive`, `propose.forward`, `withdraw` | drafter, triage, crm agents and people, by role |
-| approvals | `approve`, `reject`, `gateway.stop`, `gateway.start` | people only |
+| approvals | `approve`, `reject`, `gateway.stop`, `gateway.start` | people; any cell agent may also write `gateway.stop` |
 | reads | `read` | anyone who reads the twin: a receipt per message read |
 | outbox | `sent`, `refused`, `failed` | the gateway only |
 
@@ -55,7 +55,7 @@ A client may put an opaque `client_ref` string on a `propose.send` or `propose.r
 
 `gatewayStopped` reads the kill switch from the merged approvals lane: the last `gateway.stop` or `gateway.start` wins.
 
-`decide` (in `cell/gateway/decide.mjs`) turns the merged lanes, the twin and the email policy into what the gateway would do now with each open proposal: send, wait for a person, refuse or drop. It sends nothing.
+`decide` (in `cell/gateway/decide.mjs`) accepts only a result that `mergeLanes` verified, with the agents file, in that same call, and refuses to send unless both policy files carry a person's signature. It turns the merged lanes, the twin and the email policy into what the gateway would do now with each open proposal: send, wait for a person, refuse or drop. It sends nothing.
 
 ## Not built yet
 

@@ -47,9 +47,12 @@ twin/
   "labels": ["INBOX", "IMPORTANT"],
   "language": "pt",
   "body": { "text": "Olá Alex, ...", "html": null },
-  "attachments": []
+  "attachments": [],
+  "auth": { "spf": "pass", "dkim": "pass", "dmarc": "pass" }
 }
 ```
+
+`auth` (inbound only) holds the receiving server's SPF, DKIM and DMARC results. The correspondents index counts `inbound_verified`, mail whose DMARC passed, and only that counts as correspondence: a forged From cannot turn a first contact into a reply.
 
 The twin's own ids (`m-`, `t-`, `a-`) are separate from Gmail's, which are kept under `source`, so the same twin can later hold mail from Outlook or IMAP.
 

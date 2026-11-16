@@ -2,6 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { append, verifyChain, mergeLanes, refOf, gatewayStopped, canonical } from '../cell/lanes/entry.mjs';
 import { decide } from '../cell/gateway/decide.mjs';
+import { signPolicy } from '../cell/policy/signed.mjs';
 import { keys, agents, policy, simTwin } from './helpers.mjs';
 
 const D = 'drafter.email@AgentiCCells.dinis', G = 'gateway.email@AgentiCCells.dinis', T = 'triage.email@AgentiCCells.dinis', O = 'person:owner';
@@ -9,9 +10,21 @@ const D = 'drafter.email@AgentiCCells.dinis', G = 'gateway.email@AgentiCCells.di
 const ruiReply = () => ({
   in_reply_to: 'm-0012', to: ['rui@example.com'], cc: [], bcc: [], language: 'pt', attachments: [],
   subject: 'Re: Reunião sobre o projeto',
-  text: 'Olá Rui,\n\nObrigado pela mensagem. Até quinta-feira de manhã, então.\n\nCumprimentos,\nAlex',
-  template: { id: 'reply-pt-confirm', slots: { subject: 'Reunião sobre o projeto', name: 'Rui', message: 'Até quinta-feira de manhã, então.', signer: 'Alex' } },
+  text: 'Olá Rui,\n\nObrigado pela mensagem. Respondo com mais detalhe em breve.\n\nCumprimentos,\nAlex',
+  template: { id: 'reply-pt-thanks', slots: { subject: 'Reunião sobre o projeto', name: 'Rui', signer: 'Alex' } },
 });
+// The gateway's context: both policy files signed by the owner, as the vault will hold them.
+function gatewayCtx(signers, registry, over = {}) {
+  const pol = policy(), ag = agents();
+  return {
+    policy: pol, agents: ag, registry, twin: simTwin(), now: '2026-11-16T12:00:00Z',
+    signatures: {
+      policy: signPolicy(pol, { name: 'email-policy.json', author: O }, signers[O]),
+      agents: signPolicy(ag, { name: 'agents.json', author: O }, signers[O]),
+    },
+    ...over,
+  };
+}
 const jo = () => ({
   in_reply_to: 'm-0003', to: ['jo@example.net'], cc: [], bcc: [], language: 'en', attachments: [],
   subject: 'Re: Introduction: Jo Park', text: 'Hi Jo,\n\nWednesday at 15:00 is good for me. Thank you, and see you then.\n\nBest regards,\nAlex',
@@ -109,10 +122,10 @@ test('the gateway decides: auto-send under policy, wait for a person, refuse', (
   append(a, { lane: 'actions', author: D, type: 'propose.reply', body: { email: ruiReply(), client_ref: 'crm-draft-1' }, at: '2026-11-16T10:00:00Z' }, signers[D]);
   append(a, { lane: 'actions', author: D, type: 'propose.reply', body: { email: jo() }, at: '2026-11-16T10:01:00Z' }, signers[D]);
   append(a, { lane: 'actions', author: D, type: 'propose.reply', body: { email: { ...jo(), bcc: ['sam@example.com'] } }, at: '2026-11-16T10:02:00Z' }, signers[D]);
-  const { order } = mergeLanes([a], registry, agents());
-  const out = decide(order, { policy: policy(), twin: simTwin(), now: '2026-11-16T12:00:00Z' });
+  const out = decide(mergeLanes([a], registry, agents()), gatewayCtx(signers, registry));
+  assert.deepEqual(out.policy_problems, []);
   assert.deepEqual(out.rows.map((r) => r.action_now), ['send', 'wait for a person', 'refuse']);
-  assert.equal(out.rows[0].policy.automation, 'auto-reply-pt-confirm');
+  assert.equal(out.rows[0].policy.automation, 'auto-reply-pt-thanks');
   assert.equal(out.rows[0].client_ref, 'crm-draft-1');
   assert.equal(out.rows[1].client_ref, null);
 });
@@ -122,10 +135,50 @@ test('the gateway sends a held email once a person approves, and nothing while s
   const a = [], p = [];
   const x = append(a, { lane: 'actions', author: D, type: 'propose.reply', body: { email: jo() }, at: '2026-11-16T10:00:00Z' }, signers[D]);
   append(p, { lane: 'approvals', author: O, type: 'approve', refs: [refOf(x)], at: '2026-11-16T10:05:00Z' }, signers[O]);
-  let out = decide(mergeLanes([a, p], registry, agents()).order, { policy: policy(), twin: simTwin(), now: '2026-11-16T12:00:00Z' });
+  let out = decide(mergeLanes([a, p], registry, agents()), gatewayCtx(signers, registry));
   assert.equal(out.rows[0].action_now, 'send');
   append(p, { lane: 'approvals', author: O, type: 'gateway.stop', at: '2026-11-16T10:06:00Z' }, signers[O]);
-  out = decide(mergeLanes([a, p], registry, agents()).order, { policy: policy(), twin: simTwin(), now: '2026-11-16T12:00:00Z' });
+  out = decide(mergeLanes([a, p], registry, agents()), gatewayCtx(signers, registry));
   assert.equal(out.stopped, true);
   assert.equal(out.rows[0].action_now, 'refuse');
+});
+
+test('the send path refuses lanes that were not verified in that merge', () => {
+  const { signers, registry } = keys([D, O]);
+  const a = [];
+  append(a, { lane: 'actions', author: D, type: 'propose.reply', body: { email: jo() } }, signers[D]);
+  const merged = mergeLanes([a], registry, agents());
+  assert.throws(() => decide({ ...merged }, gatewayCtx(signers, registry)), /not verified/);
+  assert.throws(() => decide(mergeLanes([a], registry), gatewayCtx(signers, registry)), /not verified/);
+  a[0].body.email.to = ['x@example.com'];
+  assert.throws(() => decide(mergeLanes([a], registry, agents()), gatewayCtx(signers, registry)), /not verified/);
+});
+
+test('unsigned or changed policy files: the gateway refuses every send', () => {
+  const { signers, registry } = keys([D, O, G]);
+  const a = [];
+  append(a, { lane: 'actions', author: D, type: 'propose.reply', body: { email: ruiReply() }, at: '2026-11-16T10:00:00Z' }, signers[D]);
+  const merged = mergeLanes([a], registry, agents());
+  let out = decide(merged, gatewayCtx(signers, registry, { signatures: {} }));
+  assert.equal(out.rows[0].action_now, 'refuse');
+  assert.ok(out.policy_problems.some((p) => p.includes('not signed')));
+  const ctx = gatewayCtx(signers, registry);
+  ctx.policy.automations[0].first_contact = true;
+  out = decide(merged, ctx);
+  assert.ok(out.policy_problems.some((p) => p.includes('changed after it was signed')));
+  const byAgent = gatewayCtx(signers, registry);
+  byAgent.signatures.agents = signPolicy(byAgent.agents, { name: 'agents.json', author: G }, signers[G]);
+  out = decide(merged, byAgent);
+  assert.ok(out.policy_problems.some((p) => p.includes('not a person with the approver role')));
+});
+
+test('any cell agent may stop the gateway; only a person may start it', () => {
+  const { signers, registry } = keys([T, O]);
+  const t = [], p = [];
+  append(t, { lane: 'approvals', author: T, type: 'gateway.stop', at: '2026-11-16T10:00:00Z' }, signers[T]);
+  append(p, { lane: 'approvals', author: O, type: 'gateway.start', at: '2026-11-16T11:00:00Z' }, signers[O]);
+  assert.deepEqual(mergeLanes([t, p], registry, agents()).errors, []);
+  const t2 = [];
+  append(t2, { lane: 'approvals', author: T, type: 'gateway.start' }, signers[T]);
+  assert.ok(mergeLanes([t2], registry, agents()).errors.some((e) => e.includes('may not write gateway.start')));
 });

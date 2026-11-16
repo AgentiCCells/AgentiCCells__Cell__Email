@@ -37,6 +37,7 @@ export function simulatedMessages() {
     language: s.language,
     body: { text: s.text, html: s.html || null },
     attachments: s.attachments || [],
+    ...(s.direction === 'inbound' ? { auth: s.auth || { spf: 'pass', dkim: 'pass', dmarc: 'pass' } } : {}),
     simulated: true,
   }));
 }

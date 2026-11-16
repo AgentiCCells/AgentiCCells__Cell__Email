@@ -57,6 +57,10 @@ export function checkMessage(m) {
   if (m?.language !== null && !LANG.test(m?.language || '')) e.push(`${w}: language must be a two-letter code or null`);
   if (!m?.body || typeof m.body.text !== 'string') e.push(`${w}: body.text missing`);
   if (m?.body && m.body.html !== null && typeof m.body.html !== 'string') e.push(`${w}: body.html must be a string or null`);
+  if (m?.direction === 'inbound') {
+    const okv = ['pass', 'fail', 'none', 'softfail', 'neutral', 'temperror', 'permerror'];
+    if (!m.auth || !['spf', 'dkim', 'dmarc'].every((k) => okv.includes(m.auth[k]))) e.push(`${w}: inbound messages need auth {spf, dkim, dmarc} from the receiving server's Authentication-Results`);
+  }
   if (!Array.isArray(m?.attachments) || m.attachments.some((a) => !ID.test(a) || !a.startsWith('a-'))) e.push(`${w}: attachments must be a list of a-... ids`);
   return e;
 }
@@ -126,11 +130,13 @@ const walk = (d) => (existsSync(d) ? readdirSync(d).flatMap((f) => { const p = j
 export function buildCorrespondents(messages, ownAddress) {
   const own = ownAddress.toLowerCase();
   const idx = {};
-  const touch = (addr) => (idx[addr.toLowerCase()] ||= { inbound: 0, outbound: 0, first_seen: null, last_inbound: null, last_outbound: null });
+  const touch = (addr) => (idx[addr.toLowerCase()] ||= { inbound: 0, inbound_verified: 0, outbound: 0, first_seen: null, last_inbound: null, last_outbound: null });
   for (const m of [...messages].sort((a, b) => Date.parse(a.date) - Date.parse(b.date))) {
     if (m.direction === 'inbound') {
       const c = touch(m.from.address);
       c.inbound++; c.last_inbound = m.date; c.first_seen ||= m.date;
+      // Verified: DMARC passed, so the From address is not forged. Only these count as correspondence.
+      if (m.auth?.dmarc === 'pass') c.inbound_verified++;
     } else {
       for (const p of [...m.to, ...m.cc, ...m.bcc]) {
         if (p.address.toLowerCase() === own) continue;

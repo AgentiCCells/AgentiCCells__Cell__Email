@@ -16,15 +16,19 @@ export function simulate(twin, policy, author) {
     const correspondents = { correspondents: {} };
     for (const x of before) if (x.direction === 'inbound') {
       const k = x.from.address.toLowerCase();
-      (correspondents.correspondents[k] ||= { inbound: 0 }).inbound++;
+      const c = (correspondents.correspondents[k] ||= { inbound: 0, inbound_verified: 0 });
+      c.inbound++;
+      if (x.auth?.dmarc === 'pass') c.inbound_verified++;
     }
+    // As if the twin had been synced just before this email was proposed.
+    const mailbox = { ...twin.mailbox, sync: { ...twin.mailbox.sync, synced_at: m.date } };
     const parent = m.headers.in_reply_to ? before.find((x) => x.headers.message_id === m.headers.in_reply_to) : null;
     const proposal = {
       author, kind: parent ? 'reply' : 'send', in_reply_to: parent?.id || null,
       to: m.to.map((p) => p.address), cc: m.cc.map((p) => p.address), bcc: m.bcc.map((p) => p.address),
       subject: m.subject, text: m.body.text, language: m.language, attachments: [], at: m.date,
     };
-    const r = check(proposal, { policy, twin: { ...twin, correspondents }, outbox: [] });
+    const r = check(proposal, { policy, twin: { ...twin, mailbox, correspondents }, outbox: [] });
     rows.push({ id: m.id, decision: r.decision, reasons: r.reasons.map((x) => `${x.level} ${x.rule}: ${x.detail}`) });
   }
   const counts = { allow: 0, hold: 0, deny: 0 };
