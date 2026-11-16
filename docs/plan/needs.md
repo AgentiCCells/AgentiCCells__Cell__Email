@@ -10,7 +10,7 @@ On the vault: Dinis, 16 November 2026: "The sgit vault, that should be created b
 
 | Need | Why | The narrowest form |
 |---|---|---|
-| **A Google OAuth app, in testing**, in RiskMandate's Google Cloud project (or The Cyber Boardroom's) | Only Google's own consent screen can grant Gmail access. In testing: up to 100 test users, no verification. | Every value to enter is on [the Google OAuth setup page](google-oauth.md): a Desktop client, publishing status *Testing*, test users our own addresses only. Dinis creates it and accepts Google's terms; an agent cannot. |
+| **A Google OAuth app, in testing**, in RiskMandate's Google Cloud project (or The Cyber Boardroom's) | Only Google's own consent screen can grant Gmail access. In testing: up to 100 test users, no verification. | Every value to enter is on [the Google OAuth setup page](google-oauth.md). Dinis chose the **Internal** audience (riskmandate.ai Workspace accounts only), which needs no verification and no test-user list. Dinis creates it and accepts Google's terms; an agent cannot. |
 | **The scopes to start with** | Altitude 1 | Start with `gmail.metadata` for the first sync test, then `gmail.readonly`. No compose, send or modify yet. |
 | **A Pub/Sub topic** for Gmail push notifications | The receive flow | One topic, with publish rights for Gmail's service account only; or skip push at first and poll the history on a timer. |
 | **Which mailbox to sync first** | Our own inboxes first | One mailbox, chosen by Dinis. |

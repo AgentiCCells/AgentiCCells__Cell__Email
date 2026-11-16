@@ -1,6 +1,6 @@
 # Google OAuth setup: the values to configure
 
-**Status: for Dinis to configure.** Nothing here has been set up yet. The labels follow the Google Cloud console as this cell understands it on 16 November 2026 (the "Google Auth Platform" pages: Branding, Audience, Data access, Clients); Google renames these often, so trust the console where they differ. [Back to the plan](index.md).
+**Status: being configured by Dinis** (16 November 2026), in RiskMandate's project. He chose the Internal audience: "So I set audience internal since we only need @riskmandate.ai users to access it". The labels follow the Google Cloud console as this cell understands it on 16 November 2026 (the "Google Auth Platform" pages: Branding, Audience, Data access, Clients); Google renames these often, so trust the console where they differ. [Back to the plan](index.md).
 
 Dinis's word, 16 November 2026: "Can you add the website to Google OAuth details for me to configure?"
 
@@ -14,18 +14,17 @@ A proposal to use a browser client instead (the site itself as the gateway, no s
 | APIs and services, Library | Enable | Gmail API (step 1); Cloud Pub/Sub API (later, for push) |
 | Branding | App name | `Email AgenticCell` |
 | Branding | User support email | Dinis's choice (not written here) |
-| Branding | App logo | leave empty while testing (a logo starts Google's brand review) |
+| Branding | App logo | leave empty for now (a logo can start Google's brand review); the logo is ready at `/assets/logo-120.png` |
 | Branding | Application home page | `https://email-cell.agenticcells.site/` |
 | Branding | Application privacy policy link | `https://email-cell.agenticcells.site/privacy.html` (a draft: Dinis approves it first) |
 | Branding | Application terms of service link | leave empty for now (optional) |
 | Branding | Authorised domains | `agenticcells.site` |
 | Branding | Developer contact | Dinis's choice |
-| Audience | User type | External |
-| Audience | Publishing status | Testing (leaving it is a stop-and-ask for Dinis) |
-| Audience | Test users | our own addresses only (Google's limit is 100) |
+| Audience | User type | **Internal** (chosen by Dinis): only accounts in the riskmandate.ai Google Workspace can sign in |
+| Audience | Publishing status, test users | not used by an Internal app |
 | Data access | Scopes, step 1 | `https://www.googleapis.com/auth/gmail.metadata` only |
 | Data access | Scopes, later | `gmail.readonly` (read), then `gmail.send` (send), each added only when its build step needs it |
-| Clients | Application type | Desktop app (recommended while testing; see below) |
+| Clients | Application type | Desktop app, as approved; or Web application if Dinis approves [the browser gateway](browser-gateway.md) |
 | Clients | Name | `email-cell-gateway` |
 | Clients | Authorised JavaScript origins | none: no browser ever holds the token |
 | Clients | Authorised redirect URIs | none for a Desktop app (it uses a loopback address) |
@@ -42,11 +41,13 @@ A proposal to use a browser client instead (the site itself as the gateway, no s
 - Never paste it into a chat, a commit, an issue or a vault this repository can read. The build session must never see it (abp/cell-email, rule N13).
 - If it leaks, delete the client in the console and make a new one.
 
-## Things Google does while in testing
+## What the Internal audience means
 
-- Refresh tokens for an External app in Testing expire after seven days, so the gateway will need a fresh sign-in each week until the app is published. To confirm in Google's documentation.
-- No verification is needed for up to 100 test users. `gmail.metadata` and `gmail.readonly` are restricted scopes: leaving testing with them means verification and an annual security assessment (see [the policy page](policy.md)).
-- The privacy policy and home page must sit on an authorised domain; verifying ownership of `agenticcells.site` (in Google Search Console) is needed before verification, not for testing.
+- **No verification and no security assessment**, even for the restricted scopes (`gmail.metadata`, `gmail.readonly`): Google does not verify Internal apps. This removes the hardest part of the plan. To confirm against Google's documentation.
+- **No test-user list and no 100-user cap:** any riskmandate.ai Workspace account can connect, and no other account can.
+- **The seven-day refresh-token expiry** applies to External apps in testing, not Internal ones, as this cell understands it. To confirm once the first token is issued.
+- **Limits:** a personal Gmail or another organisation's mailbox cannot use this app. Workspace admin controls on third-party API access still apply, and may need the app allowed.
+- **Other teams later:** each team registers its own Internal app in its own Workspace (customer work runs in the customer's environment), or we move to External with verification. Moving to External is a stop-and-ask for Dinis.
 
 ## Later: push notifications
 
