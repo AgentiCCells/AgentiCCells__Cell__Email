@@ -260,11 +260,11 @@ footer{margin-top:3rem;border-top:1px solid var(--line);padding-top:1rem;color:v
 <p>Agents never see Gmail and never see raw mail. They see the clean copy and can only propose. That is the air gap the article asks for: reading an email can never, by itself, send one.</p></div>
 <div class="card"><h3>Drift, and how we notice it</h3>
 <p>The gateway records Gmail's history cursor with each sync and re-checks on a timer, because push notices can be late or lost. If the twin falls behind, the policy fails closed: every recipient counts as a first contact until it catches up.</p></div>
-<div class="card"><h3>Open questions <span class="tag">for Dinis</span></h3>
+<div class="card"><h3>Decided by Dinis, 16 November 2026</h3>
 <ul>
-<li>When a message is deleted in Gmail, the twin records the deletion as a new version. Does the backup keep the old one, and for how long?</li>
-<li>Are <code>raw/</code> and <code>clean/</code> one vault with separate keys, or two vaults?</li>
-<li>Does the twin push label changes back to Gmail, or only keep its own labels?</li>
+<li><b>Deleted messages stay in the backup.</b> A deletion in Gmail is recorded in the twin; the message's file is kept.</li>
+<li><b>Labels stay 100% in sync with Gmail,</b> both ways: label changes in Gmail come into the twin, and approved label changes in the twin go back to Gmail (this needs the <code>gmail.modify</code> scope).</li>
+<li><b>Still open:</b> whether <code>raw/</code> and <code>clean/</code> are one vault or two.</li>
 </ul></div>
 </div>
 
