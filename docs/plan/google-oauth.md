@@ -17,7 +17,8 @@ A proposal to use a browser client instead (the site itself as the gateway, no s
 | Client id | `235486550409-67qqf0j65poc62fbm2in7jbceci3sv5k.apps.googleusercontent.com` (public by nature: a browser client's id is in its page) |
 | Authorised JavaScript origin | `https://email-cell.agenticcells.site` |
 | Redirect URIs | none (pop-up sign-in) |
-| Scope, Gmail API enabled | to confirm with Dinis |
+| Gmail API | enabled by Dinis |
+| Scope (`gmail.metadata` under Data access) | to confirm with Dinis |
 
 The Web client follows [the browser gateway proposal](browser-gateway.md). Nothing in this repository requests a token yet: that waits for Dinis to approve the proposal's policy change.
 
