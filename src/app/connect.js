@@ -145,6 +145,9 @@ document.addEventListener('drop', (ev) => { ev.preventDefault(); $('drop').class
 async function buttons() {
   const hasKey = (await kept('vault:twin').catch(() => false)) || (await kept('vault:' + OUTBOX_VAULT).catch(() => false));
   $('open-vault').hidden = !hasKey;
+  if (!hasKey) say('waiting', (await kept('sgsend:token').catch(() => false))
+    ? 'The access token is kept. Still needed: a sealed QR code with a vault key (the outbox key from conductor@PrompTugal, or your twin vault key).'
+    : 'Opens once a sealed QR code with a vault key is kept here.');
   $('sync').hidden = !(twin && token);
 }
 
