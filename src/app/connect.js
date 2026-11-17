@@ -63,10 +63,33 @@ $('revoke').addEventListener('click', async () => {
 });
 
 // ------------------------------------------------------------ the page's key, and sealed codes
+// Drawn on a canvas, so the browser offers "Copy image"; the Copy button puts the image and its text
+// on the clipboard together (Dinis, 16 November 2026: "I still can't copy the QR").
+let keyCanvas = null, keyText = '';
 identity().then((id) => {
-  const qr = qrcode(0, 'M'); qr.addData(publicQrText(id)); qr.make();
-  $('key-qr').innerHTML = qr.createSvgTag({ cellSize: 3, margin: 2, scalable: true });
+  keyText = publicQrText(id);
+  const qr = qrcode(0, 'M'); qr.addData(keyText); qr.make();
+  const n = qr.getModuleCount(), cell = 6, margin = 4 * cell, c = document.createElement('canvas');
+  c.width = c.height = n * cell + 2 * margin;
+  const g = c.getContext('2d'); g.fillStyle = '#fff'; g.fillRect(0, 0, c.width, c.height); g.fillStyle = '#000';
+  for (let r = 0; r < n; r++) for (let k = 0; k < n; k++) if (qr.isDark(r, k)) g.fillRect(margin + k * cell, margin + r * cell, cell, cell);
+  c.setAttribute('role', 'img'); c.setAttribute('aria-label', "This page's public key as a QR code");
+  $('key-qr').replaceChildren(c); keyCanvas = c;
+  $('copy-qr').hidden = false;
 }).catch((e) => say('sealed-status', `Could not make the page's key: ${e.message}.`));
+
+async function copyQr() {
+  if (!keyCanvas) return;
+  const btn = $('copy-qr'), label = btn.textContent;
+  const png = await new Promise((res) => keyCanvas.toBlob(res, 'image/png'));
+  const text = new Blob([keyText], { type: 'text/plain' });
+  let done = '';
+  try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': png, 'text/plain': text })]); done = 'Copied'; }
+  catch { try { await navigator.clipboard.write([new ClipboardItem({ 'image/png': png })]); done = 'Copied'; } catch { try { await navigator.clipboard.writeText(keyText); done = 'Copied as text'; } catch { done = 'Could not copy'; } } }
+  btn.textContent = done; setTimeout(() => { btn.textContent = label; }, 2000);
+}
+$('copy-qr').addEventListener('click', copyQr);
+$('key-qr').addEventListener('click', copyQr);
 
 async function openSealedText(text) {
   text = String(text || '').trim();
