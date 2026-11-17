@@ -11,7 +11,7 @@
 // By cell.email@AgentiCCells.dinis, 2026-11-16. Apache-2.0.
 import { authUrl, newState, parseFragment } from './oauth.js?v=__VERSION__';
 import { HEADERS, syncPlan } from './twin.js?v=__VERSION__';
-import { openTwinVault, readState as readVaultState, readThreads, writeMany, publish, readJson, ensureLoaded } from './vault.js?v=__VERSION__';
+import { createTwinVault, displayKey, openTwinVault, readState as readVaultState, readThreads, writeMany, publish, readJson, ensureLoaded } from './vault.js?v=__VERSION__';
 import { identity, existingIdentity, publicQrText, openSealed, keep, recall, forget, kept } from './pki.js?v=__VERSION__';
 import { TRUSTED } from './trusted.js?v=__VERSION__';
 import qrcode from './vendor/qrcode-generator/2.0.4/qrcode.mjs?v=__VERSION__';
@@ -104,10 +104,11 @@ async function openSealedText(text) {
       got.push(v.id === OUTBOX_VAULT ? 'the outbox key' : `the key of vault ${v.id}`);
     }
     if (r.grant) { await keep(id, 'sgsend:token', r.grant.token); accessToken = r.grant.token; got.push('the SG/Send access token'); }
-    say('sealed-status', got.length ? `Kept, sealed to this page's key: ${got.join(', ')}. From ${r.from}.` : `Opened a code from ${r.from}, but it carries no vault key or access token.`);
+    const from = r.from.startsWith('a code you brought') ? '' : ` From ${r.from}.`;
+    say('sealed-status', got.length ? `Kept in this browser: ${got.join(', ')}.${from}` : `Opened, but it carries no vault key or access token.${from}`);
     $('drop').value = '';
     await buttons();
-    if (got.length && !$('open-vault').hidden) await openVaults();
+    if (got.length) await openVaults();
   } catch (e) { say('sealed-status', `Not opened: ${e.message}.`); }
 }
 
@@ -143,12 +144,11 @@ document.addEventListener('drop', (ev) => { ev.preventDefault(); $('drop').class
 
 // ------------------------------------------------------------ the vaults
 async function buttons() {
+  const hasToken = !!accessToken || (await kept('sgsend:token').catch(() => false));
   const hasKey = (await kept('vault:twin').catch(() => false)) || (await kept('vault:' + OUTBOX_VAULT).catch(() => false));
-  $('open-vault').hidden = !hasKey;
-  if (!hasKey) say('waiting', (await kept('sgsend:token').catch(() => false))
-    ? 'The access token is kept. Still needed: a sealed QR code with a vault key (the outbox key from conductor@PrompTugal, or your twin vault key).'
-    : 'Opens once a sealed QR code with a vault key is kept here.');
+  $('open-vault').hidden = !(hasKey || hasToken);
   $('sync').hidden = !(twin && token);
+  $('copy-twin-key').hidden = !twin;
 }
 
 async function openVaults() {
@@ -156,8 +156,14 @@ async function openVaults() {
   const lines = [];
   $('open-vault').disabled = true;
   say('vault-status', 'Opening (deriving keys takes a second or two)...');
-  const twinKey = await recall(id, 'vault:twin').catch(() => null);
-  if (twinKey) {
+  let twinKey = await recall(id, 'vault:twin').catch(() => null);
+  if (!twinKey && accessToken) {
+    // No twin vault yet: make one here. Its key is made in this browser and kept sealed to the
+    // page's key; it is never shown to anyone (Dinis, 17 November 2026: "I should only have to
+    // paste the QR code that you gave me").
+    try { twin = await createTwinVault(accessToken); twinKey = displayKey(twin); await keep(id, 'vault:twin', twinKey); lines.push(`Twin vault ${twin.vaultId} created and open; its key is kept in this browser.`); }
+    catch (e) { lines.push(`Could not create the twin vault: ${e.message}.`); }
+  } else if (twinKey) {
     try { twin = await openTwinVault(accessToken, twinKey); lines.push(`Twin vault ${twin.vaultId} open${accessToken ? '' : ' to read only (no SG/Send access token yet)'}.`); }
     catch (e) { lines.push(`Twin vault: ${e.message}.`); }
   }
@@ -177,12 +183,17 @@ async function openVaults() {
       lines.push(`Outbox open: ${folders.length} message${folders.length === 1 ? '' : 's'}.`);
     } catch (e) { lines.push(`Outbox: ${e.message}.`); }
   }
-  say('vault-status', lines.join(' ') || 'No vault key kept yet: paste a sealed QR code.');
+  say('vault-status', lines.join(' ') || 'Nothing to open yet: paste the sealed QR code with your access token.');
   $('open-vault').disabled = false;
   $('open-vault').textContent = 'Open vault again';
   buttons();
 }
 $('open-vault').addEventListener('click', openVaults);
+$('copy-twin-key').addEventListener('click', async () => {
+  const btn = $('copy-twin-key'), label = btn.textContent;
+  try { await navigator.clipboard.writeText(await recall(await identity(), 'vault:twin')); btn.textContent = 'Copied: keep it in your password manager'; } catch { btn.textContent = 'Could not copy'; }
+  setTimeout(() => { btn.textContent = label; }, 4000);
+});
 
 // ------------------------------------------------------------ sync: headers and labels into the twin
 async function listIds() {
