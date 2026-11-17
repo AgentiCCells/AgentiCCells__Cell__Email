@@ -12,22 +12,49 @@
 </head>
 <body>
 <main>
-<h1><img src="/assets/logo.svg" alt="" width="44" height="44">Your mailbox twin</h1>
+<header class="top">
+<h1><img src="/assets/logo.svg" alt="" width="40" height="40">Your mailbox twin</h1>
+<p class="lede">Three steps: connect Gmail, swap keys with your agent, open the vault.</p>
+</header>
 
-<p><button id="connect" type="button">Connect with Google</button></p>
+<section class="step step-connect" aria-labelledby="step1-title">
+<div class="step-head"><span class="num" aria-hidden="true">1</span><h2 id="step1-title">Connect</h2></div>
+<div class="step-body">
+<p class="action"><button id="connect" type="button">Connect with Google</button></p>
 <p id="status" role="status"><span id="who"></span> <button id="revoke" class="link" type="button" hidden>Disconnect</button></p>
+</div>
+</section>
 
+<section class="step step-swap" aria-labelledby="step2-title">
+<div class="step-head"><span class="num" aria-hidden="true">2</span><h2 id="step2-title">Swap keys</h2></div>
 <div class="pair">
-<div id="key-qr" class="qr" title="This page's public key"></div>
+<div class="panel give">
+<p class="panel-label"><span class="tag">Give</span> This page's public key</p>
+<div id="key-qr" class="qr" title="Click to copy"></div>
+<p class="panel-foot"><button id="copy-qr" class="secondary" type="button" hidden>Copy QR code</button></p>
+</div>
+<div class="panel get">
+<p class="panel-label"><span class="tag">Get back</span> The agent's sealed QR code</p>
+<div class="dropzone">
 <textarea id="drop" rows="6" spellcheck="false" autocomplete="off" aria-label="Paste or drop the sealed QR code here" placeholder="Paste or drop the sealed QR code here"></textarea>
+<div class="drop-hint" aria-hidden="true"><span class="drop-icon"></span><strong>Paste or drop the sealed QR code</strong><span>Paste works anywhere on the page. An image or its text both work.</span></div>
+</div>
+</div>
 </div>
 <p id="sealed-status" class="muted" role="status">Show the QR code on the left to the agent. Paste or drop its sealed QR code back on the right.</p>
+</section>
 
-<p><button id="open-vault" type="button" hidden>Open vault</button> <button id="sync" type="button" hidden>Sync my mailbox</button></p>
+<section class="step step-vault" aria-labelledby="step3-title">
+<div class="step-head"><span class="num" aria-hidden="true">3</span><h2 id="step3-title">Open vault</h2></div>
+<div class="step-body">
+<p class="waiting muted">Opens once a sealed QR code is kept here.</p>
+<p class="actions"><button id="open-vault" type="button" hidden>Open vault</button> <button id="sync" class="secondary" type="button" hidden>Sync my mailbox</button></p>
 <p id="vault-status" role="status"></p>
 <ol id="outbox-list"></ol>
+</div>
+</section>
 
-<details class="muted"><summary>What this page does</summary>
+<details class="about muted"><summary>What this page does</summary>
 <ul>
 <li>Connect sends you to Google's own consent screen. The token comes back in the address bar's fragment, which browsers never send to a server; the page removes it at once.</li>
 <li>The QR code is this page's public key. Its private half is made in this browser and cannot be read or exported, not even by the page. A sealed QR code made for it opens only here.</li>
