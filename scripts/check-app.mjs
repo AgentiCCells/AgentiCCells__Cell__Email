@@ -2,7 +2,7 @@
 // every build (abp/cell-email v1.1.0: N1, N17, N18, C5). For every HTML page under _site/app/:
 //   - a Content-Security-Policy meta tag, first thing after the charset;
 //   - default-src 'none', script-src 'self' only, base-uri 'none', form-action 'none';
-//   - connect-src only Google's Gmail and token-revocation services and the vault service;
+//   - connect-src only Google's Gmail and token-revocation services, the vault service and pki.sgit.ai;
 //   - no inline script, no script from another site, a no-referrer policy;
 // for every script under _site/app/ outside vendor/: no persistent storage (no localStorage, no
 // IndexedDB, no cookies), and fetch only to the allowed hosts; and every file under
@@ -13,8 +13,9 @@ import { join, relative, sep } from 'node:path';
 import { createHash } from 'node:crypto';
 
 const DIR = '_site/app';
-// Google's Gmail and token-revocation services, and the user's vault service (abp/cell-email N17).
-const CONNECT = new Set(['https://gmail.googleapis.com', 'https://oauth2.googleapis.com', 'https://dev.send.sgraph.ai']);
+// Google's Gmail and token-revocation services, the user's vault service, and pki.sgit.ai's public
+// register for "Sign in with pki.sgit.ai" (abp/cell-email N17).
+const CONNECT = new Set(['https://gmail.googleapis.com', 'https://oauth2.googleapis.com', 'https://dev.send.sgraph.ai', 'https://pki.sgit.ai']);
 const problems = [];
 const fail = (m) => problems.push(m);
 
@@ -35,7 +36,7 @@ for (const f of files.filter((n) => n.endsWith('.html'))) {
   if (!is('script-src', ["'self'"])) fail(`${f}: script-src must be 'self' only`);
   if (!is('base-uri', ["'none'"])) fail(`${f}: base-uri must be 'none'`);
   if (!is('form-action', ["'none'"])) fail(`${f}: form-action must be 'none'`);
-  for (const h of csp['connect-src'] || []) if (!CONNECT.has(h)) fail(`${f}: connect-src allows ${h}, which is not Google's Gmail or token-revocation service or the vault service`);
+  for (const h of csp['connect-src'] || []) if (!CONNECT.has(h)) fail(`${f}: connect-src allows ${h}, which is not Google's Gmail or token-revocation service, the vault service or pki.sgit.ai`);
   if (!head.includes('<meta name="referrer" content="no-referrer">')) fail(`${f}: no no-referrer policy`);
   for (const t of s.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/g)) {
     const src = t[1].match(/\bsrc="([^"]+)"/);

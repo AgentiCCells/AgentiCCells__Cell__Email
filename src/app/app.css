@@ -114,3 +114,5 @@ details.about p{max-width:48rem}
   .qr{max-width:15rem}
 }
 #sealed-status:empty{display:none}
+.pki-row{margin:.4rem 0 0;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1rem}
+.pki-row button.secondary{padding:.35rem .8rem;font-size:.95rem}

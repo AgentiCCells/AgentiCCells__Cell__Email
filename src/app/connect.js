@@ -12,17 +12,23 @@
 import { authUrl, newState, parseFragment } from './oauth.js?v=__VERSION__';
 import { HEADERS, syncPlan } from './twin.js?v=__VERSION__';
 import { createTwinVault, displayKey, openTwinVault, readState as readVaultState, readThreads, writeMany, publish, readJson, ensureLoaded } from './vault.js?v=__VERSION__';
-import { identity, existingIdentity, publicQrText, openSealed, keep, recall, forget, kept } from './pki.js?v=__VERSION__';
+import { identity, existingIdentity, publicQrText, openSealed, keep, recall, forget, kept, sealedStore } from './pki.js?v=__VERSION__';
+import { sso } from './vendor/pki/v0.2.28/sso.js';
+import * as K from './vendor/pki/v0.2.28/keys.js';
 import { TRUSTED } from './trusted.js?v=__VERSION__';
 import qrcode from './vendor/qrcode-generator/2.0.4/qrcode.mjs?v=__VERSION__';
 
 const OUTBOX_VAULT = 'co57gzld'; // promptugal-outreach (conductor@PrompTugal.dinis)
 const STATE_KEY = 'cell-email.oauth-state';
+// The root this site trusts for "Sign in with pki.sgit.ai": Dinis Cruz's key, as pki.sgit.ai's guide
+// for sites gives it. Pinned here, never read from the register; to be confirmed by Dinis.
+const PKI_ROOT = 'sha256:db7f79fdd87e030a';
 const $ = (id) => document.getElementById(id);
 
 let token = null; // Google
 let accessToken = ''; // SG/Send
 let twin = null, outbox = null, labelList = [];
+let trusted = [...TRUSTED]; // plus the person signed in with pki.sgit.ai, once checked
 
 const say = (id, text) => { $(id).textContent = text; };
 function readState() { try { return sessionStorage.getItem(STATE_KEY); } catch { return null; } }
@@ -96,7 +102,7 @@ async function openSealedText(text) {
   if (!text) return;
   try {
     const id = await identity();
-    const r = await openSealed(id, text, TRUSTED, { carried: true });
+    const r = await openSealed(id, text, trusted, { carried: true });
     const got = [];
     for (const v of r.vaultKeys) {
       await keep(id, 'vault:' + v.id, v.key);
@@ -248,10 +254,61 @@ $('sync').addEventListener('click', async () => {
 });
 
 // ------------------------------------------------------------ on load
+// ------------------------------------------------------------ Sign in with pki.sgit.ai
+// The person's passkey stays at pki.sgit.ai (a passkey works only on its own site). pki.sgit.ai signs
+// a delegation for a key this page makes, at this site only, for 7 days; this page checks it against
+// the public register from the pinned root. The browser key and the delegation are kept sealed to
+// the page's key (sealedStore), not in plain web storage. Once signed in, codes the person signs
+// with their own key (for example from pki.sgit.ai's "Send a message") open as theirs.
+const LEVEL = { strong: 'strong: your record vouches for it today', soft: 'soft: signed by your key, valid until its date', 'not-vouched': 'not vouched for yet: waiting for your record to be published', invalid: 'not valid' };
+let pki = null, pkiStore = null;
+async function pkiStart() {
+  try {
+    pkiStore = await sealedStore(await identity(), 'sso:store');
+    pki = await sso({ root: PKI_ROOT, pki: 'https://pki.sgit.ai/', store: pkiStore });
+    const back = await pki.finish().catch((e) => ({ ok: false, why: e.message }));
+    await pkiStore.flush();
+    if (back && !back.ok) say('pki-who', `Not signed in with pki.sgit.ai: ${back.why}.`);
+    await pkiShow();
+  } catch (e) { say('pki-who', `pki.sgit.ai sign-in is not available: ${e.message}.`); }
+}
+async function pkiShow() {
+  const s = pki?.session();
+  $('pki-signin').hidden = !!s; $('pki-signout').hidden = !s;
+  if (!s) { trusted = [...TRUSTED]; return; }
+  say('pki-who', `Signed in with pki.sgit.ai as ${s.identity.name}. Checking against the register...`);
+  const st = await pki.status().catch((e) => ({ level: 'invalid', why: e.message }));
+  say('pki-who', `Signed in with pki.sgit.ai as ${s.identity.name} (${LEVEL[st.level] || st.level}).`);
+  if (st.level === 'invalid') { trusted = [...TRUSTED]; return; }
+  // Their public key, so codes they sign open as theirs. The register's summary file is checked:
+  // the bundle must be well formed and its signing fingerprint must be the identity just checked.
+  try {
+    const fp = s.identity.fp;
+    if (!K.FP.test(fp)) throw new Error('not a fingerprint');
+    const d = await (await fetch(`https://pki.sgit.ai/id/${fp.replace(':', '-')}.json`, { cache: 'no-cache', referrerPolicy: 'no-referrer' })).json();
+    if (d.bundle?.signing_fingerprint !== fp || (await K.checkBundle(d.bundle)).length) throw new Error('the key file does not match');
+    trusted = [...TRUSTED, { label: `${s.identity.name} (signed in with pki.sgit.ai)`, bundle: d.bundle }];
+  } catch (e) { say('pki-who', `${$('pki-who').textContent} Could not read your public key: ${e.message}.`); }
+}
+$('pki-signin').addEventListener('click', async () => {
+  const btn = $('pki-signin'); btn.disabled = true; btn.textContent = 'Making this browser\'s key...';
+  try {
+    // Make the browser key here and keep it sealed before leaving, so sso.js finds it on the way back.
+    const KEY = `pki.sso.v1.${location.origin}`;
+    if (!JSON.parse(pkiStore.getItem(KEY) || 'null')?.key) {
+      const k = await K.generate(`browser key for ${location.origin}`);
+      pkiStore.setItem(KEY, JSON.stringify({ key: { bundle: k.bundle, encrypt: K.b64(k.private.encrypt), sign: K.b64(k.private.sign) } }));
+    }
+    await pkiStore.flush();
+    await pki.login({ can: ['identity', 'sign:approve'], days: 7, label: 'the email cell' });
+  } catch (e) { say('pki-who', `Could not start the sign-in: ${e.message}.`); btn.disabled = false; btn.textContent = 'Sign in with pki.sgit.ai'; }
+});
+$('pki-signout').addEventListener('click', async () => { pki.logout(); await pkiStore.flush(); say('pki-who', 'Signed out of pki.sgit.ai on this page.'); pkiShow(); });
+
 async function start() {
   const id = await existingIdentity();
   if (id) accessToken = (await recall(id, 'sgsend:token').catch(() => null)) || '';
-  const answer = parseFragment(location.hash, readState());
+  const answer = /[#&]pki=/.test(location.hash) ? { none: true } : parseFragment(location.hash, readState()); // a pki.sgit.ai answer is pkiStart's
   if (!answer.none) {
     history.replaceState(null, '', location.pathname); writeState(null);
     if (answer.error) say('who', `Not connected: ${answer.error}.`);
@@ -267,3 +324,4 @@ async function start() {
   await buttons();
 }
 start();
+pkiStart();

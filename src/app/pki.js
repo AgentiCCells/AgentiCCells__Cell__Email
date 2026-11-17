@@ -126,3 +126,18 @@ export async function recall(id, name) {
 }
 export const forget = (name) => del('secret:' + name);
 export async function kept(name) { return !!(await get('secret:' + name)); }
+
+// A key-value store for vendored code that wants one (pki.sgit.ai's sso.js, which defaults to the
+// browser's plain web storage): held in memory, and kept at rest only sealed to the page's key,
+// under one name. flush() waits until the last change is kept.
+export async function sealedStore(id, name) {
+  const map = JSON.parse((await recall(id, name).catch(() => null)) || '{}');
+  let pending = Promise.resolve();
+  const save = () => { pending = pending.then(() => keep(id, name, JSON.stringify(map))).catch(() => {}); };
+  return {
+    getItem: (k) => (Object.prototype.hasOwnProperty.call(map, k) ? map[k] : null),
+    setItem: (k, v) => { map[k] = String(v); save(); },
+    removeItem: (k) => { delete map[k]; save(); },
+    flush: () => pending,
+  };
+}
