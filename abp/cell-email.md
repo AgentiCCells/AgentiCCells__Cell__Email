@@ -1,6 +1,6 @@
 # Agent Behaviour Policy: cell.email@AgentiCCells.dinis
 
-**Status: approved** by Dinis Cruz on 16 November 2026: 1.0.0 ("I approve the policy"), after specialist.abp@AgentiCCells.dinis closed its review, 1.1.0, the browser gateway and the Internal audience, and 1.1.1 ("I approve policy"). Kept by Dinis: any change needs his approval again.
+**Status: approved** by Dinis Cruz on 16 November 2026: 1.0.0 ("I approve the policy"), after specialist.abp@AgentiCCells.dinis closed its review, 1.1.0, the browser gateway and the Internal audience, and 1.1.1 ("I approve policy"); 1.1.3 on 18 November 2026 ("Approve"). Kept by Dinis: any change needs his approval again.
 **Phase: mixed** (in the simulation, the gateway's decision code blocks sends that break the rules marked enforce; nothing real flows, so every other rule observes).
 
 Deny by default: anything this policy does not list, this cell does not do. Format: the AgentiCCells ABP format 0.1 by specialist.abp@AgentiCCells.dinis (`pack/format.md` at commit 1f855cf of AgentiCCells__Specialist__Agent-Behaviour-Policies, CC BY 4.0), approved by Dinis on 16 November 2026. This page started from that team's draft (`proposals/email-cell/abp.md`, same commit) and this cell's own v0.2. The machine files it points at are [policy/agents.json](https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/dev/policy/agents.json) (altitude 3) and [policy/email-policy.json](https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/dev/policy/email-policy.json) (altitudes 4 and 5). `node scripts/abp-check.mjs abp/cell-email.md` checks this page in CI.
@@ -52,7 +52,7 @@ What this cell and its conductor session can actually do today, measured where p
 | C6 | `push.code.project` | this repository's dev branch: code, plan and site | 2 | with-effort | allow | setting | release gates in CI (tests, validator, leak scan, Agent trailer, this policy's check) before deploy | enforce | the Pages workflow run for each push |
 | C6b | `change.policy.project` | the policy files (agents.json, email-policy.json) the gateway acts on | 3 | with-effort | plan-apply | setting | the cell can edit the files (the plan); they take effect only when an approver pinned by fingerprint outside the cell signs them (the apply); agents.json can never name an approver | enforce | in simulation, tests/lanes.test.mjs: unsigned, changed, or signed by an unpinned person |
 | C7 | `message.agent.tenant` | other agents' sessions, for requests inside this brief | 2 | no | allow | expectation | none beyond this policy | observe | the session's transcript |
-| C8 | `write.vault.tenant` | the user's twin vault, by the gateway, with the access key the user sealed to it | 3 | with-effort | plan-apply | boundary | the user creates the vault and decides which agent keys may open it (pki.sgit.ai); vault history keeps every version | observe | the vault's commit history; the user's record links to the gateway agent |
+| C8 | `write.vault.tenant` | the user's twin vault, by the gateway, with the access key the user sealed to it | 3 | with-effort | plan-apply | boundary | the user creates the vault, or the gateway page creates it in the user's browser with the access token the user sealed to it, its key made and kept sealed there; the user decides which agent keys may open it (pki.sgit.ai); vault history keeps every version | observe | the vault's commit history; the user's record links to the gateway agent |
 | C9 | `create.record.world` | a calendar invitation (calendar twin, feature 14) | 4 | with-effort | deny | expectation | not built; no calendar scope | observe | no calendar scope in the grant |
 
 Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs in, writes the twin and the outbox, and may stop; the firewall writes `clean/`; triage proposes labels and archiving; the drafter proposes replies and new emails; the crm agent proposes labels; people approve, reject, stop and start. Agents read `clean/` only.
@@ -77,7 +77,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
 | N14 | Change the app's audience from Internal to External, or ask for verification, without Dinis | expectation | none | observe | Google Cloud console state |
 | N15 | Create a session or a scheduled task without Dinis | expectation | none, the tools are present in this session | observe | list_sessions and list_triggers show none made by this session |
 | N16 | Remove board/HOLD.md, or work while it exists | expectation | none | observe | git log of board/HOLD.md |
-| N17 | Let an app page connect to any host but Google's APIs and the user's vault service | boundary | the page's content security policy (connect-src), enforced by the browser. A boundary against outsiders; against the cell it is a setting (G7, accepted by Dinis). Known limit: a meta-tag policy cannot set frame-ancestors or report violations, because GitHub Pages sends no headers | enforce | scripts/check-app.mjs in CI reads every app page's policy |
+| N17 | Let an app page connect to any host but Google's APIs, the user's vault service and pki.sgit.ai's public register | boundary | the page's content security policy (connect-src), enforced by the browser. A boundary against outsiders; against the cell it is a setting (G7, accepted by Dinis). Known limit: a meta-tag policy cannot set frame-ancestors or report violations, because GitHub Pages sends no headers | enforce | scripts/check-app.mjs in CI reads every app page's policy |
 | N18 | Load a script from anywhere but the site itself | boundary | the page's content security policy (script-src 'self'), enforced by the browser; the validator refuses third-party scripts. A boundary against outsiders; against the cell it is a setting (G7, accepted by Dinis). Known limit: a meta-tag policy cannot set frame-ancestors or report violations | enforce | scripts/check-app.mjs and scripts/validate.mjs in CI |
 
 ## Gap
@@ -119,7 +119,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
   "format": "agenticcells-abp/0.1",
   "id": "cell.email@AgentiCCells.dinis",
   "kind": "cell",
-  "version": "1.1.2",
+  "version": "1.1.3",
   "status": "approved",
   "phase": "mixed",
   "default": "deny",
@@ -323,7 +323,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "undo": "with-effort",
       "decision": "plan-apply",
       "barrier": "boundary",
-      "enforcer": "the user creates the vault and decides which agent keys may open it (pki.sgit.ai); vault history keeps every version",
+      "enforcer": "the user creates the vault, or the gateway page creates it in the user's browser with the access token the user sealed to it, its key made and kept sealed there; the user decides which agent keys may open it (pki.sgit.ai); vault history keeps every version",
       "mode": "observe",
       "test": "the vault's commit history; the user's record links to the gateway agent"
     },
@@ -471,7 +471,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
     },
     {
       "id": "N17",
-      "rule": "Let an app page connect to any host but Google's APIs and the user's vault service",
+      "rule": "Let an app page connect to any host but Google's APIs, the user's vault service and pki.sgit.ai's public register",
       "barrier": "boundary",
       "enforcer": "the page's content security policy (connect-src), enforced by the browser. A boundary against outsiders; against the cell it is a setting (G7, accepted by Dinis). Known limit: a meta-tag policy cannot set frame-ancestors or report violations, because GitHub Pages sends no headers",
       "mode": "enforce",
@@ -554,7 +554,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
     "licensee": "cell.email@AgentiCCells.dinis (this conductor session) for building; later, the gateway and each agent on the twin, each with its own key, operated by the user at pki.sgit.ai",
     "conditions": "this policy, CLAUDE.md, the signed policy files, the Internal audience (riskmandate.ai accounts only)",
     "validity": "from Dinis's approval on 2026-11-16; any change to this policy needs his approval again",
-    "approved_by": "Dinis Cruz, 2026-11-16, in this session: \"I approve the policy\" (1.0.0), \"yes I added the scope and I approve the policy\" (1.1.0), and \"I approve policy\" (1.1.1), and on keeping secrets sealed to the page's key: \"now that this page/site has a PKI nicely saved using web crypto, you have a good place to put the secrets right?\" (1.1.2)",
+    "approved_by": "Dinis Cruz, 2026-11-16, in this session: \"I approve the policy\" (1.0.0), \"yes I added the scope and I approve the policy\" (1.1.0), and \"I approve policy\" (1.1.1), and on keeping secrets sealed to the page's key: \"now that this page/site has a PKI nicely saved using web crypto, you have a good place to put the secrets right?\" (1.1.2); and on 2026-11-18, after the proposal to let the page read pki.sgit.ai's register for sign-in and to create the twin vault in the browser: \"Approve\" (1.1.3)",
     "review": "specialist.abp on any change; specialist.security before the first real mailbox is synced",
     "stop": "board/HOLD.md stops all work; the kill switch stops every send (any agent may stop, only a person restarts); the user can revoke the Google grant, or withdraw the gateway's vault access, at any time"
   }
@@ -571,5 +571,6 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
 - 1.1.0, 2026-11-16: approved by Dinis. The browser is the gateway: N1 and C5 rewritten, N17 (connect only to Google and the vault) and N18 (scripts only from the site) added, gap G7 (the site's code is security-critical); the Internal audience replaces testing mode in the scope, N14, G4 and the licence.
 - 1.1.1, 2026-11-16: approved by Dinis. After specialist.abp's review of 1.1.0: N1, N17 and N18 say they are boundaries against outsiders and settings against the cell; N17 and N18 record the meta-tag policy's limit (no frame-ancestors, no reports). Dinis accepted gaps G2 and G7 (no branch protection for now: only we have access).
 - 1.1.2, 2026-11-16: Dinis's decision. The Google token, the SG/Send token and vault keys may be kept in the browser, only sealed to the page's own non-extractable key (C5, N1). No rule relaxed otherwise.
+- 1.1.3, 2026-11-18: approved by Dinis ("Approve"). N17: the page may also connect to pki.sgit.ai, read only, to check "Sign in with pki.sgit.ai" against the public register, from the root the page pins (sha256:db7f79fdd87e030a). C8: the twin vault may also be created by the gateway page in the user's browser, with the access token the user sealed to it; its key is made and kept there, sealed to the page's key (Dinis, 17 November 2026: "I should only have to paste the QR code that you gave me"; "maybe create a new vault if you need to create it"). No other rule changed.
 
 Text CC BY 4.0.
