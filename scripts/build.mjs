@@ -50,6 +50,7 @@ for (const f of walk('_site')) {
   const s = readFileSync(f, 'utf8');
   if (s.includes('__VERSION__')) writeFileSync(f, s.replaceAll('__VERSION__', version));
 }
-writeFileSync('_site/version.json', JSON.stringify({ version, commit: process.env.GITHUB_SHA || 'local', built: new Date().toISOString() }, null, 2) + '\n');
+// cell.email.b@AgentiCCells.dinis, 2026-11-21: version.json also names the repository and branch; /version.html shows it.
+writeFileSync('_site/version.json', JSON.stringify({ version, commit: process.env.GITHUB_SHA || 'local', built: new Date().toISOString(), branch: process.env.GITHUB_REF_NAME || 'local', repository: 'AgentiCCells/AgentiCCells__Cell__Email', site: 'https://email-cell.agenticcells.site' }, null, 2) + '\n');
 writeFileSync('_site/.nojekyll', '');
 console.log(`built _site/ (${version})`);

@@ -10,7 +10,11 @@ export const SCOPE = 'https://www.googleapis.com/auth/gmail.metadata';
 // Asked for only when the person presses "Allow sending" (Dinis, 21 November 2026: "make sure that
 // I can actually open the email and I can start to send from there").
 export const SEND_SCOPE = 'https://www.googleapis.com/auth/gmail.send';
-const ALLOWED = new Set([SCOPE, SEND_SCOPE]);
+// Asked for only when the person presses "Allow reading", for the mail client /app/mail.html (Dinis,
+// 21 November 2026: "a Web UI email client ... that does not use the vault store"). Without
+// gmail.metadata: a token that carries gmail.metadata is held to metadata even with gmail.readonly.
+export const READ_SCOPE = 'https://www.googleapis.com/auth/gmail.readonly';
+const ALLOWED = new Set([SCOPE, SEND_SCOPE, READ_SCOPE]);
 export const HOSTED_DOMAIN = 'riskmandate.ai';
 export const AUTH_ENDPOINT = 'https://accounts.google.com/o/oauth2/v2/auth';
 
@@ -20,12 +24,17 @@ export function newState(randomBytes) {
 
 // No forced consent screen: once access is granted, Google returns at once.
 // With { send: true } it asks for gmail.send as well, and Google shows the consent screen again.
-export function authUrl(state, { send = false } = {}) {
+// With { read: true } it asks for gmail.readonly and gmail.send (no gmail.metadata).
+export function scopesFor({ send = false, read = false } = {}) {
+  if (read) return `${READ_SCOPE} ${SEND_SCOPE}`;
+  return send ? `${SCOPE} ${SEND_SCOPE}` : SCOPE;
+}
+export function authUrl(state, opts = {}) {
   const q = new URLSearchParams({
     client_id: CLIENT_ID,
     redirect_uri: REDIRECT_URI,
     response_type: 'token',
-    scope: send ? `${SCOPE} ${SEND_SCOPE}` : SCOPE,
+    scope: scopesFor(opts),
     state,
     hd: HOSTED_DOMAIN,
     include_granted_scopes: 'false',
@@ -33,7 +42,7 @@ export function authUrl(state, { send = false } = {}) {
   return `${AUTH_ENDPOINT}?${q}`;
 }
 
-// Read Google's answer from the fragment. Returns { token, expiresIn, scope, canSend } or { error }.
+// Read Google's answer from the fragment. Returns { token, expiresIn, scope, canSend, canRead } or { error }.
 export function parseFragment(hash, expectedState) {
   const f = new URLSearchParams(String(hash || '').replace(/^#/, ''));
   if (!f.toString()) return { none: true };
@@ -43,6 +52,6 @@ export function parseFragment(hash, expectedState) {
   if (!token || f.get('token_type')?.toLowerCase() !== 'bearer') return { error: 'no access token in the answer' };
   const scope = f.get('scope') || '';
   const granted = scope.split(' ').filter(Boolean);
-  if (granted.some((s) => !ALLOWED.has(s))) return { error: `Google granted more than gmail.metadata and gmail.send (${scope}); the token was not used` };
-  return { token, expiresIn: Number(f.get('expires_in') || 0), scope, canSend: granted.includes(SEND_SCOPE) };
+  if (granted.some((s) => !ALLOWED.has(s))) return { error: `Google granted more than gmail.metadata, gmail.readonly and gmail.send (${scope}); the token was not used` };
+  return { token, expiresIn: Number(f.get('expires_in') || 0), scope, canSend: granted.includes(SEND_SCOPE), canRead: granted.includes(READ_SCOPE) && !granted.includes(SCOPE) };
 }

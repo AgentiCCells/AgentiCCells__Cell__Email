@@ -14,3 +14,11 @@ Waiting on Dinis:
 1. Try it: open the page, Connect, press Allow sending, paste the sealed QR code, Open vault, open one draft, and send it to yourself first.
 2. ABP 1.1.4 (proposed): C4 today names the full gateway check. Proposed wording for this first step: "until decide() runs in the page, a person's press of Approve and send on one email, after the page's checks in src/app/send.js, is the approval; nothing sends without it."
 3. The passkey round trip needs your passkey, which only your device holds: press "Sign in with pki.sgit.ai" on the page and say what it shows.
+
+Later the same day, Dinis: "can you add a Web UI email client (pure JS, HTML, CSS), that does not use the vault store? (for now) ... make it look as much possible with popular and effective web email clients"; the version number in the top menu, linked to a page showing version.json; a GitHub star link to the repository; and "ask the design agent to help out to make this look more professional and nice".
+
+Done: `/app/mail.html` (with `mailparse.js` and tests/mail.test.mjs), Allow reading on the gateway, `/version.html`, the version and GitHub links.
+
+Also proposed for ABP 1.1.4: "the person may read and send their own mail in their own browser through the mail client, with gmail.readonly and gmail.send; no agent sees it (N5 unchanged)."
+
+Next ask for Dinis: gmail.modify, so the client can mark read, archive, star and label.

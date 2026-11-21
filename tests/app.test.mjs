@@ -1,7 +1,7 @@
 // The browser gateway's sign-in functions (src/app/oauth.js), run in Node with made-up answers.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { authUrl, parseFragment, newState, SCOPE, SEND_SCOPE, REDIRECT_URI, CLIENT_ID } from '../src/app/oauth.js';
+import { authUrl, parseFragment, newState, SCOPE, SEND_SCOPE, READ_SCOPE, REDIRECT_URI, CLIENT_ID } from '../src/app/oauth.js';
 
 test('the sign-in URL asks Google for gmail.metadata only, for riskmandate.ai, back to the app page', () => {
   const u = new URL(authUrl('abc123'));
@@ -42,7 +42,7 @@ test('an answer with gmail.send says the page can send; without it, it cannot', 
 });
 
 test('an answer that grants any other scope is refused', () => {
-  assert.match(parseFragment(ok({ scope: `${SCOPE} https://www.googleapis.com/auth/gmail.modify` }), 's1').error, /more than gmail.metadata and gmail.send/);
+  assert.match(parseFragment(ok({ scope: `${SCOPE} https://www.googleapis.com/auth/gmail.modify` }), 's1').error, /more than gmail.metadata, gmail.readonly and gmail.send/);
   assert.match(parseFragment(ok({ scope: 'https://mail.google.com/' }), 's1').error, /more than/);
 });
 
@@ -50,4 +50,12 @@ test('an error from Google, an empty fragment, and a missing token', () => {
   assert.match(parseFragment('#error=access_denied&state=s1', 's1').error, /access_denied/);
   assert.equal(parseFragment('', 's1').none, true);
   assert.match(parseFragment('#token_type=Bearer&state=s1', 's1').error, /no access token/);
+});
+
+test('"Allow reading" asks for gmail.readonly and gmail.send, without gmail.metadata', () => {
+  const u = new URL(authUrl('abc123', { read: true }));
+  assert.deepEqual(u.searchParams.get('scope').split(' ').sort(), [READ_SCOPE, SEND_SCOPE].sort());
+  const r = parseFragment(ok({ scope: `${READ_SCOPE} ${SEND_SCOPE}` }), 's1');
+  assert.equal(r.canRead, true); assert.equal(r.canSend, true);
+  assert.equal(parseFragment(ok({ scope: `${SCOPE} ${READ_SCOPE}` }), 's1').canRead, false);
 });

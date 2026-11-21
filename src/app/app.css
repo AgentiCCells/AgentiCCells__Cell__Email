@@ -121,3 +121,6 @@ details.about p{max-width:48rem}
 #outbox-list .mail dt{color:var(--muted)}
 #outbox-list .mail dd{margin:0}
 .mail-text{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;margin:0 0 .6rem;padding:.6rem;background:var(--well);border-radius:4px;max-height:24rem;overflow:auto}
+a.button-link{display:inline-block;font-weight:600;font-size:.95rem;padding:.6rem 1.15rem;border-radius:8px;background:var(--accent);color:var(--on-accent);text-decoration:none}
+a.button-link[hidden]{display:none}
+.lede .version{font:600 .75rem ui-monospace,Menlo,Consolas,monospace;color:var(--muted);background:var(--accent-soft);border-radius:6px;padding:.15rem .45rem;text-decoration:none;margin-left:.5rem}

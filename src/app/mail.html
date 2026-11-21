@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self'; connect-src https://gmail.googleapis.com; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="mail.css?v=__VERSION__">
+<title>Mail · Email AgenticCell</title>
+<meta name="description" content="A mail client in the browser: reads and sends straight from Gmail with the person's own token, without the vault.">
+</head>
+<body>
+<header class="bar">
+  <button id="menu" class="icon" type="button" aria-label="Show folders" title="Folders">☰</button>
+  <a class="brand" href="connect.html" title="Back to the gateway"><img src="/assets/logo.svg" alt="" width="28" height="28"><span>Mail</span></a>
+  <form id="search-form" class="search" role="search">
+    <input id="search" type="search" placeholder="Search mail" aria-label="Search mail" autocomplete="off" spellcheck="false">
+  </form>
+  <span id="me" class="me"></span>
+  <a class="gh" href="https://github.com/AgentiCCells/AgentiCCells__Cell__Email" title="The code on GitHub (give it a star)" rel="noopener">★ GitHub</a>
+  <a id="version" class="version" href="../version.html" title="Version details">__VERSION__</a>
+</header>
+
+<div class="shell">
+  <nav id="side" class="side" aria-label="Folders">
+    <button id="compose" class="compose" type="button"><span aria-hidden="true">✎</span> Compose</button>
+    <ul id="folders" class="folders"></ul>
+    <p class="side-head">Labels</p>
+    <ul id="labels" class="folders"></ul>
+  </nav>
+
+  <section id="list-pane" class="list-pane" aria-label="Messages">
+    <div class="toolbar">
+      <button id="refresh" class="icon" type="button" title="Refresh (g then r)" aria-label="Refresh">⟳</button>
+      <span id="list-title" class="list-title">Inbox</span>
+      <span class="spacer"></span>
+      <span id="range" class="muted"></span>
+      <button id="prev" class="icon" type="button" aria-label="Newer" title="Newer" disabled>‹</button>
+      <button id="next" class="icon" type="button" aria-label="Older" title="Older" disabled>›</button>
+    </div>
+    <ul id="threads" class="threads" role="listbox" aria-label="Conversations"></ul>
+    <p id="list-status" class="status" role="status"></p>
+  </section>
+
+  <section id="read-pane" class="read-pane" aria-label="Conversation">
+    <div id="empty" class="empty"><p>Choose a conversation to read it.</p><p class="muted">Keys: j and k move, Enter opens, c writes, r replies, a replies to all, f forwards, / searches.</p></div>
+    <article id="thread" class="thread" hidden>
+      <div class="toolbar">
+        <button id="back" class="icon back" type="button" aria-label="Back to the list" title="Back">←</button>
+        <h1 id="thread-subject" class="thread-subject"></h1>
+      </div>
+      <div id="messages"></div>
+    </article>
+  </section>
+</div>
+
+<div id="gate" class="gate" hidden>
+  <div class="gate-box">
+    <h1>Mail needs reading access</h1>
+    <p id="gate-why">This browser holds no Google token that allows reading mail.</p>
+    <p>Open the gateway, Connect with Google, then press <strong>Allow reading</strong>. The token stays in this browser, sealed to the page's own key.</p>
+    <p><a class="primary" href="connect.html">Open the gateway</a></p>
+  </div>
+</div>
+
+<form id="composer" class="composer" hidden aria-label="New message">
+  <div class="composer-head"><span id="composer-title">New message</span><span class="spacer"></span>
+    <button id="composer-min" class="icon light" type="button" aria-label="Minimise" title="Minimise">–</button>
+    <button id="composer-close" class="icon light" type="button" aria-label="Discard" title="Discard">✕</button></div>
+  <div class="composer-body">
+    <label class="field"><span>To</span><input id="c-to" type="text" autocomplete="off" spellcheck="false"></label>
+    <label class="field"><span>Cc</span><input id="c-cc" type="text" autocomplete="off" spellcheck="false"></label>
+    <label class="field"><span>Subject</span><input id="c-subject" type="text" autocomplete="off"></label>
+    <textarea id="c-text" aria-label="Message" spellcheck="true"></textarea>
+    <div class="composer-foot"><button id="c-send" class="send" type="submit">Send</button><span id="c-status" class="muted" role="status"></span></div>
+  </div>
+</form>
+
+<div id="toast" class="toast" role="status" hidden></div>
+<script type="module" src="mail.js?v=__VERSION__"></script>
+</body>
+</html>

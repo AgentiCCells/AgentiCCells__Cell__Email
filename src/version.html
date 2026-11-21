@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+<title>Version · Email AgenticCell</title>
+<meta name="description" content="Which build of the Email AgenticCell site this is: its version, commit and build time, read from version.json.">
+<style>
+:root{--bg:#fbf7f0;--fg:#222;--muted:#666;--line:#ddd2c0;--box:#fff;--accent:#8a4b12}
+@media(prefers-color-scheme:dark){:root{--bg:#17140f;--fg:#eee;--muted:#aaa;--line:#3b342a;--box:#211d17;--accent:#e9a866}}
+*{box-sizing:border-box}
+body{margin:0;font:17px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--fg)}
+main{max-width:46rem;margin:0 auto;padding:2.5rem 1rem}
+a{color:var(--accent)}
+nav{font-size:.9rem;color:var(--muted)}
+h1{font-size:1.8rem;margin:.5rem 0 1rem}
+dl{display:grid;grid-template-columns:max-content 1fr;gap:.4rem 1.25rem;background:var(--box);border:1px solid var(--line);border-radius:10px;padding:1rem 1.25rem;margin:0}
+dt{color:var(--muted)}
+dd{margin:0;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.95rem;overflow-wrap:anywhere}
+pre{background:var(--box);border:1px solid var(--line);border-radius:10px;padding:1rem;overflow:auto;font-size:.85rem}
+</style>
+</head>
+<body>
+<main>
+<nav><a href="index.html">Email AgenticCell</a> / Version · <a href="version.html">__VERSION__</a> · <a href="https://github.com/AgentiCCells/AgentiCCells__Cell__Email" title="The code on GitHub (give it a star)">★ GitHub</a></nav>
+<h1>Version <span id="v">__VERSION__</span></h1>
+<dl id="details"><dt>Version</dt><dd>__VERSION__</dd></dl>
+<p>From <a href="version.json">version.json</a>, which the build writes on every release:</p>
+<pre id="raw">Loading...</pre>
+<p><a href="app/connect.html">The gateway</a> · <a href="app/mail.html">Mail</a> · <a href="flow.html">Approve and send</a> · <a href="https://github.com/AgentiCCells/AgentiCCells__Cell__Email/commits/dev">All commits on dev</a></p>
+</main>
+<script src="version.js?v=__VERSION__"></script>
+</body>
+</html>

@@ -64,7 +64,7 @@ export function rawMessage(m) {
   const lines = [`To: ${m.to.join(', ')}`];
   if (m.cc.length) lines.push(`Cc: ${m.cc.join(', ')}`);
   lines.push(`Subject: ${word(m.subject)}`);
-  if (m.inReplyTo) lines.push(`In-Reply-To: ${m.inReplyTo}`, `References: ${m.inReplyTo}`);
+  if (m.inReplyTo) lines.push(`In-Reply-To: ${m.inReplyTo}`, `References: ${m.references || m.inReplyTo}`);
   lines.push('MIME-Version: 1.0', 'Content-Type: text/plain; charset="UTF-8"', 'Content-Transfer-Encoding: base64', '');
   const body = b64(utf8(m.text.replace(/\r?\n/g, '\r\n'))).replace(/.{76}/g, '$&\r\n');
   const raw = lines.join('\r\n') + '\r\n' + body;
