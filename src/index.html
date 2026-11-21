@@ -25,17 +25,25 @@ a{color:var(--accent)}
 .cards b{display:block}
 ol.alt li{margin-bottom:.4rem}
 nav.links a{margin-right:1rem}
+a.chip{font:600 .8rem ui-monospace,Menlo,Consolas,monospace;color:var(--accent);background:rgba(138,75,18,.1);border-radius:6px;padding:.15rem .45rem;text-decoration:none}
+a.chip:hover{text-decoration:underline}
+.cta{display:flex;flex-wrap:wrap;gap:.75rem;margin:1.25rem 0}
+.cta a{display:inline-block;padding:.6rem 1.2rem;border-radius:10px;font-weight:600;text-decoration:none;border:1px solid var(--accent)}
+.cta a.go{background:var(--accent);color:#fff}
+@media(prefers-color-scheme:dark){.cta a.go{color:#1b1209}}
 footer{margin-top:3rem;border-top:1px solid var(--line);padding-top:1rem}
 </style>
 </head>
 <body>
 <main>
-<h1 style="display:flex;align-items:center;gap:.6rem"><img src="assets/logo.svg" alt="" width="56" height="56">Email AgenticCell <a href="version.html" title="Version details" style="font:600 .8rem ui-monospace,Menlo,Consolas,monospace;color:inherit;opacity:.65;background:rgba(127,127,127,.15);border-radius:6px;padding:.15rem .45rem;text-decoration:none">__VERSION__</a> <a href="https://github.com/AgentiCCells/AgentiCCells__Cell__Email" title="The code on GitHub (give it a star)" style="font:600 .8rem ui-monospace,Menlo,Consolas,monospace;color:inherit;opacity:.65;background:rgba(127,127,127,.15);border-radius:6px;padding:.15rem .45rem;text-decoration:none">★ GitHub</a></h1>
+<h1 style="display:flex;align-items:center;gap:.6rem"><img src="assets/logo.svg" alt="" width="56" height="56">Email AgenticCell <a class="chip" href="version.html" title="Version details">__VERSION__</a> <a class="chip" href="https://github.com/AgentiCCells/AgentiCCells__Cell__Email" title="The code on GitHub (give it a star)">★ GitHub</a></h1>
 <p class="lead">One gateway agent alone touches Gmail. People and agents work on a signed, encrypted twin of the mailbox, kept in an SGit vault.</p>
 
+<p class="cta"><a class="go" href="app/mail.html">Open Mail</a> <a href="app/connect.html">Open the gateway</a></p>
+
 <div class="status" role="note">
-<strong>Status: a plan, with the first parts built against a simulated mailbox.</strong>
-Built and tested (16 November 2026, 73 tests): the twin's schema, signed lane entries and their checks, the email policy checker, the inbound firewall and a first policy simulator. All of it runs on made-up messages only. Nothing touches a real mailbox yet: that needs a Google OAuth app in testing (<a href="plan/google-oauth.html">the values to configure</a>) and the user's own vault, created through pki.sgit.ai. See <a href="plan/needs.html">what each step needs</a>.
+<strong>Status, 21 November 2026: the browser gateway works on a real mailbox; the agents' side runs on made-up mail.</strong>
+In the person's own browser: connect Gmail (riskmandate.ai accounts only), sync headers and labels into their own vault, read and write mail in the mail client, and approve and send drafts from the outbox. The token never leaves that browser. No real email has been sent through it yet. The lanes, the policy checker, the firewall and the simulator are built and tested on made-up messages only. See <a href="flow.html">approve and send, step by step</a> and <a href="plan/needs.html">what each step needs</a>.
 </div>
 
 <nav class="links" aria-label="Pages">

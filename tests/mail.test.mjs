@@ -70,3 +70,10 @@ test('HTML to text for quoting, and list dates', () => {
   assert.equal(shortDate(Date.UTC(2026, 0, 3), now), '3 Jan');
   assert.equal(shortDate(Date.UTC(2025, 0, 3, 12), now), '03/01/2025');
 });
+
+test('yesterday says Yesterday; plain text follows the dark theme, HTML stays on paper', () => {
+  const now = Date.UTC(2026, 10, 21, 12);
+  assert.equal(shortDate(Date.UTC(2026, 10, 20, 12), now), 'Yesterday');
+  assert.match(frameDoc({ text: 'x' }, { dark: true }), /background:#1c1915/);
+  assert.doesNotMatch(frameDoc({ html: '<p>x</p>' }, { dark: true }), /background:#1c1915/);
+});

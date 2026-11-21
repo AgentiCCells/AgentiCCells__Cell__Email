@@ -16,7 +16,11 @@ const $ = (id) => document.getElementById(id);
 const el = (tag, props = {}, ...kids) => { const e = Object.assign(document.createElement(tag), props); e.append(...kids.filter((k) => k != null)); return e; };
 const API = 'https://gmail.googleapis.com/gmail/v1/users/me/';
 const PAGE = 50, PARALLEL = 10;
-const FOLDERS = [['INBOX', 'Inbox', '📥'], ['STARRED', 'Starred', '☆'], ['SENT', 'Sent', '➤'], ['DRAFT', 'Drafts', '📝'], ['', 'All mail', '✉'], ['SPAM', 'Spam', '⚠'], ['TRASH', 'Bin', '🗑']];
+// Icons from the sprite in mail.html (design round 1, design.b.rounds@SovereignWebsite.dinis, 21 November 2026).
+const NS = 'http://www.w3.org/2000/svg';
+const icon = (name, cls = 'i') => { const s = document.createElementNS(NS, 'svg'); s.setAttribute('class', cls); s.setAttribute('aria-hidden', 'true'); const u = document.createElementNS(NS, 'use'); u.setAttribute('href', '#i-' + name); s.append(u); return s; };
+const FOLDERS = [['INBOX', 'Inbox', 'inbox'], ['STARRED', 'Starred', 'star'], ['SENT', 'Sent', 'sent'], ['DRAFT', 'Drafts', 'draft'], ['', 'All mail', 'all'], ['SPAM', 'Spam', 'spam'], ['TRASH', 'Bin', 'bin']];
+const iconOf = (label) => (FOLDERS.find((f) => f[0] === label) || [0, 0, 'inbox'])[2];
 
 let token = '', canSend = false, me = '';
 let view = { label: 'INBOX', q: '', title: 'Inbox', pages: [''], page: 0 };
@@ -45,8 +49,8 @@ function gate(why) { $('gate-why').textContent = why; $('gate').hidden = false; 
 function toast(text, ms = 4000) { const t = $('toast'); t.textContent = text; t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true; }, ms); }
 
 // ------------------------------------------------------------ folders and labels
-function folderButton(id, name, icon, extra) {
-  const b = el('button', { type: 'button' }, el('span', { textContent: icon, ariaHidden: 'true' }), el('span', { textContent: name }), extra);
+function folderButton(id, name, iconName, extra) {
+  const b = el('button', { type: 'button' }, iconName ? icon(iconName) : el('span', { className: 'dot' }), el('span', { textContent: name }), extra);
   b.dataset.label = id;
   b.addEventListener('click', () => { document.body.classList.remove('side-open'); go({ label: id, q: '', title: name }); });
   return el('li', {}, b);
@@ -56,8 +60,9 @@ async function loadFolders() {
   const { labels = [] } = await api('labels');
   const user = labels.filter((l) => l.type === 'user').sort((a, b) => a.name.localeCompare(b.name));
   $('labels').replaceChildren(...user.map((l) => {
-    const dot = el('span', { className: 'dot' }); if (l.color?.backgroundColor) dot.style.background = l.color.backgroundColor;
-    const li = folderButton(l.id, l.name, '', null); li.firstChild.firstChild.replaceWith(dot); return li;
+    const li = folderButton(l.id, l.name, '', null);
+    if (l.color?.backgroundColor) li.querySelector('.dot').style.background = l.color.backgroundColor;
+    return li;
   }));
   api('labels/INBOX').then((l) => { if (l.messagesUnread) $('inbox-count').textContent = l.messagesUnread.toLocaleString('en-GB'); }).catch(() => {});
 }
@@ -67,7 +72,9 @@ function markFolder() { for (const b of document.querySelectorAll('.folders butt
 function go(v) { view = { ...view, ...v, pages: [''], page: 0 }; markFolder(); loadList(); }
 async function loadList() {
   $('list-title').textContent = view.q ? `Search: ${view.q}` : view.title;
-  $('list-status').textContent = 'Loading...'; $('threads').replaceChildren(); rows = []; focus = -1;
+  rows = []; focus = -1; status('');
+  $('threads').replaceChildren(...Array.from({ length: 8 }, () => el('li', { className: 'skel', ariaHidden: 'true' }, el('span'), el('span'), el('span'))));
+  $('threads').setAttribute('aria-busy', 'true');
   $('prev').disabled = $('next').disabled = true;
   try {
     const q = new URLSearchParams({ maxResults: String(PAGE) });
@@ -81,12 +88,28 @@ async function loadList() {
     const meta = 'format=metadata&metadataHeaders=From&metadataHeaders=To&metadataHeaders=Subject&metadataHeaders=Date';
     const threads = await pool(list, (t) => api(`threads/${t.id}?${meta}`));
     rows = threads.filter(Boolean).map(rowOf);
-    $('threads').replaceChildren(...rows.map(rowEl));
+    $('threads').replaceChildren(...rows.map(rowEl)); $('threads').removeAttribute('aria-busy');
     const start = view.page * PAGE;
     $('range').textContent = rows.length ? `${start + 1}–${start + rows.length}` : '';
     $('prev').disabled = view.page === 0; $('next').disabled = !view.pages[view.page + 1];
-    $('list-status').textContent = rows.length ? '' : (view.q ? 'No conversations match your search.' : 'Nothing here.');
-  } catch (e) { $('list-status').textContent = `Could not load: ${e.message}.`; }
+    $('prev').hidden = $('next').hidden = view.page === 0 && !view.pages[1];
+    if (!rows.length) {
+      if (view.q) status(`No conversations match “${view.q}”.`, 'search', 'Clear search', () => { $('search').value = ''; go({ q: '' }); });
+      else status(`No conversations in ${view.title}.`, iconOf(view.label));
+    }
+  } catch (e) {
+    $('threads').replaceChildren(); $('threads').removeAttribute('aria-busy');
+    status(`Could not load the conversations: ${e.message}.`, 'refresh', 'Try again', () => loadList());
+  }
+}
+// The list pane's empty and error block: the folder's icon, words that name it, and one action.
+function status(text, iconName, action, fn) {
+  const box = $('list-status');
+  if (!text) { box.replaceChildren(); box.className = 'status'; return; }
+  box.className = 'status big';
+  const kids = [icon(iconName || 'inbox'), el('p', { textContent: text })];
+  if (action) { const b = el('button', { type: 'button', className: 'textbtn', textContent: action }); b.addEventListener('click', fn); kids.push(b); }
+  box.replaceChildren(...kids);
 }
 function rowOf(t) {
   const ms = t.messages || [], last = ms[ms.length - 1] || {};
@@ -98,30 +121,33 @@ function rowOf(t) {
     unread: ms.some((m) => (m.labelIds || []).includes('UNREAD')), clip: ms.some((m) => /multipart\/mixed/i.test(m.payload?.mimeType || '')) };
 }
 function decodeEntities(s) { const t = document.createElement('textarea'); t.innerHTML = s; return t.value; }
+// Each row is a real button (Tab and Enter work; design round 1, item 10); j and k move the focus.
 function rowEl(r, i) {
-  const li = el('li', { className: r.unread ? 'unread' : '', role: 'option', tabIndex: -1 },
+  const b = el('button', { type: 'button', className: 'row' },
     el('span', { className: 'from' }, r.from, r.count > 1 ? el('span', { className: 'n', textContent: ` ${r.count}` }) : null),
     el('span', { className: 'date', textContent: shortDate(r.date) }),
-    el('span', { className: 'subj' }, el('b', { textContent: r.subject }), ` – ${r.snippet}`, r.clip ? el('span', { className: 'clip', textContent: '📎', title: 'Has attachments' }) : null));
-  li.setAttribute('aria-selected', String(r.id === openId));
-  li.addEventListener('click', () => { setFocus(i); openThread(r.id); });
-  return li;
+    el('span', { className: 'subj' }, el('b', { textContent: r.subject }), r.clip ? icon('clip', 'i i-s') : null),
+    el('span', { className: 'snip', textContent: r.snippet }));
+  if (r.clip) b.title = 'Has attachments';
+  b.setAttribute('aria-current', String(r.id === openId));
+  b.addEventListener('click', () => { focus = i; openThread(r.id); });
+  b.addEventListener('focus', () => { focus = i; });
+  return el('li', { className: r.unread ? 'unread' : '' }, b);
 }
 function setFocus(i) {
-  const lis = $('threads').children; if (!lis.length) return;
-  focus = Math.max(0, Math.min(lis.length - 1, i));
-  for (const [k, li] of [...lis].entries()) li.classList.toggle('focus', k === focus);
-  lis[focus].scrollIntoView({ block: 'nearest' });
+  const bs = $('threads').querySelectorAll('.row'); if (!bs.length) return;
+  focus = Math.max(0, Math.min(bs.length - 1, i));
+  bs[focus].focus(); bs[focus].scrollIntoView({ block: 'nearest' });
 }
 
 // ------------------------------------------------------------ a conversation
-const COLOURS = ['#1a73e8', '#d93025', '#188038', '#e37400', '#9334e6', '#c5221f', '#007b83', '#b06000'];
+const COLOURS = ['#8a4b12', '#2f6b2a', '#3b5b8c', '#7a3e6b', '#a3263a', '#4f5d2f', '#6b4f2a', '#2d6a6a']; // 4.5:1 or more with white
 function avatar(name) { let h = 0; for (const c of name) h = (h * 31 + c.charCodeAt(0)) >>> 0; return el('span', { className: 'avatar', textContent: (name[0] || '?').toUpperCase(), style: `background:${COLOURS[h % COLOURS.length]}` }); }
 
 let current = null;
 async function openThread(id) {
-  openId = id; for (const [k, li] of [...$('threads').children].entries()) li.setAttribute('aria-selected', String(rows[k]?.id === id));
-  document.body.classList.add('reading');
+  openId = id; for (const [k, b] of [...$('threads').querySelectorAll('.row')].entries()) b.setAttribute('aria-current', String(rows[k]?.id === id));
+  if (!document.body.classList.contains('reading')) { document.body.classList.add('reading'); history.pushState({ t: id }, ''); }
   $('empty').hidden = true; $('thread').hidden = false; $('messages').replaceChildren(el('p', { className: 'status', textContent: 'Opening...' }));
   try {
     const t = await api(`threads/${id}?format=full`);
@@ -131,19 +157,21 @@ async function openThread(id) {
     $('thread-subject').textContent = header(ms[0], 'Subject') || '(no subject)';
     $('messages').replaceChildren(...ms.map((m, i) => messageEl(m, i === ms.length - 1 || (m.labelIds || []).includes('UNREAD'))));
     $('messages').append(el('div', { className: 'actions' },
-      pill('Reply', () => compose(respond('reply', ms[ms.length - 1], me), 'Reply')),
-      pill('Reply all', () => compose(respond('replyAll', ms[ms.length - 1], me), 'Reply all')),
-      pill('Forward', () => compose(respond('forward', ms[ms.length - 1], me), 'Forward'))),
-      el('p', { className: 'note', textContent: 'Remote images are blocked. Opening a message here does not mark it read: this page has read-only access.' }));
+      pill('reply', 'Reply', () => answer('reply')), pill('replyall', 'Reply all', () => answer('replyAll')), pill('forward', 'Forward', () => answer('forward'))));
   } catch (e) { $('messages').replaceChildren(el('p', { className: 'status', textContent: `Could not open it: ${e.message}.` })); }
 }
-const pill = (text, fn) => { const b = el('button', { type: 'button', className: 'pill', textContent: text }); b.addEventListener('click', fn); return b; };
+const pill = (iconName, text, fn) => { const b = el('button', { type: 'button', className: 'pill' }, icon(iconName, 'i i-s'), text); b.addEventListener('click', fn); return b; };
+const TITLES = { reply: 'Reply', replyAll: 'Reply all', forward: 'Forward' };
+function answer(kind) { const ms = current?.messages || []; if (ms.length) compose(respond(kind, ms[ms.length - 1], me), TITLES[kind]); }
+$('t-reply').addEventListener('click', () => answer('reply'));
+$('t-replyall').addEventListener('click', () => answer('replyAll'));
+$('t-forward').addEventListener('click', () => answer('forward'));
 
 function messageEl(m, open) {
   const from = header(m, 'From'), a = parseAddress(from), name = a.name || a.address;
   const to = [header(m, 'To'), header(m, 'Cc')].filter(Boolean).join(', ');
   const head = el('div', { className: 'msg-head' }, avatar(name),
-    el('div', { className: 'who' }, el('b', { textContent: name }), a.name ? el('span', { className: 'addr', textContent: ` <${a.address}>` }) : null,
+    el('div', { className: 'who' }, el('b', { textContent: name, title: a.address }), a.name ? el('span', { className: 'addr', textContent: ` <${a.address}>` }) : null,
       el('div', { className: 'to', textContent: `to ${splitAddresses(to).map((x) => (parseAddress(x).address.toLowerCase() === me.toLowerCase() ? 'me' : displayName(x))).join(', ')}` }),
       el('div', { className: 'snippet', textContent: decodeEntities(m.snippet || '') })),
     el('span', { className: 'when', textContent: longDate(m.internalDate), title: header(m, 'Date') }));
@@ -155,7 +183,9 @@ function messageEl(m, open) {
     const parts = partsOf(m);
     const frame = el('iframe', { title: 'Message text', loading: 'lazy' });
     frame.setAttribute('sandbox', 'allow-same-origin allow-popups allow-popups-to-escape-sandbox'); // no scripts
-    frame.srcdoc = frameDoc(parts);
+    const dark = matchMedia('(prefers-color-scheme: dark)').matches;
+    if (!parts.html) frame.classList.add('plain');
+    frame.srcdoc = frameDoc(parts, { dark });
     const fit = () => { try { frame.style.height = (frame.contentDocument.documentElement.scrollHeight + 8) + 'px'; } catch { frame.style.height = '24rem'; } };
     frame.addEventListener('load', () => { fit(); setTimeout(fit, 300); });
     body.append(frame);
@@ -167,7 +197,7 @@ function messageEl(m, open) {
   return box;
 }
 function attachmentEl(msgId, x) {
-  const b = el('button', { type: 'button', className: 'att', title: `Download ${x.name}` }, el('b', { textContent: `📎 ${x.name}` }), el('span', { textContent: `${size(x.size)} · ${x.mimeType}` }));
+  const b = el('button', { type: 'button', className: 'att', title: `Download ${x.name}` }, icon('clip'), el('span', {}, el('b', { textContent: x.name }), el('small', { textContent: `${size(x.size)} · ${x.mimeType}` })));
   b.addEventListener('click', async () => {
     b.disabled = true;
     try {
@@ -200,6 +230,8 @@ function closeComposer() {
 }
 $('compose').addEventListener('click', () => compose());
 $('composer-close').addEventListener('click', (e) => { e.stopPropagation(); closeComposer(); });
+$('composer-back').addEventListener('click', (e) => { e.stopPropagation(); closeComposer(); });
+$('c-discard').addEventListener('click', () => closeComposer());
 $('composer-min').addEventListener('click', (e) => { e.stopPropagation(); $('composer').classList.toggle('min'); });
 document.querySelector('.composer-head').addEventListener('click', () => $('composer').classList.remove('min'));
 $('composer').addEventListener('submit', async (e) => {
@@ -221,8 +253,12 @@ $('search-form').addEventListener('submit', (e) => { e.preventDefault(); const q
 $('refresh').addEventListener('click', () => loadList());
 $('prev').addEventListener('click', () => { if (view.page > 0) { view.page--; loadList(); } });
 $('next').addEventListener('click', () => { if (view.pages[view.page + 1]) { view.page++; loadList(); } });
-$('back').addEventListener('click', () => { document.body.classList.remove('reading'); });
+// Back (the arrow, u, Esc, or the phone's own back gesture) closes the conversation.
+function closeReading() { if (document.body.classList.contains('reading')) history.back(); }
+window.addEventListener('popstate', () => { document.body.classList.remove('reading'); const b = $('threads').querySelectorAll('.row')[focus]; if (b) b.focus(); });
+$('back').addEventListener('click', closeReading);
 $('menu').addEventListener('click', () => document.body.classList.toggle('side-open'));
+$('scrim').addEventListener('click', () => document.body.classList.remove('side-open'));
 let lastKey = '';
 document.addEventListener('keydown', (e) => {
   if (e.target.closest('input,textarea,[contenteditable]') || e.metaKey || e.ctrlKey || e.altKey) { if (e.key === 'Escape') e.target.blur(); return; }
@@ -234,7 +270,7 @@ document.addEventListener('keydown', (e) => {
   if (k === 'j') setFocus(focus + 1);
   else if (k === 'k') setFocus(focus - 1);
   else if ((k === 'Enter' || k === 'o') && focus >= 0) openThread(rows[focus].id);
-  else if (k === 'u' || k === 'Escape') document.body.classList.remove('reading');
+  else if (k === 'u' || k === 'Escape') { if ($('composer').hidden) closeReading(); }
   else if (k === 'c') { e.preventDefault(); compose(); }
   else if (k === '/') { e.preventDefault(); $('search').focus(); }
   else if (last && k === 'r') { e.preventDefault(); compose(respond('reply', last, me), 'Reply'); }
@@ -249,7 +285,7 @@ async function start() {
   if (!g || Date.now() >= g.expires_at - 60000) return gate(g ? 'The Google token has expired (they last an hour).' : 'This browser holds no Google token yet.');
   if (!g.can_read) return gate('The Google token here allows headers only, not reading mail.');
   token = g.token; canSend = !!g.can_send;
-  try { const p = await api('profile'); me = p.emailAddress; $('me').textContent = me; } catch (e) { return; }
+  try { const p = await api('profile'); me = p.emailAddress; $('me').textContent = `Signed in as ${me}`; $('me-initial').textContent = (me[0] || '?').toUpperCase(); } catch (e) { return; }
   await loadFolders().catch((e) => toast(`Could not read labels: ${e.message}.`));
   go({ label: 'INBOX', q: '', title: 'Inbox' });
 }

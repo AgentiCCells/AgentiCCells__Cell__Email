@@ -67,6 +67,7 @@ export const displayName = (s) => { const a = parseAddress(s); return a.name || 
 export function shortDate(ms, now = Date.now()) {
   const d = new Date(Number(ms)), n = new Date(now);
   if (d.toDateString() === n.toDateString()) return d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+  const y = new Date(now - 864e5); if (d.toDateString() === y.toDateString()) return 'Yesterday';
   if (d.getFullYear() === n.getFullYear()) return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
   return d.toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric' });
 }
@@ -111,8 +112,10 @@ export function respond(kind, msg, me) {
 // The HTML shown in the sandboxed frame: the email's own HTML (or its text), with links opening
 // in a new tab. The frame has no scripts and no same-origin access; the page's policy, which the
 // frame inherits, blocks every remote image, font and request.
-export function frameDoc(parts) {
+// { dark }: plain-text mail follows the dark theme; HTML mail stays on paper, never inverted.
+export function frameDoc(parts, { dark = false } = {}) {
   const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   const content = parts.html || `<pre style="white-space:pre-wrap;font:inherit;margin:0">${esc(parts.text || '')}</pre>`;
-  return `<!doctype html><html><head><meta charset="utf-8"><base target="_blank"><style>body{margin:0;padding:4px 2px;font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;color:#202124;overflow-wrap:anywhere}img{max-width:100%;height:auto}img[src^="http"],img[src^="//"]{display:none}blockquote{margin:0 0 0 .8ex;border-left:1px solid #ccc;padding-left:1ex}</style></head><body>${content}</body></html>`;
+  const theme = !parts.html && dark ? 'body{background:#1c1915;color:#ece6dc}a{color:#e9a866}' : '';
+  return `<!doctype html><html><head><meta charset="utf-8"><base target="_blank"><style>body{margin:0;padding:16px 20px;font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;color:#202124;overflow-wrap:anywhere}img{max-width:100%;height:auto}img[src^="http"],img[src^="//"]{display:none}blockquote{margin:0 0 0 .8ex;border-left:1px solid #ccc;padding-left:1ex}${theme}</style></head><body>${content}</body></html>`;
 }
