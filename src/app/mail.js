@@ -186,7 +186,7 @@ function messageEl(m, open) {
     const dark = matchMedia('(prefers-color-scheme: dark)').matches;
     if (!parts.html) frame.classList.add('plain');
     frame.srcdoc = frameDoc(parts, { dark });
-    const fit = () => { try { frame.style.height = (frame.contentDocument.documentElement.scrollHeight + 8) + 'px'; } catch { frame.style.height = '24rem'; } };
+    const fit = () => { try { frame.style.height = (frame.contentDocument.documentElement.scrollHeight + 2) + 'px'; } catch { frame.style.height = '24rem'; } };
     frame.addEventListener('load', () => { fit(); setTimeout(fit, 300); });
     body.append(frame);
     const atts = parts.attachments.filter((x) => !x.inline || !parts.html);

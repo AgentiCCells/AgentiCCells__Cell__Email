@@ -77,3 +77,9 @@ test('yesterday says Yesterday; plain text follows the dark theme, HTML stays on
   assert.match(frameDoc({ text: 'x' }, { dark: true }), /background:#1c1915/);
   assert.doesNotMatch(frameDoc({ html: '<p>x</p>' }, { dark: true }), /background:#1c1915/);
 });
+
+test('the frame paints its own backdrop: paper for HTML, the theme for plain text in dark', () => {
+  assert.match(frameDoc({ html: '<p>x</p>' }, { dark: true }), /html\{background:#f4efe6\}/);
+  assert.match(frameDoc({ html: '<p>x</p>' }), /html\{background:#fffdf9\}/);
+  assert.match(frameDoc({ text: 'x' }, { dark: true }), /html,body\{background:#1c1915/);
+});

@@ -116,6 +116,7 @@ export function respond(kind, msg, me) {
 export function frameDoc(parts, { dark = false } = {}) {
   const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
   const content = parts.html || `<pre style="white-space:pre-wrap;font:inherit;margin:0">${esc(parts.text || '')}</pre>`;
-  const theme = !parts.html && dark ? 'body{background:#1c1915;color:#ece6dc}a{color:#e9a866}' : '';
+  // The frame's own backdrop, or the browser paints it white under the page (design check, 21 November 2026).
+  const theme = !parts.html && dark ? 'html,body{background:#1c1915;color:#ece6dc}a{color:#e9a866}' : `html{background:${dark ? '#f4efe6' : '#fffdf9'}}`;
   return `<!doctype html><html><head><meta charset="utf-8"><base target="_blank"><style>body{margin:0;padding:16px 20px;font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;color:#202124;overflow-wrap:anywhere}img{max-width:100%;height:auto}img[src^="http"],img[src^="//"]{display:none}blockquote{margin:0 0 0 .8ex;border-left:1px solid #ccc;padding-left:1ex}${theme}</style></head><body>${content}</body></html>`;
 }
