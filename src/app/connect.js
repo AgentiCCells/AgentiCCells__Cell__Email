@@ -280,6 +280,7 @@ async function listIds() {
   return ids;
 }
 
+const PARALLEL = 10;
 async function getMetadata(ids, onEach) {
   const q = 'format=metadata&' + HEADERS.map((h) => `metadataHeaders=${encodeURIComponent(h)}`).join('&');
   const out = new Array(ids.length); let next = 0, done = 0;
@@ -293,11 +294,14 @@ async function getMetadata(ids, onEach) {
       onEach(++done);
     }
   }
-  await Promise.all(Array.from({ length: 5 }, worker));
+  // 10 at a time (Dinis, 21 November 2026: "can this sync happen a number of parallel threads?").
+  // Gmail allows a user 250 quota units a second and a metadata read costs 5, so about 50 reads a
+  // second; 10 in flight stays well inside that, and a 429 backs off and retries above.
+  await Promise.all(Array.from({ length: PARALLEL }, worker));
   return out;
 }
 
-const BATCH = 500; // newest first; each press adds up to this many the twin does not hold yet
+const BATCH = 1000; // newest first; each press adds up to this many the twin does not hold yet
 $('sync').addEventListener('click', async () => {
   if (!twin || !token) return;
   $('sync').disabled = true;
