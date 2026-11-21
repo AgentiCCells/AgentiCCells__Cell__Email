@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+<title>Approve and send · Email AgenticCell</title>
+<meta name="description" content="How an email goes from an agent's draft to Dinis's Gmail Sent folder: the sequence of events, what the page checks, and what it looks like.">
+<style>
+:root{--bg:#fbf7f0;--fg:#222;--muted:#666;--line:#ddd2c0;--box:#fff;--accent:#8a4b12;--done:#4d8a3c;--new:#b2475a;--half:#c0742c;--life:#cbbfa9}
+@media(prefers-color-scheme:dark){:root{--bg:#17140f;--fg:#eee;--muted:#aaa;--line:#3b342a;--box:#211d17;--accent:#e9a866;--done:#7cbf69;--new:#e07a8c;--half:#e19a55;--life:#4a4134}}
+*{box-sizing:border-box}
+body{margin:0;font:17px/1.6 system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--fg)}
+main{max-width:62rem;margin:0 auto;padding:2.5rem 1rem}
+h1{font-size:1.9rem;line-height:1.2;margin-bottom:.3rem}
+h2{font-size:1.3rem;margin-top:2.4rem;border-bottom:1px solid var(--line);padding-bottom:.3rem}
+a{color:var(--accent)}
+.lead{font-size:1.1rem}
+nav.crumbs{font-size:.9rem;color:var(--muted)}
+.fig{overflow-x:auto;background:var(--box);border:1px solid var(--line);border-radius:8px;padding:.6rem;margin:1rem 0}
+.fig svg{display:block;width:100%;min-width:820px;height:auto}
+svg text{fill:var(--fg);font:13px system-ui,-apple-system,"Segoe UI",sans-serif;paint-order:stroke;stroke:var(--box);stroke-width:4px;stroke-linejoin:round}
+svg .t{font-weight:700;font-size:15px}
+svg .s{font-size:11px;fill:var(--muted)}
+svg .actor{fill:var(--bg);stroke:var(--line);stroke-width:1.5}
+svg .life{stroke:var(--life);stroke-dasharray:4 5}
+svg .msg{stroke-width:1.8;fill:none}
+svg .msg.done{stroke:var(--done)} svg .msg.new{stroke:var(--new)} svg .msg.half{stroke:var(--half)}
+svg .lbl.new{fill:var(--new);font-weight:600} svg .lbl.half{fill:var(--half)}
+svg .head{fill:var(--fg)}
+.key{display:flex;flex-wrap:wrap;gap:.4rem 1.4rem;font-size:.95rem;margin:.4rem 0}
+.key span::before{content:"";display:inline-block;width:1.6rem;height:3px;vertical-align:middle;margin-right:.4rem}
+.k-done::before{background:var(--done)} .k-half::before{background:var(--half)} .k-new::before{background:var(--new)}
+figure{margin:1.2rem 0}
+figure img{display:block;max-width:100%;height:auto;border:1px solid var(--line);border-radius:8px}
+figcaption{font-size:.92rem;color:var(--muted);margin-top:.4rem}
+.shots{display:grid;grid-template-columns:2fr 1fr;gap:1rem;align-items:start}
+@media(max-width:700px){.shots{grid-template-columns:1fr}}
+ol li,ul li{margin:.25rem 0}
+</style>
+</head>
+<body>
+<main>
+<nav class="crumbs"><a href="index.html">Email AgenticCell</a> / Approve and send</nav>
+<h1>Approve and send</h1>
+<p class="lead">How an email goes from an agent's draft to your Gmail Sent folder. The agent drafts; you open the email in the page, read exactly what will go, and press Approve and send. The Google token never leaves your browser.</p>
+<p>Asked for by Dinis Cruz on 21 November 2026: "the main thing I want to do is to make sure that I can actually open the email and I can start to send from there". Written by cell.email.b@AgentiCCells.dinis.</p>
+
+<h2>The sequence of events</h2>
+<div class="key"><span class="k-done">built and used</span><span class="k-half">built, not yet run end to end</span><span class="k-new">new on 21 November 2026, not yet run on a real mailbox</span></div>
+<div class="fig">
+<svg viewBox="0 0 1000 856" role="img" aria-labelledby="seq-t seq-d" xmlns="http://www.w3.org/2000/svg">
+<title id="seq-t">Approve and send: the sequence of events</title>
+<desc id="seq-d">Six lanes: Dinis, the page, Google, pki.sgit.ai, the vault service and the agent. Sixteen steps from opening the page to a sent email recorded in the outbox.</desc>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0L10,5L0,10z" class="head"/></marker></defs>
+<rect x="8" y="10" width="144" height="50" rx="8" class="actor a-p"/><text x="80" y="31" text-anchor="middle" class="t">Dinis</text><text x="80" y="49" text-anchor="middle" class="s">in his browser</text>
+<line x1="80" y1="60" x2="80" y2="846" class="life"/>
+<rect x="178" y="10" width="144" height="50" rx="8" class="actor a-page"/><text x="250" y="31" text-anchor="middle" class="t">The page</text><text x="250" y="49" text-anchor="middle" class="s">email-cell.agenticcells.site</text>
+<line x1="250" y1="60" x2="250" y2="846" class="life"/>
+<rect x="348" y="10" width="144" height="50" rx="8" class="actor a-g"/><text x="420" y="31" text-anchor="middle" class="t">Google</text><text x="420" y="49" text-anchor="middle" class="s">sign-in and Gmail</text>
+<line x1="420" y1="60" x2="420" y2="846" class="life"/>
+<rect x="518" y="10" width="144" height="50" rx="8" class="actor a-pki"/><text x="590" y="31" text-anchor="middle" class="t">pki.sgit.ai</text><text x="590" y="49" text-anchor="middle" class="s">passkey and register</text>
+<line x1="590" y1="60" x2="590" y2="846" class="life"/>
+<rect x="688" y="10" width="144" height="50" rx="8" class="actor a-v"/><text x="760" y="31" text-anchor="middle" class="t">Vault service</text><text x="760" y="49" text-anchor="middle" class="s">ciphertext only</text>
+<line x1="760" y1="60" x2="760" y2="846" class="life"/>
+<rect x="848" y="10" width="144" height="50" rx="8" class="actor a-a"/><text x="920" y="31" text-anchor="middle" class="t">The agent</text><text x="920" y="49" text-anchor="middle" class="s">drafts the emails</text>
+<line x1="920" y1="60" x2="920" y2="846" class="life"/>
+<line x1="84" y1="110" x2="244" y2="110" class="msg done" marker-end="url(#ah)"/>
+<text x="88" y="103" class="lbl done">1. Opens the page</text>
+<path d="M250,148 h34 v16 h-32" class="msg done" marker-end="url(#ah)"/>
+<text x="292" y="160" class="lbl done">2. Makes its own key pair (cannot be exported)</text>
+<line x1="254" y1="202" x2="414" y2="202" class="msg done" marker-end="url(#ah)"/>
+<text x="258" y="195" class="lbl done">3. Connect: gmail.metadata</text>
+<line x1="416" y1="248" x2="256" y2="248" class="msg done" marker-end="url(#ah)"/>
+<text x="258" y="241" class="lbl done">4. Token in the URL fragment, kept sealed in the browser</text>
+<line x1="254" y1="294" x2="584" y2="294" class="msg half" marker-end="url(#ah)"/>
+<text x="258" y="287" class="lbl half">5. Sign in with pki.sgit.ai (passkey)</text>
+<line x1="586" y1="340" x2="256" y2="340" class="msg half" marker-end="url(#ah)"/>
+<text x="258" y="333" class="lbl half">6. Delegation, checked against the register</text>
+<line x1="84" y1="386" x2="914" y2="386" class="msg done" marker-end="url(#ah)"/>
+<text x="88" y="379" class="lbl done">7. Gives the page's QR code (public key) to the agent</text>
+<line x1="916" y1="432" x2="766" y2="432" class="msg done" marker-end="url(#ah)"/>
+<text x="768" y="425" class="lbl done">8. Drafts emails into the outbox vault</text>
+<line x1="916" y1="478" x2="86" y2="478" class="msg done" marker-end="url(#ah)"/>
+<text x="88" y="471" class="lbl done">9. Sealed QR code: vault keys and access token</text>
+<line x1="84" y1="524" x2="244" y2="524" class="msg done" marker-end="url(#ah)"/>
+<text x="88" y="517" class="lbl done">10. Pastes it; the page opens the vaults</text>
+<line x1="254" y1="570" x2="754" y2="570" class="msg done" marker-end="url(#ah)"/>
+<text x="258" y="563" class="lbl done">11. Reads the outbox</text>
+<line x1="84" y1="616" x2="244" y2="616" class="msg new" marker-end="url(#ah)"/>
+<text x="88" y="609" class="lbl new">12. Opens an email: To, Subject, the exact text</text>
+<line x1="254" y1="662" x2="414" y2="662" class="msg new" marker-end="url(#ah)"/>
+<text x="258" y="655" class="lbl new">13. Allow sending: asks for gmail.send</text>
+<line x1="84" y1="708" x2="244" y2="708" class="msg new" marker-end="url(#ah)"/>
+<text x="88" y="701" class="lbl new">14. Approve and send (page checks, then confirm)</text>
+<line x1="254" y1="754" x2="414" y2="754" class="msg new" marker-end="url(#ah)"/>
+<text x="258" y="747" class="lbl new">15. messages.send with Dinis's own token</text>
+<line x1="254" y1="800" x2="754" y2="800" class="msg new" marker-end="url(#ah)"/>
+<text x="258" y="793" class="lbl new">16. Records sent, when, and who approved</text>
+</svg>
+</div>
+
+<h2>What the page checks before it sends</h2>
+<ul>
+<li>The entry is not already sent, rejected, withdrawn or stopped.</li>
+<li>It has at least one recipient, every address is an email address, there are at most 10 recipients, and there is no Bcc.</li>
+<li>It has a subject on one line, and some text.</li>
+<li>The subject and text hold nothing that looks like a private key, a vault key, or a Google, GitHub or API token.</li>
+<li>The outbox records fewer than 20 emails sent today.</li>
+<li>Google granted <code>gmail.send</code>, which the page asks for only when you press Allow sending.</li>
+<li>You confirm the exact recipients in a last dialog. Each press sends one email.</li>
+</ul>
+<p>After sending, the page writes into the entry's <code>meta.json</code>: <code>status: sent</code>, the time, Gmail's message id, and who approved it. If the vault cannot record it, the page says so and tells you not to send it again.</p>
+<p>Not yet done: the full gateway check of the approved policy (abp/cell-email C4: signed lanes, signed policy files and the email policy checker) runs in the simulation only. Today the person's press in the page is the approval. The rules ask Dinis to approve this first step (ABP 1.1.4, proposed).</p>
+
+<h2>What it looks like</h2>
+<figure><img src="assets/flow/page-today.png" width="1100" height="900" alt="The page as anyone sees it on arrival: step 1 Connect with Google and Sign in with pki.sgit.ai, step 2 the page's QR code and the paste box, step 3 Open vault."><figcaption>The page on arrival (a real screenshot of this build).</figcaption></figure>
+<div class="shots">
+<figure><img src="assets/flow/open-and-send-simulated.png" alt="Step 3 with the outbox open: a draft to jane@example.com opened, showing To, Subject, Status, the text, and an Approve and send button."><figcaption>An email opened from the outbox, ready to approve. Simulation: the page's real layout with made-up addresses and text; no vault or Google account was used.</figcaption></figure>
+<figure><img src="assets/flow/phone-simulated.png" alt="The same page on a phone-width screen."><figcaption>The same on a phone. Simulation, as on the left.</figcaption></figure>
+</div>
+
+<p><a href="app/connect.html">Open the page</a> · <a href="architecture.html">Architecture diagrams</a> · <a href="plan/browser-gateway.html">The browser gateway</a> · <a href="abp/cell-email.html">The behaviour policy</a></p>
+<p class="crumbs">Text and images CC BY 4.0. Code Apache-2.0.</p>
+</main>
+</body>
+</html>

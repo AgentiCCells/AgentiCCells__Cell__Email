@@ -1,7 +1,7 @@
 // The browser gateway's sign-in functions (src/app/oauth.js), run in Node with made-up answers.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { authUrl, parseFragment, newState, SCOPE, REDIRECT_URI, CLIENT_ID } from '../src/app/oauth.js';
+import { authUrl, parseFragment, newState, SCOPE, SEND_SCOPE, REDIRECT_URI, CLIENT_ID } from '../src/app/oauth.js';
 
 test('the sign-in URL asks Google for gmail.metadata only, for riskmandate.ai, back to the app page', () => {
   const u = new URL(authUrl('abc123'));
@@ -31,8 +31,19 @@ test('an answer with the wrong state, or none expected, is ignored', () => {
   assert.match(parseFragment(ok(), null).error, /state/);
 });
 
-test('an answer that grants more than gmail.metadata is refused', () => {
-  assert.match(parseFragment(ok({ scope: `${SCOPE} https://www.googleapis.com/auth/gmail.send` }), 's1').error, /more than gmail.metadata/);
+test('"Allow sending" asks for gmail.metadata and gmail.send, nothing else', () => {
+  const u = new URL(authUrl('abc123', { send: true }));
+  assert.deepEqual(u.searchParams.get('scope').split(' ').sort(), [SCOPE, SEND_SCOPE].sort());
+});
+
+test('an answer with gmail.send says the page can send; without it, it cannot', () => {
+  assert.equal(parseFragment(ok({ scope: `${SCOPE} ${SEND_SCOPE}` }), 's1').canSend, true);
+  assert.equal(parseFragment(ok(), 's1').canSend, false);
+});
+
+test('an answer that grants any other scope is refused', () => {
+  assert.match(parseFragment(ok({ scope: `${SCOPE} https://www.googleapis.com/auth/gmail.modify` }), 's1').error, /more than gmail.metadata and gmail.send/);
+  assert.match(parseFragment(ok({ scope: 'https://mail.google.com/' }), 's1').error, /more than/);
 });
 
 test('an error from Google, an empty fragment, and a missing token', () => {

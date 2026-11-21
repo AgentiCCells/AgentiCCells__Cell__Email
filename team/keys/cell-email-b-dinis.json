@@ -1,0 +1,11 @@
+{
+  "v": 1,
+  "encrypt": "-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAxOtOecJRTqTXHglRZZ3n\nsSeitEEgKQ8GvU/J7foSy/D/0FKcZqKKNKujx89HnwMLmU7eKEzhUQgJn3JqCLP5\nDAFfea/WI4uIrCz5biWclw/IoEkQvhIH9qVg0pTw2Hz/Aa/QCI2MPZX84dlnpzhF\nt2IBgMiqOE4BYXku++6r6AH/bRNAX+/oDAyZWU/JMnqqYfjhQlks2jlAaVbE9kDW\nsXgCeCNZ+rkVGs/NwHmNQ+oOb9N7cAkETSXStwx6saXqpZ/wlBdFelXASv1Bw5aj\nOb5okOQBKgRpeitccYeJ7IuL5hV3p3Ahmt16lyWquDeI7QaTuMEBISIc/6WjMXL7\nzTqfaS/N+cWZ0uhryBTzKRgAUnA1/QUwimlRFeLBKKfLcN76LpodfbY8ePhEZdmE\nXjwrDhSXd1sE3Vot0f1FUsBZQN3Ziy9lp/56yYnG1Ww4lTQphuSDBGKkUp8wimX5\n5OxweJBpB0V2Std6c8qWs1wJcpIZqUUQyt/iut1RSEqw3DM0OiLv9dMi6uKbw2ja\ncV2M/AlVRUAHy8a8gJgmfaIeslFd9cTiTn6PpXUTVSj+8yuyjGkcy7VCWb1D6M3O\nZRENlb9Gq9uf8GquNu/L89omsthl9JxTQ4H54/Zh+jBAJov3/5i6yn27KcK8YClL\nPuLdkG+EtckrzNnxm7CkBlcCAwEAAQ==\n-----END PUBLIC KEY-----\n",
+  "sign": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEPUFa6PgAPlD7UK5NSdcL3kVr09mH\ngw32WKzp9FMetaWJYpxtmgXcro4oXeFIdJRP5Z6apFMm0MMs6/cUwq7G3A==\n-----END PUBLIC KEY-----\n",
+  "label": "cell.email.b@AgentiCCells.dinis",
+  "fingerprint": "sha256:8a9c306f0223c0df",
+  "signing_fingerprint": "sha256:de5bdff0aa5063e0",
+  "created": "2026-11-21T15:34:55Z",
+  "supersedes": "cell.email@AgentiCCells.dinis (account A; that session never published a key)",
+  "approved_by": "Dinis Cruz, in session, 21 November 2026"
+}

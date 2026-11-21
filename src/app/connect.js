@@ -10,6 +10,7 @@
 // - Open vault opens what is kept; Sync writes the mailbox's headers and labels into the twin.
 // By cell.email@AgentiCCells.dinis, 2026-11-16. Apache-2.0.
 import { authUrl, newState, parseFragment } from './oauth.js?v=__VERSION__';
+import { BODY_FILES, messageOf, problems, rawMessage, sentOn } from './send.js?v=__VERSION__';
 import { HEADERS, syncPlan } from './twin.js?v=__VERSION__';
 import { createTwinVault, displayKey, openTwinVault, readState as readVaultState, readThreads, writeMany, publish, readJson, ensureLoaded } from './vault.js?v=__VERSION__';
 import { identity, existingIdentity, publicQrText, openSealed, keep, recall, forget, kept, sealedStore } from './pki.js?v=__VERSION__';
@@ -26,6 +27,7 @@ const PKI_ROOT = 'sha256:db7f79fdd87e030a';
 const $ = (id) => document.getElementById(id);
 
 let token = null; // Google
+let canSend = false, me = ''; // whether the token carries gmail.send; the Gmail address
 let accessToken = ''; // SG/Send
 let twin = null, outbox = null, labelList = [];
 let trusted = [...TRUSTED]; // plus the person signed in with pki.sgit.ai, once checked
@@ -47,23 +49,26 @@ async function connected() {
   say('who', 'Reading Gmail...');
   try {
     const [p, labels] = await Promise.all([gmail('profile'), gmail('labels')]);
-    labelList = labels.labels || [];
+    labelList = labels.labels || []; me = p.emailAddress;
     say('who', `Connected as ${p.emailAddress}: ${Number(p.messagesTotal).toLocaleString('en-GB')} messages, ${Number(p.threadsTotal).toLocaleString('en-GB')} threads.`);
-    $('connect').hidden = true; $('revoke').hidden = false;
+    $('connect').hidden = true; $('revoke').hidden = false; $('allow-send').hidden = canSend;
+    if (canSend) $('who').textContent += ' Sending is allowed.';
     buttons();
   } catch (e) { token = null; say('who', `Could not read Gmail: ${e.message}. Connect again.`); $('connect').hidden = false; }
 }
 
-$('connect').addEventListener('click', () => {
+function signIn(send) {
   const bytes = new Uint8Array(16); crypto.getRandomValues(bytes);
   const state = newState(bytes); writeState(state);
-  location.assign(authUrl(state));
-});
+  location.assign(authUrl(state, { send }));
+}
+$('connect').addEventListener('click', () => signIn(false));
+$('allow-send').addEventListener('click', () => signIn(true));
 
 $('revoke').addEventListener('click', async () => {
   if (token) { try { await fetch('https://oauth2.googleapis.com/revoke', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `token=${encodeURIComponent(token)}`, referrerPolicy: 'no-referrer' }); } catch { /* it expires within the hour anyway */ } }
-  token = null; await forget('google:token').catch(() => {});
-  $('revoke').hidden = true; $('connect').hidden = false;
+  token = null; canSend = false; await forget('google:token').catch(() => {});
+  $('revoke').hidden = true; $('allow-send').hidden = true; $('connect').hidden = false;
   say('who', 'Disconnected: the Google token was revoked and forgotten here.');
   buttons();
 });
@@ -179,13 +184,7 @@ async function openVaults() {
       outbox = await openTwinVault(accessToken, outboxKey);
       await ensureLoaded(outbox, '/outbox');
       const folders = (outbox.listFolder('/outbox') || []).filter((e) => e.type === 'folder').map((e) => e.name).sort();
-      const list = $('outbox-list'); list.replaceChildren();
-      for (const f of folders) {
-        const meta = await readJson(outbox, `/outbox/${f}`, 'meta.json');
-        const li = document.createElement('li');
-        li.textContent = `${meta?.status || '?'} · to ${(meta?.to || []).join(', ')} · ${meta?.subject || f}`;
-        list.append(li);
-      }
+      await showOutbox(folders);
       lines.push(`Outbox open: ${folders.length} message${folders.length === 1 ? '' : 's'}.`);
     } catch (e) { lines.push(`Outbox: ${e.message}.`); }
   }
@@ -195,6 +194,74 @@ async function openVaults() {
   buttons();
 }
 $('open-vault').addEventListener('click', openVaults);
+
+// ------------------------------------------------------------ the outbox: open, approve and send
+// Dinis, 21 November 2026: "make sure that I can actually open the email and I can start to send
+// from there". Each entry opens to the exact email; Approve and send sends that one email through
+// Gmail with the person's own token, then records it in the outbox. Nothing sends without a press.
+let outboxMetas = {};
+async function readBody(folder, meta) {
+  const names = (outbox.listFolder(folder) || []).filter((e) => e.type === 'file').map((e) => e.name);
+  const name = BODY_FILES.find((n) => names.includes(n));
+  return name ? new TextDecoder().decode(await outbox.getFile(folder, name)) : undefined;
+}
+const el = (tag, props = {}, ...kids) => { const e = Object.assign(document.createElement(tag), props); e.append(...kids); return e; };
+function summary(meta, f) { return `${meta?.status || 'draft'} · to ${messageOf(meta).to.join(', ') || 'nobody'} · ${meta?.subject || f}`; }
+
+async function showOutbox(folders) {
+  const list = $('outbox-list'); list.replaceChildren(); outboxMetas = {};
+  for (const f of folders) outboxMetas[f] = await readJson(outbox, `/outbox/${f}`, 'meta.json') || {};
+  for (const f of folders) {
+    const line = el('span', { textContent: summary(outboxMetas[f], f) });
+    const open = el('button', { type: 'button', className: 'link', textContent: 'Open' });
+    const box = el('div', { className: 'mail', hidden: true });
+    const li = el('li', {}, line, ' ', open, box);
+    open.addEventListener('click', async () => {
+      if (!box.hidden) { box.hidden = true; open.textContent = 'Open'; return; }
+      open.textContent = 'Close'; box.hidden = false; box.replaceChildren(el('p', { className: 'muted', textContent: 'Opening...' }));
+      try { await showMail(box, f, line); } catch (e) { box.replaceChildren(el('p', { textContent: `Could not open it: ${e.message}.` })); }
+    });
+    list.append(li);
+  }
+}
+
+async function showMail(box, f, line) {
+  const folder = `/outbox/${f}`, meta = outboxMetas[f];
+  const m = messageOf(meta, await readBody(folder, meta));
+  const head = el('dl', {},
+    el('dt', { textContent: 'To' }), el('dd', { textContent: m.to.join(', ') || '(nobody)' }),
+    ...(m.cc.length ? [el('dt', { textContent: 'Cc' }), el('dd', { textContent: m.cc.join(', ') })] : []),
+    el('dt', { textContent: 'Subject' }), el('dd', { textContent: m.subject || '(none)' }),
+    el('dt', { textContent: 'Status' }), el('dd', { textContent: m.status + (meta.sent_at ? `, ${meta.sent_at}` : '') + (meta.approved_by ? `, approved by ${meta.approved_by}` : '') }));
+  const body = el('pre', { className: 'mail-text', textContent: m.text || '(no text)' });
+  const why = problems(m, { sentToday: sentOn(Object.values(outboxMetas)) });
+  const status = el('p', { role: 'status' });
+  const send = el('button', { type: 'button', textContent: 'Approve and send' });
+  if (why.length) { send.disabled = true; status.textContent = `Not sendable: ${why.join('; ')}.`; }
+  else if (!token) { send.disabled = true; status.textContent = 'Connect with Google to send.'; }
+  else if (!canSend) { send.disabled = true; status.textContent = 'Press Allow sending (step 1) to let the page send from your Gmail.'; }
+  else status.textContent = `Sends from ${me} to ${[...m.to, ...m.cc].join(', ')}, exactly as shown.`;
+  send.addEventListener('click', async () => {
+    if (!confirm(`Send "${m.subject}" from ${me} to ${[...m.to, ...m.cc].join(', ')} now?`)) return;
+    send.disabled = true; status.textContent = 'Sending...';
+    let sent;
+    try {
+      const r = await fetch('https://gmail.googleapis.com/gmail/v1/users/me/messages/send', {
+        method: 'POST', headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' }, referrerPolicy: 'no-referrer',
+        body: JSON.stringify(m.threadId ? { raw: rawMessage(m), threadId: m.threadId } : { raw: rawMessage(m) }) });
+      if (!r.ok) throw new Error(`Gmail answered ${r.status}`);
+      sent = await r.json();
+    } catch (e) { status.textContent = `Not sent: ${e.message}.`; send.disabled = false; return; }
+    const who = pki?.session()?.identity?.name;
+    const done = { ...meta, status: 'sent', sent_at: new Date().toISOString().slice(0, 19) + 'Z', gmail_id: sent.id, gmail_thread_id: sent.threadId,
+      approved_by: `${me} in the page${who ? `, signed in with pki.sgit.ai as ${who}` : ''}` };
+    outboxMetas[f] = done; line.textContent = summary(done, f);
+    status.textContent = `Sent (Gmail id ${sent.id}). Recording it in the outbox...`;
+    try { await writeMany(outbox, [{ folder, name: 'meta.json', data: JSON.stringify(done, null, 2) + '\n' }]); await publish(outbox); status.textContent = `Sent (Gmail id ${sent.id}) and recorded in the outbox.`; }
+    catch (e) { status.textContent = `Sent (Gmail id ${sent.id}), but the outbox could not record it: ${e.message}. Do not send it again; it is in your Gmail Sent folder.`; }
+  });
+  box.replaceChildren(head, body, el('p', { className: 'actions' }, send), status);
+}
 $('copy-twin-key').addEventListener('click', async () => {
   const btn = $('copy-twin-key'), label = btn.textContent;
   try { await navigator.clipboard.writeText(await recall(await identity(), 'vault:twin')); btn.textContent = 'Copied: keep it in your password manager'; } catch { btn.textContent = 'Could not copy'; }
@@ -313,12 +380,12 @@ async function start() {
     history.replaceState(null, '', location.pathname); writeState(null);
     if (answer.error) say('who', `Not connected: ${answer.error}.`);
     else {
-      token = answer.token;
-      await keep(await identity(), 'google:token', JSON.stringify({ token, expires_at: Date.now() + (answer.expiresIn || 3600) * 1000 })).catch(() => {});
+      token = answer.token; canSend = !!answer.canSend;
+      await keep(await identity(), 'google:token', JSON.stringify({ token, can_send: canSend, expires_at: Date.now() + (answer.expiresIn || 3600) * 1000 })).catch(() => {});
     }
   } else if (id) {
     const g = JSON.parse((await recall(id, 'google:token').catch(() => null)) || 'null');
-    if (g && Date.now() < g.expires_at - 60000) token = g.token;
+    if (g && Date.now() < g.expires_at - 60000) { token = g.token; canSend = !!g.can_send; }
   }
   if (token) await connected();
   await buttons();

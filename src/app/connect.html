@@ -21,7 +21,7 @@
 <div class="step-head"><span class="num" aria-hidden="true">1</span><h2 id="step1-title">Connect</h2></div>
 <div class="step-body">
 <p class="action"><button id="connect" type="button">Connect with Google</button></p>
-<p id="status" role="status"><span id="who"></span> <button id="revoke" class="link" type="button" hidden>Disconnect</button></p>
+<p id="status" role="status"><span id="who"></span> <button id="allow-send" class="secondary" type="button" hidden>Allow sending</button> <button id="revoke" class="link" type="button" hidden>Disconnect</button></p>
 <p class="pki-row"><button id="pki-signin" class="secondary" type="button">Sign in with pki.sgit.ai</button> <span id="pki-who" class="muted" role="status"></span> <button id="pki-signout" class="link" type="button" hidden>Sign out</button></p>
 </div>
 </section>
@@ -51,7 +51,7 @@
 <p id="waiting" class="waiting muted">Opens once the sealed QR code with your access token is pasted here.</p>
 <p class="actions"><button id="open-vault" type="button" hidden>Open vault</button> <button id="sync" class="secondary" type="button" hidden>Sync my mailbox</button> <button id="copy-twin-key" class="link" type="button" hidden>Copy the twin vault key (a backup)</button></p>
 <p id="vault-status" role="status"></p>
-<ol id="outbox-list"></ol>
+<ol id="outbox-list" class="outbox"></ol>
 </div>
 </section>
 
@@ -61,6 +61,7 @@
 <li>The QR code is this page's public key. Its private half is made in this browser and cannot be read or exported, not even by the page. A sealed QR code made for it opens only here.</li>
 <li>Everything it receives (vault keys, the SG/Send access token, the Google token with its expiry) is kept in this browser only sealed to that key. Clearing the site's data deletes them.</li>
 <li>A sealed code signed by a trusted sender (<span id="trusted-list"></span>) opens as theirs. Any other code you paste or drop opens as one you brought yourself, and says so.</li>
+<li>Allow sending asks Google for <code>gmail.send</code> as well. The outbox lists the emails agents drafted; Open shows the exact email, and Approve and send sends that one email from your Gmail, after the page's checks (recipients, no Bcc, no key material, at most 20 a day). Nothing sends without your press, and the outbox records who approved and when.</li>
 <li>Sync reads each message's headers and labels from Gmail and writes the twin into your vault, encrypted in this browser. The page can connect only to Google, to the vault service (<code>dev.send.sgraph.ai</code>), which stores ciphertext it cannot read, and to pki.sgit.ai's public register.</li>
 <li>Sign in with pki.sgit.ai: your passkey stays at pki.sgit.ai. It signs a delegation for a key this page makes, valid at this site only for 7 days, which the page checks against the public register from a root it pins (<code>sha256:db7f79fdd87e030a</code>). The key and the delegation are kept sealed to the page's key. Once you are signed in, codes signed with your own key open as yours.</li>
 </ul>
