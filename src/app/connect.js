@@ -288,6 +288,7 @@ async function listIds() {
 }
 
 const PARALLEL = 10;
+let stopAsked = false; // the Stop button (Dinis, 21 November 2026: "can you also add resume and stop buttons")
 // Returns { messages, error }: the headers read, in order, and the error that stopped the rest, if any.
 // When Gmail says slow down, the worker waits (0.5 s doubling, with jitter, up to six tries); every
 // worker stops at the first error that is not a slow-down, so the status line shows that error.
@@ -295,9 +296,9 @@ async function getMetadata(ids, onEach) {
   const q = 'format=metadata&' + HEADERS.map((h) => `metadataHeaders=${encodeURIComponent(h)}`).join('&');
   const out = new Array(ids.length); let next = 0, done = 0, error = null;
   async function worker() {
-    while (next < ids.length && !error) {
+    while (next < ids.length && !error && !stopAsked) {
       const i = next++;
-      for (let attempt = 0; !error; attempt++) {
+      for (let attempt = 0; !error && !stopAsked; attempt++) {
         try { out[i] = await gmail(`messages/${ids[i]}?${q}`); onEach(++done); break; }
         catch (e) {
           if (attempt >= 5 || !e.retry) { error = error || e; break; }
@@ -310,13 +311,18 @@ async function getMetadata(ids, onEach) {
   // Gmail allows a user 250 quota units a second and a metadata read costs 5, so about 50 reads a
   // second; 10 in flight stays inside that, and a slow-down waits and retries above.
   await Promise.all(Array.from({ length: PARALLEL }, worker));
-  return { messages: out.filter(Boolean), error };
+  return { messages: out.filter(Boolean), error, stopped: stopAsked && !error };
 }
 
 const BATCH = 1000; // newest first; each press adds up to this many the twin does not hold yet
+$('sync-stop').addEventListener('click', () => {
+  stopAsked = true; $('sync-stop').disabled = true;
+  say('vault-status', 'Stopping: finishing the reads in flight, then writing what was read...');
+});
 $('sync').addEventListener('click', async () => {
   if (!twin || !token) return;
-  $('sync').disabled = true;
+  $('sync').disabled = true; stopAsked = false;
+  $('sync-stop').hidden = false; $('sync-stop').disabled = false;
   try {
     say('vault-status', 'Reading what the twin holds...');
     const state = await readVaultState(twin);
@@ -324,8 +330,10 @@ $('sync').addEventListener('click', async () => {
     const all = await listIds();
     const missing = all.filter((id) => !state.ids[id]);
     const todo = missing.slice(0, BATCH);
-    const { messages, error } = await getMetadata(todo, (n) => say('vault-status', `Reading headers: ${n} of ${todo.length}...`));
+    const { messages, error, stopped } = await getMetadata(todo, (n) => say('vault-status', `Reading headers: ${n} of ${todo.length}...`));
     if (error && !messages.length) throw error;
+    if (!messages.length) { say('vault-status', 'Stopped before any message was read. Press Resume sync to go on.'); return; }
+    $('sync-stop').disabled = true; // writing and publishing finish once started, so the twin stays whole
     // A stop part way keeps what was read: those messages are written and published now.
     state.threads = await readThreads(twin, [...new Set(messages.map((m) => 't-' + String(m.threadId).toLowerCase()))]);
     const plan = syncPlan({ profile: await gmail('profile'), gmailLabels: labelList, messages, state });
@@ -333,10 +341,11 @@ $('sync').addEventListener('click', async () => {
     say('vault-status', 'Publishing...');
     await publish(twin);
     const left = missing.length - messages.length;
-    const stop = error ? `Stopped after ${messages.length} of ${todo.length}: ${error.message}. ` : '';
-    say('vault-status', `${stop}Synced: ${plan.added} messages added, ${plan.threads} threads changed, ${plan.hostile} marked hostile${plan.problems.length ? `, ${plan.problems.length} skipped` : ''}. ${left ? `${left.toLocaleString('en-GB')} older messages to go: press Sync again.` : 'The twin holds every message.'}`);
+    const stop = error ? `Stopped after ${messages.length} of ${todo.length}: ${error.message}. ` : stopped ? `Stopped after ${messages.length} of ${todo.length}, as asked. ` : '';
+    $('sync').textContent = left ? 'Resume sync' : 'Sync my mailbox';
+    say('vault-status', `${stop}Synced: ${plan.added} messages added, ${plan.threads} threads changed, ${plan.hostile} marked hostile${plan.problems.length ? `, ${plan.problems.length} skipped` : ''}. ${left ? `${left.toLocaleString('en-GB')} older messages to go: press Resume sync.` : 'The twin holds every message.'}`);
   } catch (e) { say('vault-status', `Sync stopped: ${e.message}. Nothing half-written is published; press again to retry.`); }
-  finally { $('sync').disabled = false; }
+  finally { $('sync').disabled = false; $('sync-stop').hidden = true; stopAsked = false; }
 });
 
 // ------------------------------------------------------------ on load
