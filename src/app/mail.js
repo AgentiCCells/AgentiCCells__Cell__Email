@@ -9,7 +9,7 @@
 // - With gmail.readonly, opening a message does not mark it read, and there is no archive or star.
 // By cell.email.b@AgentiCCells.dinis, 2026-11-21. Apache-2.0.
 import { existingIdentity, recall } from './pki.js?v=__VERSION__';
-import { partsOf, header, displayName, parseAddress, splitAddresses, shortDate, longDate, size, respond, frameDoc, b64urlBytes } from './mailparse.js?v=__VERSION__';
+import { partsOf, header, displayName, parseAddress, splitAddresses, shortDate, longDate, size, respond, frameDoc, b64urlBytes, labelChange, threadLabels } from './mailparse.js?v=__VERSION__';
 import { problems, rawMessage } from './send.js?v=__VERSION__';
 
 const $ = (id) => document.getElementById(id);
@@ -22,7 +22,8 @@ const icon = (name, cls = 'i') => { const s = document.createElementNS(NS, 'svg'
 const FOLDERS = [['INBOX', 'Inbox', 'inbox'], ['STARRED', 'Starred', 'star'], ['SENT', 'Sent', 'sent'], ['DRAFT', 'Drafts', 'draft'], ['', 'All mail', 'all'], ['SPAM', 'Spam', 'spam'], ['TRASH', 'Bin', 'bin']];
 const iconOf = (label) => (FOLDERS.find((f) => f[0] === label) || [0, 0, 'inbox'])[2];
 
-let token = '', canSend = false, me = '';
+let token = '', canSend = false, canManage = false, me = '';
+let userLabels = [];
 let view = { label: 'INBOX', q: '', title: 'Inbox', pages: [''], page: 0 };
 let rows = [], focus = -1, openId = '';
 
@@ -59,6 +60,7 @@ async function loadFolders() {
   $('folders').replaceChildren(...FOLDERS.map(([id, name, icon]) => folderButton(id, name, icon, id === 'INBOX' ? el('span', { className: 'count', id: 'inbox-count' }) : null)));
   const { labels = [] } = await api('labels');
   const user = labels.filter((l) => l.type === 'user').sort((a, b) => a.name.localeCompare(b.name));
+  userLabels = user;
   $('labels').replaceChildren(...user.map((l) => {
     const li = folderButton(l.id, l.name, '', null);
     if (l.color?.backgroundColor) li.querySelector('.dot').style.background = l.color.backgroundColor;
@@ -153,6 +155,7 @@ async function openThread(id) {
     const t = await api(`threads/${id}?format=full`);
     if (openId !== id) return;
     current = t;
+    if (canManage) afterOpen(t);
     const ms = t.messages || [];
     $('thread-subject').textContent = header(ms[0], 'Subject') || '(no subject)';
     $('messages').replaceChildren(...ms.map((m, i) => messageEl(m, i === ms.length - 1 || (m.labelIds || []).includes('UNREAD'))));
@@ -210,6 +213,73 @@ function attachmentEl(msgId, x) {
   });
   return b;
 }
+
+// ------------------------------------------------------------ managing (gmail.modify; abp/cell-email 1.1.4, C3)
+// Each action is the person's own press or key; archive and Bin can be undone from the toast; nothing
+// is deleted for good. Dinis, 21 November 2026: "yes" to gmail.modify.
+async function modify(id, change) { return api(`threads/${id}/modify`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(change) }); }
+function rowIndex(id) { return rows.findIndex((r) => r.id === id); }
+function setUnread(id, on) {
+  const i = rowIndex(id); if (i < 0) return;
+  rows[i].unread = on; $('threads').children[i]?.classList.toggle('unread', on);
+}
+function dropRow(id) {
+  const i = rowIndex(id); if (i < 0) return;
+  rows.splice(i, 1); $('threads').children[i]?.remove();
+  if (!rows.length) status(`No conversations in ${view.title}.`, iconOf(view.label));
+}
+function showManage(t) {
+  const labels = threadLabels(t);
+  $('t-star').setAttribute('aria-pressed', String(labels.has('STARRED')));
+  $('t-star').title = labels.has('STARRED') ? 'Remove star (s)' : 'Star (s)';
+  const list = $('label-list');
+  if (!userLabels.length) { list.replaceChildren(el('p', { className: 'none', textContent: 'No labels yet. Make them in Gmail.' })); return; }
+  list.replaceChildren(...userLabels.map((l) => {
+    const box = el('input', { type: 'checkbox', checked: labels.has(l.id) });
+    box.addEventListener('change', async () => {
+      try { await modify(t.id, labelChange(box.checked ? 'label' : 'unlabel', l.id)); toast(`${box.checked ? 'Labelled' : 'Removed the label'} ${l.name}.`); }
+      catch (e) { box.checked = !box.checked; toast(`Could not change the label: ${e.message}.`); }
+    });
+    return el('label', {}, box, l.name);
+  }));
+}
+async function afterOpen(t) {
+  showManage(t);
+  if (threadLabels(t).has('UNREAD')) {
+    try { await modify(t.id, labelChange('read')); setUnread(t.id, false); for (const m of t.messages) m.labelIds = (m.labelIds || []).filter((x) => x !== 'UNREAD'); }
+    catch (e) { toast(`Could not mark it read: ${e.message}.`); }
+  }
+}
+function undoToast(text, undo) {
+  const t = $('toast'), b = el('button', { type: 'button', textContent: 'Undo' });
+  b.addEventListener('click', async () => { t.hidden = true; try { await undo(); loadList(); toast('Undone.'); } catch (e) { toast(`Could not undo: ${e.message}.`); } });
+  t.replaceChildren(text, b); t.hidden = false; clearTimeout(toast.t); toast.t = setTimeout(() => { t.hidden = true; }, 8000);
+}
+async function act(kind) {
+  const t = current; if (!t || !canManage) return;
+  try {
+    if (kind === 'archive') {
+      await modify(t.id, labelChange('archive')); dropRow(t.id); closeReading();
+      undoToast('Archived. ', () => modify(t.id, labelChange('inbox')));
+    } else if (kind === 'bin') {
+      await api(`threads/${t.id}/trash`, { method: 'POST' }); dropRow(t.id); closeReading();
+      undoToast('Moved to Bin. ', () => api(`threads/${t.id}/untrash`, { method: 'POST' }));
+    } else if (kind === 'unread') {
+      await modify(t.id, labelChange('unread')); setUnread(t.id, true); closeReading(); toast('Marked unread.');
+    } else if (kind === 'star') {
+      const on = !threadLabels(t).has('STARRED');
+      await modify(t.id, labelChange(on ? 'star' : 'unstar'));
+      const last = t.messages[t.messages.length - 1];
+      for (const m of t.messages) m.labelIds = (m.labelIds || []).filter((x) => x !== 'STARRED');
+      if (on) last.labelIds.push('STARRED');
+      showManage(t); toast(on ? 'Starred.' : 'Star removed.');
+    }
+  } catch (e) { toast(`Could not ${kind === 'bin' ? 'move it to Bin' : kind}: ${e.message}.`); }
+}
+$('t-archive').addEventListener('click', () => act('archive'));
+$('t-bin').addEventListener('click', () => act('bin'));
+$('t-unread').addEventListener('click', () => act('unread'));
+$('t-star').addEventListener('click', () => act('star'));
 
 // ------------------------------------------------------------ writing and sending
 let draft = { threadId: '', inReplyTo: '', references: '' };
@@ -276,6 +346,11 @@ document.addEventListener('keydown', (e) => {
   else if (last && k === 'r') { e.preventDefault(); compose(respond('reply', last, me), 'Reply'); }
   else if (last && k === 'a') { e.preventDefault(); compose(respond('replyAll', last, me), 'Reply all'); }
   else if (last && k === 'f') { e.preventDefault(); compose(respond('forward', last, me), 'Forward'); }
+  else if (current && canManage && k === 'e') act('archive');
+  else if (current && canManage && k === '#') act('bin');
+  else if (current && canManage && k === 's') act('star');
+  else if (current && canManage && k === 'U') act('unread');
+  else if (current && canManage && k === 'l') { $('t-labels').open = true; $('label-list').querySelector('input')?.focus(); }
 });
 
 // ------------------------------------------------------------ on load
@@ -284,7 +359,9 @@ async function start() {
   const g = id ? JSON.parse((await recall(id, 'google:token').catch(() => null)) || 'null') : null;
   if (!g || Date.now() >= g.expires_at - 60000) return gate(g ? 'The Google token has expired (they last an hour).' : 'This browser holds no Google token yet.');
   if (!g.can_read) return gate('The Google token here allows headers only, not reading mail.');
-  token = g.token; canSend = !!g.can_send;
+  token = g.token; canSend = !!g.can_send; canManage = !!g.can_manage;
+  $('manage').hidden = !canManage;
+  if (canManage) $('note-text').textContent = 'Remote images are blocked. Opening a conversation marks it read.';
   try { const p = await api('profile'); me = p.emailAddress; $('me').textContent = `Signed in as ${me}`; $('me-initial').textContent = (me[0] || '?').toUpperCase(); } catch (e) { return; }
   await loadFolders().catch((e) => toast(`Could not read labels: ${e.message}.`));
   go({ label: 'INBOX', q: '', title: 'Inbox' });

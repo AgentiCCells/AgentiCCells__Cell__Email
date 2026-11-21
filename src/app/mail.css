@@ -199,3 +199,19 @@ kbd{font:600 var(--t-xs) ui-monospace,Menlo,Consolas,monospace;border:1px solid 
   .list-pane,.read-pane{border-radius:var(--r-m)}
 }
 .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* managing (gmail.modify): archive, Bin, unread, star, labels */
+.manage{display:inline-flex;align-items:center;gap:.25rem}
+.manage[hidden]{display:none}
+.sep{width:1px;height:24px;background:var(--line);margin:0 .25rem}
+#t-star[aria-pressed="true"]{color:var(--accent)}
+#t-star[aria-pressed="true"] .i{fill:currentColor}
+.labels-menu{position:relative}
+.labels-menu summary{list-style:none;cursor:pointer}
+.labels-menu summary::-webkit-details-marker{display:none}
+.labels-menu .menu{position:absolute;right:0;top:calc(100% + 6px);min-width:14rem;max-height:20rem;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-m);box-shadow:var(--shadow);padding:.4rem;z-index:25}
+.labels-menu label{display:flex;align-items:center;gap:.6rem;padding:.4rem .6rem;border-radius:var(--r-s);cursor:pointer}
+.labels-menu label:hover{background:var(--hover)}
+.labels-menu .none{padding:.4rem .6rem;color:var(--muted);margin:0}
+.toast button{margin-left:1rem;border:0;background:none;color:inherit;font-weight:700;text-decoration:underline;cursor:pointer}
+@media(max-width:720px){.sep{display:none}#t-unread,.labels-menu{display:none}}

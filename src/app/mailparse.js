@@ -120,3 +120,21 @@ export function frameDoc(parts, { dark = false } = {}) {
   const theme = !parts.html && dark ? 'html,body{background:#1c1915;color:#ece6dc}a{color:#e9a866}' : `html{background:${dark ? '#f4efe6' : '#fffdf9'}}`;
   return `<!doctype html><html><head><meta charset="utf-8"><base target="_blank"><style>body{margin:0;padding:16px 20px;font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;color:#202124;overflow-wrap:anywhere}img{max-width:100%;height:auto}img[src^="http"],img[src^="//"]{display:none}blockquote{margin:0 0 0 .8ex;border-left:1px solid #ccc;padding-left:1ex}${theme}</style></head><body>${content}</body></html>`;
 }
+
+// The label changes each mail action asks Gmail for (threads.modify), with gmail.modify. Move to Bin
+// is threads.trash, and back is threads.untrash; nothing here deletes for good (abp/cell-email C3).
+export function labelChange(kind, labelId) {
+  switch (kind) {
+    case 'archive': return { addLabelIds: [], removeLabelIds: ['INBOX'] };
+    case 'inbox': return { addLabelIds: ['INBOX'], removeLabelIds: [] };
+    case 'read': return { addLabelIds: [], removeLabelIds: ['UNREAD'] };
+    case 'unread': return { addLabelIds: ['UNREAD'], removeLabelIds: [] };
+    case 'star': return { addLabelIds: ['STARRED'], removeLabelIds: [] };
+    case 'unstar': return { addLabelIds: [], removeLabelIds: ['STARRED'] };
+    case 'label': return { addLabelIds: [labelId], removeLabelIds: [] };
+    case 'unlabel': return { addLabelIds: [], removeLabelIds: [labelId] };
+    default: throw new Error(`no such action: ${kind}`);
+  }
+}
+// The labels a conversation carries: every label on any of its messages.
+export const threadLabels = (t) => new Set((t?.messages || []).flatMap((m) => m.labelIds || []));

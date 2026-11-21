@@ -1,6 +1,6 @@
 # Agent Behaviour Policy: cell.email@AgentiCCells.dinis
 
-**Status: approved** by Dinis Cruz on 16 November 2026: 1.0.0 ("I approve the policy"), after specialist.abp@AgentiCCells.dinis closed its review, 1.1.0, the browser gateway and the Internal audience, and 1.1.1 ("I approve policy"); 1.1.3 on 18 November 2026 ("Approve"). Kept by Dinis: any change needs his approval again.
+**Status: approved** by Dinis Cruz on 16 November 2026: 1.0.0 ("I approve the policy"), after specialist.abp@AgentiCCells.dinis closed its review, 1.1.0, the browser gateway and the Internal audience, and 1.1.1 ("I approve policy"); 1.1.3 on 18 November 2026 ("Approve"); 1.1.4 on 21 November 2026 ("yes"). Kept by Dinis: any change needs his approval again.
 **Phase: mixed** (in the simulation, the gateway's decision code blocks sends that break the rules marked enforce; nothing real flows, so every other rule observes).
 
 Deny by default: anything this policy does not list, this cell does not do. Format: the AgentiCCells ABP format 0.1 by specialist.abp@AgentiCCells.dinis (`pack/format.md` at commit 1f855cf of AgentiCCells__Specialist__Agent-Behaviour-Policies, CC BY 4.0), approved by Dinis on 16 November 2026. This page started from that team's draft (`proposals/email-cell/abp.md`, same commit) and this cell's own v0.2. The machine files it points at are [policy/agents.json](https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/dev/policy/agents.json) (altitude 3) and [policy/email-policy.json](https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/dev/policy/email-policy.json) (altitudes 4 and 5). `node scripts/abp-check.mjs abp/cell-email.md` checks this page in CI.
@@ -18,7 +18,7 @@ Deny by default: anything this policy does not list, this cell does not do. Form
 
 | Altitude | What it decides | Enforced by | Status |
 |---|---|---|---|
-| 1. The OAuth grant | which Gmail scopes the user gave: metadata, read, compose, send | Google | plan: setup values written for Dinis (plan/google-oauth) |
+| 1. The OAuth grant | which Gmail scopes the user gave: metadata, read, modify, send | Google | built: gmail.metadata on Connect; gmail.send on Allow sending; gmail.readonly and gmail.send on Allow reading; gmail.modify and gmail.send on Allow managing; each only on the person's press, in their browser |
 | 2. Who holds the token | the user's own browser session on the cell's site, and nothing else | Google's authorised JavaScript origin and redirect URI for the Web client, and the page's content security policy | Web client created by Dinis; the test page is built, no sync yet |
 | 3. What each agent may do | read the twin, propose, approve, stop or send, per agent and per key | the lane checks, under a signed policy/agents.json; vault access keys the user seals to each agent | built (simulation) |
 | 4. What an email may be | recipients and domains, languages, templates, attachments, rates, first contact or reply, data loss | the gateway, before every send, under a signed policy/email-policy.json | built (simulation) |
@@ -46,8 +46,8 @@ What this cell and its conductor session can actually do today, measured where p
 |---|---|---|---|---|---|---|---|---|---|
 | C1 | `read.message.tenant` | the twin's cleaned copy (clean/), for the cell's agents | 1 | no | allow | setting | vault access keys the user seals per agent (plan); in the simulation, policy/agents.json lists clean/ only | observe | every read is a signed entry on the reads lane; agents' keys open clean/ only |
 | C2 | `propose.action.tenant` | the actions lane: reply, send, label, archive | 2 | yes | allow | setting | mergeLanes rejects an entry type the author's role in the signed agents.json does not allow | enforce | in simulation, tests/lanes.test.mjs, triage may not propose a reply |
-| C3 | `apply.label.tenant` | labels and archive in Gmail, through the gateway | 3 | yes | plan-apply | boundary | only the gateway holds the Google token (plan) | observe | each outbox entry matches an approved proposal |
-| C4 | `send.message.world` | an email to anyone, through the gateway only | 4 | no | draft | boundary | today the grant is gmail.metadata only, so nothing can send; when the send scope is added, only the user's browser session holds the token, and decide() requires verified lanes, policy files signed by a pinned approver, a person's approval or a signed automation, and a passing email policy check | enforce | no token in any key inventory today; in simulation, tests/lanes.test.mjs and tests/policy.test.mjs; on a real mailbox, every outbox entry has an approval or automation and a policy result |
+| C3 | `apply.label.tenant` | labels, read state, stars, archive and Bin in Gmail: by the person in the mail client in their own browser, or through the gateway for an agent's approved proposal | 3 | yes | plan-apply | boundary | only the person's browser session holds the token (gmail.modify, asked for only on Allow managing); the mail client acts only on the person's own press, and never deletes for good; agents' changes still go through approved proposals (plan) | observe | tests/mail.test.mjs (the label changes each action asks for); each outbox entry matches an approved proposal |
+| C4 | `send.message.world` | an email to anyone, through the gateway only | 4 | no | draft | boundary | gmail.send is asked for only on the person's press, and only the user's browser session holds the token. A person sends: one email at a time, by pressing Approve and send on an outbox entry after the page's checks (src/app/send.js: status, recipients, no Bcc, no key material, at most 20 a day), which records who approved and when; or their own mail, written in the mail client. Until decide() runs in the page, nothing sends without that press. An agent's automated send still needs decide(): verified lanes, policy files signed by a pinned approver, a person's approval or a signed automation, and a passing email policy check | enforce | tests/send.test.mjs; no token in any agent's key inventory; in simulation, tests/lanes.test.mjs and tests/policy.test.mjs; on a real mailbox, every sent outbox entry records who approved it and when |
 | C5 | `authenticate-as.credential.tenant` | the Google access token in the user's browser, and the Web client's secret | 3 | with-effort | deny | boundary | the token is issued only to the site's origin; it is kept in this browser only sealed to the page's non-extractable key (IndexedDB, with its expiry), never in clear and never sent anywhere but Google; Disconnect revokes and deletes it; the client secret is not used by the browser flow and not kept | observe | scripts/check-app.mjs: only pki.js stores anything, its key pairs are not extractable, and the pages connect only to Google and the vault service; a browser test checks the stored copy is ciphertext |
 | C6 | `push.code.project` | this repository's dev branch: code, plan and site | 2 | with-effort | allow | setting | release gates in CI (tests, validator, leak scan, Agent trailer, this policy's check) before deploy | enforce | the Pages workflow run for each push |
 | C6b | `change.policy.project` | the policy files (agents.json, email-policy.json) the gateway acts on | 3 | with-effort | plan-apply | setting | the cell can edit the files (the plan); they take effect only when an approver pinned by fingerprint outside the cell signs them (the apply); agents.json can never name an approver | enforce | in simulation, tests/lanes.test.mjs: unsigned, changed, or signed by an unpinned person |
@@ -119,14 +119,14 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
   "format": "agenticcells-abp/0.1",
   "id": "cell.email@AgentiCCells.dinis",
   "kind": "cell",
-  "version": "1.1.3",
+  "version": "1.1.4",
   "status": "approved",
   "phase": "mixed",
   "default": "deny",
   "owner": "Dinis Cruz",
   "keeper": "Dinis Cruz",
   "reviewer": "specialist.abp@AgentiCCells.dinis",
-  "updated": "2026-11-16",
+  "updated": "2026-11-21",
   "mandate": {
     "task": "Build the email agentic cell: one gateway agent alone touches Gmail; people and agents work on a signed, encrypted twin of the mailbox in the user's own vault; proposals, approvals, reads and sends on signed append lanes; behaviour policies at five altitudes.",
     "scope": "AgentiCCells/AgentiCCells__Cell__Email and https://email-cell.agenticcells.site. To start, our own inboxes only, under RiskMandate's Google project, as an Internal app (riskmandate.ai Workspace accounts only). Today, a simulated mailbox of made-up messages only.",
@@ -138,9 +138,9 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
     {
       "altitude": 1,
       "name": "The OAuth grant",
-      "decides": "which Gmail scopes the user gave: metadata, read, compose, send",
+      "decides": "which Gmail scopes the user gave: metadata, read, modify, send",
       "enforced_by": "Google",
-      "status": "plan: setup values written for Dinis (plan/google-oauth)"
+      "status": "built: gmail.metadata on Connect; gmail.send on Allow sending; gmail.readonly and gmail.send on Allow reading; gmail.modify and gmail.send on Allow managing; each only on the person's press, in their browser"
     },
     {
       "altitude": 2,
@@ -246,14 +246,14 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
     {
       "id": "C3",
       "capability": "apply.label.tenant",
-      "target": "labels and archive in Gmail, through the gateway",
+      "target": "labels, read state, stars, archive and Bin in Gmail: by the person in the mail client in their own browser, or through the gateway for an agent's approved proposal",
       "tier": 3,
       "undo": "yes",
       "decision": "plan-apply",
       "barrier": "boundary",
-      "enforcer": "only the gateway holds the Google token (plan)",
+      "enforcer": "only the person's browser session holds the token (gmail.modify, asked for only on Allow managing); the mail client acts only on the person's own press, and never deletes for good; agents' changes still go through approved proposals (plan)",
       "mode": "observe",
-      "test": "each outbox entry matches an approved proposal"
+      "test": "tests/mail.test.mjs (the label changes each action asks for); each outbox entry matches an approved proposal"
     },
     {
       "id": "C4",
@@ -263,9 +263,9 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
       "undo": "no",
       "decision": "draft",
       "barrier": "boundary",
-      "enforcer": "today the grant is gmail.metadata only, so nothing can send; when the send scope is added, only the user's browser session holds the token, and decide() requires verified lanes, policy files signed by a pinned approver, a person's approval or a signed automation, and a passing email policy check",
+      "enforcer": "gmail.send is asked for only on the person's press, and only the user's browser session holds the token. A person sends: one email at a time, by pressing Approve and send on an outbox entry after the page's checks (src/app/send.js: status, recipients, no Bcc, no key material, at most 20 a day), which records who approved and when; or their own mail, written in the mail client. Until decide() runs in the page, nothing sends without that press. An agent's automated send still needs decide(): verified lanes, policy files signed by a pinned approver, a person's approval or a signed automation, and a passing email policy check",
       "mode": "enforce",
-      "test": "no token in any key inventory today; in simulation, tests/lanes.test.mjs and tests/policy.test.mjs; on a real mailbox, every outbox entry has an approval or automation and a policy result"
+      "test": "tests/send.test.mjs; no token in any agent's key inventory; in simulation, tests/lanes.test.mjs and tests/policy.test.mjs; on a real mailbox, every sent outbox entry records who approved it and when"
     },
     {
       "id": "C5",
@@ -554,7 +554,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
     "licensee": "cell.email@AgentiCCells.dinis (this conductor session) for building; later, the gateway and each agent on the twin, each with its own key, operated by the user at pki.sgit.ai",
     "conditions": "this policy, CLAUDE.md, the signed policy files, the Internal audience (riskmandate.ai accounts only)",
     "validity": "from Dinis's approval on 2026-11-16; any change to this policy needs his approval again",
-    "approved_by": "Dinis Cruz, 2026-11-16, in this session: \"I approve the policy\" (1.0.0), \"yes I added the scope and I approve the policy\" (1.1.0), and \"I approve policy\" (1.1.1), and on keeping secrets sealed to the page's key: \"now that this page/site has a PKI nicely saved using web crypto, you have a good place to put the secrets right?\" (1.1.2); and on 2026-11-18, after the proposal to let the page read pki.sgit.ai's register for sign-in and to create the twin vault in the browser: \"Approve\" (1.1.3)",
+    "approved_by": "Dinis Cruz, 2026-11-16, in this session: \"I approve the policy\" (1.0.0), \"yes I added the scope and I approve the policy\" (1.1.0), and \"I approve policy\" (1.1.1), and on keeping secrets sealed to the page's key: \"now that this page/site has a PKI nicely saved using web crypto, you have a good place to put the secrets right?\" (1.1.2); and on 2026-11-18, after the proposal to let the page read pki.sgit.ai's register for sign-in and to create the twin vault in the browser: \"Approve\" (1.1.3); and on 2026-11-21 at 21:48 UTC, to cell.email.b@AgentiCCells.dinis in its session, after the proposal for approve and send, the mail client, and gmail.modify: \"yes\" (1.1.4)",
     "review": "specialist.abp on any change; specialist.security before the first real mailbox is synced",
     "stop": "board/HOLD.md stops all work; the kill switch stops every send (any agent may stop, only a person restarts); the user can revoke the Google grant, or withdraw the gateway's vault access, at any time"
   }
@@ -572,5 +572,7 @@ Per agent of the cell (machine form in `policy/agents.json`): the gateway syncs 
 - 1.1.1, 2026-11-16: approved by Dinis. After specialist.abp's review of 1.1.0: N1, N17 and N18 say they are boundaries against outsiders and settings against the cell; N17 and N18 record the meta-tag policy's limit (no frame-ancestors, no reports). Dinis accepted gaps G2 and G7 (no branch protection for now: only we have access).
 - 1.1.2, 2026-11-16: Dinis's decision. The Google token, the SG/Send token and vault keys may be kept in the browser, only sealed to the page's own non-extractable key (C5, N1). No rule relaxed otherwise.
 - 1.1.3, 2026-11-18: approved by Dinis ("Approve"). N17: the page may also connect to pki.sgit.ai, read only, to check "Sign in with pki.sgit.ai" against the public register, from the root the page pins (sha256:db7f79fdd87e030a). C8: the twin vault may also be created by the gateway page in the user's browser, with the access token the user sealed to it; its key is made and kept there, sealed to the page's key (Dinis, 17 November 2026: "I should only have to paste the QR code that you gave me"; "maybe create a new vault if you need to create it"). No other rule changed.
+
+- 1.1.4, 2026-11-21: approved by Dinis ("yes", 21:48 UTC, in cell.email.b's session). Proposed by cell.email.b@AgentiCCells.dinis. C4: until decide() runs in the page, a person's press of Approve and send on one email, after the page's checks in src/app/send.js, is the approval, and the person may read and send their own mail in the mail client (/app/mail.html) with gmail.readonly and gmail.send; no agent sees it (N5 unchanged). C3: with gmail.modify, asked for only on Allow managing, the person may mark read, star, archive, label and move to Bin in the mail client, by their own press; nothing is deleted for good. The OAuth grant layer now lists the scopes the page asks for and when. No other rule changed.
 
 Text CC BY 4.0.

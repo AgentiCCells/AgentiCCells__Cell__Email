@@ -83,3 +83,14 @@ test('the frame paints its own backdrop: paper for HTML, the theme for plain tex
   assert.match(frameDoc({ html: '<p>x</p>' }), /html\{background:#fffdf9\}/);
   assert.match(frameDoc({ text: 'x' }, { dark: true }), /html,body\{background:#1c1915/);
 });
+
+test('each mail action asks for the right label change, and none deletes', async () => {
+  const { labelChange, threadLabels } = await import('../src/app/mailparse.js');
+  assert.deepEqual(labelChange('archive'), { addLabelIds: [], removeLabelIds: ['INBOX'] });
+  assert.deepEqual(labelChange('read'), { addLabelIds: [], removeLabelIds: ['UNREAD'] });
+  assert.deepEqual(labelChange('unread'), { addLabelIds: ['UNREAD'], removeLabelIds: [] });
+  assert.deepEqual(labelChange('star'), { addLabelIds: ['STARRED'], removeLabelIds: [] });
+  assert.deepEqual(labelChange('unlabel', 'L1'), { addLabelIds: [], removeLabelIds: ['L1'] });
+  assert.throws(() => labelChange('delete'));
+  assert.deepEqual([...threadLabels({ messages: [{ labelIds: ['INBOX'] }, { labelIds: ['UNREAD', 'L1'] }] })].sort(), ['INBOX', 'L1', 'UNREAD']);
+});

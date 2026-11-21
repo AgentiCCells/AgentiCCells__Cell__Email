@@ -14,7 +14,10 @@ export const SEND_SCOPE = 'https://www.googleapis.com/auth/gmail.send';
 // 21 November 2026: "a Web UI email client ... that does not use the vault store"). Without
 // gmail.metadata: a token that carries gmail.metadata is held to metadata even with gmail.readonly.
 export const READ_SCOPE = 'https://www.googleapis.com/auth/gmail.readonly';
-const ALLOWED = new Set([SCOPE, SEND_SCOPE, READ_SCOPE]);
+// Asked for only when the person presses "Allow managing": read, mark read, star, archive, label and
+// move to Bin, never delete for good (Dinis, 21 November 2026, "yes"; abp/cell-email 1.1.4, C3).
+export const MODIFY_SCOPE = 'https://www.googleapis.com/auth/gmail.modify';
+const ALLOWED = new Set([SCOPE, SEND_SCOPE, READ_SCOPE, MODIFY_SCOPE]);
 export const HOSTED_DOMAIN = 'riskmandate.ai';
 export const AUTH_ENDPOINT = 'https://accounts.google.com/o/oauth2/v2/auth';
 
@@ -25,7 +28,8 @@ export function newState(randomBytes) {
 // No forced consent screen: once access is granted, Google returns at once.
 // With { send: true } it asks for gmail.send as well, and Google shows the consent screen again.
 // With { read: true } it asks for gmail.readonly and gmail.send (no gmail.metadata).
-export function scopesFor({ send = false, read = false } = {}) {
+export function scopesFor({ send = false, read = false, manage = false } = {}) {
+  if (manage) return `${MODIFY_SCOPE} ${SEND_SCOPE}`;
   if (read) return `${READ_SCOPE} ${SEND_SCOPE}`;
   return send ? `${SCOPE} ${SEND_SCOPE}` : SCOPE;
 }
@@ -53,5 +57,5 @@ export function parseFragment(hash, expectedState) {
   const scope = f.get('scope') || '';
   const granted = scope.split(' ').filter(Boolean);
   if (granted.some((s) => !ALLOWED.has(s))) return { error: `Google granted more than gmail.metadata, gmail.readonly and gmail.send (${scope}); the token was not used` };
-  return { token, expiresIn: Number(f.get('expires_in') || 0), scope, canSend: granted.includes(SEND_SCOPE), canRead: granted.includes(READ_SCOPE) && !granted.includes(SCOPE) };
+  return { token, expiresIn: Number(f.get('expires_in') || 0), scope, canSend: granted.includes(SEND_SCOPE), canRead: (granted.includes(READ_SCOPE) || granted.includes(MODIFY_SCOPE)) && !granted.includes(SCOPE), canManage: granted.includes(MODIFY_SCOPE) && !granted.includes(SCOPE) };
 }

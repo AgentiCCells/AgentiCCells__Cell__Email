@@ -22,3 +22,5 @@ Done: `/app/mail.html` (with `mailparse.js` and tests/mail.test.mjs), Allow read
 Also proposed for ABP 1.1.4: "the person may read and send their own mail in their own browser through the mail client, with gmail.readonly and gmail.send; no agent sees it (N5 unchanged)."
 
 Next ask for Dinis: gmail.modify, so the client can mark read, archive, star and label.
+
+21 November 2026, 21:48 UTC, Dinis: "yes", to both open asks. ABP 1.1.4 is approved and written into abp/cell-email.md (C3, C4, the OAuth grant layer, the change log). gmail.modify is added: the gateway's Allow managing, and in the mail client mark read on opening, archive, Bin, mark unread, star and labels, with Undo for archive and Bin; nothing deletes for good.

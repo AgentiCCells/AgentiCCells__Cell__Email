@@ -27,7 +27,7 @@ const PKI_ROOT = 'sha256:db7f79fdd87e030a';
 const $ = (id) => document.getElementById(id);
 
 let token = null; // Google
-let canSend = false, canRead = false, me = ''; // whether the token carries gmail.send; the Gmail address
+let canSend = false, canRead = false, canManage = false, me = ''; // whether the token carries gmail.send; the Gmail address
 let accessToken = ''; // SG/Send
 let twin = null, outbox = null, labelList = [];
 let trusted = [...TRUSTED]; // plus the person signed in with pki.sgit.ai, once checked
@@ -58,26 +58,28 @@ async function connected() {
     const [p, labels] = await Promise.all([gmail('profile'), gmail('labels')]);
     labelList = labels.labels || []; me = p.emailAddress;
     say('who', `Connected as ${p.emailAddress}: ${Number(p.messagesTotal).toLocaleString('en-GB')} messages, ${Number(p.threadsTotal).toLocaleString('en-GB')} threads.`);
-    $('connect').hidden = true; $('revoke').hidden = false; $('allow-send').hidden = canSend; $('allow-read').hidden = canRead; $('open-mail').hidden = !canRead;
-    if (canRead) $('who').textContent += ' Reading and sending are allowed.';
+    $('connect').hidden = true; $('revoke').hidden = false; $('allow-send').hidden = canSend; $('allow-read').hidden = canRead; $('allow-manage').hidden = canManage; $('open-mail').hidden = !canRead;
+    if (canManage) $('who').textContent += ' Reading, managing and sending are allowed.';
+    else if (canRead) $('who').textContent += ' Reading and sending are allowed.';
     else if (canSend) $('who').textContent += ' Sending is allowed.';
     buttons();
   } catch (e) { token = null; say('who', `Could not read Gmail: ${e.message}. Connect again.`); $('connect').hidden = false; }
 }
 
-function signIn(send, read = false) {
+function signIn(send, read = false, manage = false) {
   const bytes = new Uint8Array(16); crypto.getRandomValues(bytes);
   const state = newState(bytes); writeState(state);
-  location.assign(authUrl(state, { send, read }));
+  location.assign(authUrl(state, { send, read, manage }));
 }
 $('connect').addEventListener('click', () => signIn(false));
 $('allow-send').addEventListener('click', () => signIn(true));
 $('allow-read').addEventListener('click', () => signIn(true, true));
+$('allow-manage').addEventListener('click', () => signIn(true, true, true));
 
 $('revoke').addEventListener('click', async () => {
   if (token) { try { await fetch('https://oauth2.googleapis.com/revoke', { method: 'POST', headers: { 'Content-Type': 'application/x-www-form-urlencoded' }, body: `token=${encodeURIComponent(token)}`, referrerPolicy: 'no-referrer' }); } catch { /* it expires within the hour anyway */ } }
-  token = null; canSend = false; canRead = false; await forget('google:token').catch(() => {});
-  $('revoke').hidden = true; $('allow-send').hidden = true; $('allow-read').hidden = true; $('open-mail').hidden = true; $('connect').hidden = false;
+  token = null; canSend = false; canRead = false; canManage = false; await forget('google:token').catch(() => {});
+  $('revoke').hidden = true; $('allow-send').hidden = true; $('allow-read').hidden = true; $('allow-manage').hidden = true; $('open-mail').hidden = true; $('connect').hidden = false;
   say('who', 'Disconnected: the Google token was revoked and forgotten here.');
   buttons();
 });
@@ -410,12 +412,12 @@ async function start() {
     history.replaceState(null, '', location.pathname); writeState(null);
     if (answer.error) say('who', `Not connected: ${answer.error}.`);
     else {
-      token = answer.token; canSend = !!answer.canSend; canRead = !!answer.canRead;
-      await keep(await identity(), 'google:token', JSON.stringify({ token, can_send: canSend, can_read: canRead, scope: answer.scope, expires_at: Date.now() + (answer.expiresIn || 3600) * 1000 })).catch(() => {});
+      token = answer.token; canSend = !!answer.canSend; canRead = !!answer.canRead; canManage = !!answer.canManage;
+      await keep(await identity(), 'google:token', JSON.stringify({ token, can_send: canSend, can_read: canRead, can_manage: canManage, scope: answer.scope, expires_at: Date.now() + (answer.expiresIn || 3600) * 1000 })).catch(() => {});
     }
   } else if (id) {
     const g = JSON.parse((await recall(id, 'google:token').catch(() => null)) || 'null');
-    if (g && Date.now() < g.expires_at - 60000) { token = g.token; canSend = !!g.can_send; canRead = !!g.can_read; }
+    if (g && Date.now() < g.expires_at - 60000) { token = g.token; canSend = !!g.can_send; canRead = !!g.can_read; canManage = !!g.can_manage; }
   }
   if (token) await connected();
   await buttons();

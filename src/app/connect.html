@@ -21,7 +21,7 @@
 <div class="step-head"><span class="num" aria-hidden="true">1</span><h2 id="step1-title">Connect</h2></div>
 <div class="step-body">
 <p class="action"><button id="connect" type="button">Connect with Google</button></p>
-<p id="status" role="status"><span id="who"></span> <button id="allow-send" class="secondary" type="button" hidden>Allow sending</button> <button id="allow-read" class="secondary" type="button" hidden>Allow reading</button> <a id="open-mail" class="button-link" href="mail.html" hidden>Open Mail</a> <button id="revoke" class="link" type="button" hidden>Disconnect</button></p>
+<p id="status" role="status"><span id="who"></span> <button id="allow-send" class="secondary" type="button" hidden>Allow sending</button> <button id="allow-read" class="secondary" type="button" hidden>Allow reading</button> <button id="allow-manage" class="secondary" type="button" hidden>Allow managing</button> <a id="open-mail" class="button-link" href="mail.html" hidden>Open Mail</a> <button id="revoke" class="link" type="button" hidden>Disconnect</button></p>
 <p class="pki-row"><button id="pki-signin" class="secondary" type="button">Sign in with pki.sgit.ai</button> <span id="pki-who" class="muted" role="status"></span> <button id="pki-signout" class="link" type="button" hidden>Sign out</button></p>
 </div>
 </section>
@@ -61,6 +61,7 @@
 <li>The QR code is this page's public key. Its private half is made in this browser and cannot be read or exported, not even by the page. A sealed QR code made for it opens only here.</li>
 <li>Everything it receives (vault keys, the SG/Send access token, the Google token with its expiry) is kept in this browser only sealed to that key. Clearing the site's data deletes them.</li>
 <li>A sealed code signed by a trusted sender (<span id="trusted-list"></span>) opens as theirs. Any other code you paste or drop opens as one you brought yourself, and says so.</li>
+<li>Allow managing asks Google for <code>gmail.modify</code> and <code>gmail.send</code>, so the mail client can also mark read, star, archive, label and move to Bin, on your press; it never deletes for good.</li>
 <li>Allow reading asks Google for <code>gmail.readonly</code> and <code>gmail.send</code>, for the mail client (Open Mail), which reads and sends straight from Gmail in this browser and does not use the vault.</li>
 <li>Allow sending asks Google for <code>gmail.send</code> as well. The outbox lists the emails agents drafted; Open shows the exact email, and Approve and send sends that one email from your Gmail, after the page's checks (recipients, no Bcc, no key material, at most 20 a day). Nothing sends without your press, and the outbox records who approved and when.</li>
 <li>Sync reads each message's headers and labels from Gmail and writes the twin into your vault, encrypted in this browser. Stop finishes the reads in flight and keeps what was read; Resume sync goes on from there. The page can connect only to Google, to the vault service (<code>dev.send.sgraph.ai</code>), which stores ciphertext it cannot read, and to pki.sgit.ai's public register.</li>
