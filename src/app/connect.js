@@ -39,9 +39,16 @@ function writeState(v) { try { if (v) sessionStorage.setItem(STATE_KEY, v); else
 $('trusted-list').textContent = TRUSTED.map((t) => `${t.label}, ${t.bundle.signing_fingerprint}`).join('; ');
 
 // ------------------------------------------------------------ Google
+// Gmail says "slow down" with 429, or with 403 and a rate-limit reason; e.retry marks both, and 5xx.
 async function gmail(path) {
   const r = await fetch(`https://gmail.googleapis.com/gmail/v1/users/me/${path}`, { headers: { Authorization: `Bearer ${token}` }, referrerPolicy: 'no-referrer' });
-  if (!r.ok) throw new Error(`Gmail answered ${r.status}`);
+  if (!r.ok) {
+    const body = await r.json().catch(() => null);
+    const reason = body?.error?.errors?.[0]?.reason || body?.error?.status || '';
+    const e = new Error(`Gmail answered ${r.status}${reason ? ` (${reason})` : ''}`);
+    e.status = r.status; e.retry = r.status === 429 || r.status >= 500 || (r.status === 403 && /rate|quota|limit/i.test(reason));
+    throw e;
+  }
   return r.json();
 }
 
@@ -281,24 +288,29 @@ async function listIds() {
 }
 
 const PARALLEL = 10;
+// Returns { messages, error }: the headers read, in order, and the error that stopped the rest, if any.
+// When Gmail says slow down, the worker waits (0.5 s doubling, with jitter, up to six tries); every
+// worker stops at the first error that is not a slow-down, so the status line shows that error.
 async function getMetadata(ids, onEach) {
   const q = 'format=metadata&' + HEADERS.map((h) => `metadataHeaders=${encodeURIComponent(h)}`).join('&');
-  const out = new Array(ids.length); let next = 0, done = 0;
+  const out = new Array(ids.length); let next = 0, done = 0, error = null;
   async function worker() {
-    while (next < ids.length) {
+    while (next < ids.length && !error) {
       const i = next++;
-      for (let attempt = 0; ; attempt++) {
-        try { out[i] = await gmail(`messages/${ids[i]}?${q}`); break; }
-        catch (e) { if (attempt >= 3 || !/ 429| 5\d\d/.test(e.message)) throw e; await new Promise((r) => setTimeout(r, 500 * 2 ** attempt)); }
+      for (let attempt = 0; !error; attempt++) {
+        try { out[i] = await gmail(`messages/${ids[i]}?${q}`); onEach(++done); break; }
+        catch (e) {
+          if (attempt >= 5 || !e.retry) { error = error || e; break; }
+          await new Promise((r) => setTimeout(r, 500 * 2 ** attempt * (0.75 + Math.random() / 2)));
+        }
       }
-      onEach(++done);
     }
   }
   // 10 at a time (Dinis, 21 November 2026: "can this sync happen a number of parallel threads?").
   // Gmail allows a user 250 quota units a second and a metadata read costs 5, so about 50 reads a
-  // second; 10 in flight stays well inside that, and a 429 backs off and retries above.
+  // second; 10 in flight stays inside that, and a slow-down waits and retries above.
   await Promise.all(Array.from({ length: PARALLEL }, worker));
-  return out;
+  return { messages: out.filter(Boolean), error };
 }
 
 const BATCH = 1000; // newest first; each press adds up to this many the twin does not hold yet
@@ -312,14 +324,17 @@ $('sync').addEventListener('click', async () => {
     const all = await listIds();
     const missing = all.filter((id) => !state.ids[id]);
     const todo = missing.slice(0, BATCH);
-    const messages = await getMetadata(todo, (n) => say('vault-status', `Reading headers: ${n} of ${todo.length}...`));
+    const { messages, error } = await getMetadata(todo, (n) => say('vault-status', `Reading headers: ${n} of ${todo.length}...`));
+    if (error && !messages.length) throw error;
+    // A stop part way keeps what was read: those messages are written and published now.
     state.threads = await readThreads(twin, [...new Set(messages.map((m) => 't-' + String(m.threadId).toLowerCase()))]);
     const plan = syncPlan({ profile: await gmail('profile'), gmailLabels: labelList, messages, state });
     await writeMany(twin, plan.files, (n, total) => say('vault-status', `Writing into the twin: ${n} of ${total} files...`));
     say('vault-status', 'Publishing...');
     await publish(twin);
-    const left = missing.length - todo.length;
-    say('vault-status', `Synced: ${plan.added} messages added, ${plan.threads} threads changed, ${plan.hostile} marked hostile${plan.problems.length ? `, ${plan.problems.length} skipped` : ''}. ${left ? `${left.toLocaleString('en-GB')} older messages to go: press Sync again.` : 'The twin holds every message.'}`);
+    const left = missing.length - messages.length;
+    const stop = error ? `Stopped after ${messages.length} of ${todo.length}: ${error.message}. ` : '';
+    say('vault-status', `${stop}Synced: ${plan.added} messages added, ${plan.threads} threads changed, ${plan.hostile} marked hostile${plan.problems.length ? `, ${plan.problems.length} skipped` : ''}. ${left ? `${left.toLocaleString('en-GB')} older messages to go: press Sync again.` : 'The twin holds every message.'}`);
   } catch (e) { say('vault-status', `Sync stopped: ${e.message}. Nothing half-written is published; press again to retry.`); }
   finally { $('sync').disabled = false; }
 });
