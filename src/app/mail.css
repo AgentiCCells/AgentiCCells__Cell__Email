@@ -198,3 +198,4 @@ kbd{font:600 var(--t-xs) ui-monospace,Menlo,Consolas,monospace;border:1px solid 
   .threads{padding-bottom:calc(84px + env(safe-area-inset-bottom))}
   .list-pane,.read-pane{border-radius:var(--r-m)}
 }
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
