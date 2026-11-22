@@ -18,4 +18,4 @@ Dinis Cruz, in email.pm.d@AgentiCCells.dinis's session, about 04:04 UTC on 22 No
 
 The briefs and CLAUDE.md still hold: no agent sends email, holds a Google token or reads real mail; experiments use made-up mail (`sim/`); only email.dev.d pushes to dev, on Dinis's word; any step on the trust ladder towards agents sending is a change to `abp/cell-email.md` that Dinis approves first.
 
-The backlog built from this: `team/email-agents/backlog.md` (ranks 1 to 8 and 14 come from these words).
+The backlog built from this: `team/email-agents/backlog.md` (ranks 1 to 5, 7 to 9 and 15 come from these words; rank 6, the chat panel, from his words in email.workflows.d's session about 04:08 UTC).
