@@ -42,3 +42,23 @@ This fits the ABP. The registry only binds an agent's name to its key. It grants
 - Build both, with fixtures only.
 - The register is fetched from pki.sgit.ai, which the page's content security policy already allows. Tests serve copies of the register, as the existing sign-in test does.
 - Report to conductor.d before any push to dev.
+
+## Update, 22 November 2026, about 05:15 UTC: Dinis's words to email.workflows.d
+
+Given in email.workflows.d's session at about 04:08 UTC, and kept word for word in `team/email.workflows.d/notes/2026-11-22-dinis-workflows-as-state-machines.md` (976348f on work/email.workflows.d):
+
+> "So the pinned approvals are defined by the agentic workflows and the keys that are published, and from a browser point of view, we should be using ... the QR codes to transmit keys ... And the lane keys is that to communicate are created by vaults, right? So I guess it just depends on the workflow and who's listening."
+
+How this changes my proposal. It is still a proposal, for Dinis to confirm.
+
+- **A third option, (c): approvers per workflow, carried by QR code.**
+  - Each workflow names who approves it.
+  - The approver's published key reaches the page as a QR code (pki.sgit.ai's k1 format, which the page already reads), and the person accepts it there.
+  - The page keeps the pinned key sealed in IndexedDB, as it keeps vault keys today.
+  - This keeps ABP N8: the pin lives in the person's browser, outside the repository and the vault, and no agent can add one.
+  - It fits with (b): a QR code could carry a pki.sgit.ai identity rather than a bare key, and the page would then check that identity against the register.
+- **Lane keys: two of Dinis's answers to reconcile.**
+  - At 03:59 UTC: "Yeah, teams.keys, that's a good one".
+  - At 04:08 UTC: "created by vaults ... it just depends on the workflow and who's listening".
+  - One reading fits both: a vault (or the agent working in it) makes the lane key, and the key is published in team/keys for the page to read. To confirm with Dinis.
+- **Nothing built for approvers** until Dinis picks (a), (b) or (c).
