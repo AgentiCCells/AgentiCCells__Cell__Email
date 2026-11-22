@@ -32,7 +32,7 @@ Facts used here: live site v0.1.51 at 189ac49, built 22 November 2026 02:12 UTC 
 | W10 | The chat panel (rank 6): how a message from the website reaches an agent session, and whether Dinis signs every message so agents can tell his words from anyone else's | Nothing is built before he answers | email.pm.d, from his words relayed by email.workflows.d, 04:08 UTC 22 Nov |
 | W11 | More screenshots of the mail client on real mail, if Dinis has them | rank 12 (the live client review) has only what REALITY.md describes | email.design.d, 04:10 UTC 22 Nov |
 | W12 | Which one or two of the five inbox concepts to take further (rank 7, done) | Building any of them waits on his pick | email.design.d, 04:17 UTC 22 Nov |
-| W13 | Release release/next2 to dev: email.pm.d's backlog and notes, email.workflows.d's signed.json writer and state machines, email.design.d's reader fix and shared top bar, the checker's recipient rules, key entries; all signed by their agents | Only Dinis's word in email.dev.d's session sends it live | email.dev.d status, pass of 05:05 UTC |
+| W13 | Release release/next2 to dev (Dinis's "push to dev" in email.dev.d's own session; a relayed word was refused by its permission check, per its hand-over): email.pm.d's backlog and notes, email.workflows.d's signed.json writer and state machines, email.design.d's reader fix and shared top bar, the checker's recipient rules, key entries; all signed by their agents | Only Dinis's word in email.dev.d's session sends it live | email.dev.d status, pass of 05:05 UTC |
 | W14 | Start email.twins.d (then contacts, crm), on Dinis's yes in conductor.d's session | Ranks 19 to 21 and 33 wait on it | conductor.d, 05:07 UTC 22 Nov |
 
 The one-page form for Dinis: `board/2026-11-22-waits-on-dinis.md`.
@@ -87,7 +87,7 @@ Set by email.pm.d on Dinis's word in its session, about 04:04 UTC 22 Nov: "can y
 - **email.pm.d:** rank 1 (coordination, hourly); rank 2 with email.workflows.d (the map); release notes per release.
 - **email.workflows.d:** rank 2 done (round 2, da46c69); rank 8 in progress; next rank 3 in Chromium against fixtures (about 06:35 UTC); night loop until 09:00 UTC on Dinis's wake.
 - **email.design.d:** done: the screens review, rank 7 (five concepts, waits on W12) and rank 10 (shared top bar, in release/next2). Stopped after a hand-over; next, when it resumes: rank 12 (live client review) with the stand-in, better with W11's screenshots; the chat panel's layout after W10.
-- **email.dev.d:** ranks 30, 32, 34 and 10's integration done on release/next2, which waits on Dinis (W13). Open: 31 (blocked on W9), 33 (needs email.twins.d), 5 (approvers after W4), 6's proposal page (after W10), 4 with email.workflows.d.
+- **email.dev.d:** wrote a hand-over at about 06:10 UTC (team/email.dev.d/notes/2026-11-22-hand-over.md) because its session is long. release/next2 (01231ac) waits on W13. Queued for it or its successor: bring in email.workflows.d's round 2 (da46c69, fast-forward only), ranks 35 and 36, 31 (after W9), 5 (after W4), 33 (after email.twins.d), 6's proposal (after W10), the stand-in's 390 px timeout (29).
 - **email.twins.d, email.contacts.d, email.crm.d:** not started; their first items when conductor.d starts them (twins 19, 20, 21; contacts 22, 23, 24; crm 15 first, then 27, 25, 26).
 
 ## 5. REALITY.md: what the live check found
