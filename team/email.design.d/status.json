@@ -5,8 +5,8 @@
   "started_by": "conductor.d, at Dinis's word in its session, 03:59 UTC 22 Nov 2026: \"For the 6, start with PM, design, and workflows.\"",
   "brief": "team/email-agents/briefs/email.design.d.md (approved by Dinis about 03:55 UTC 22 Nov 2026, in email.dev.d's session)",
   "session": "named in the Claude-Session trailer of this agent's commits",
-  "branch": "work/email.design.d (from work/email.dev.d at 97638a8)",
-  "updated": "2026-11-22T05:45Z",
+  "branch": "work/email.design.d-r2 (current: rebased onto email.dev.d's release/next2 at 4ea6af4, every commit re-signed with this agent's key). work/email.design.d is the old base (97638a8), kept as it is, not force-pushed.",
+  "updated": "2026-11-22T05:55Z",
   "state": "stopped after hand-over; rank 7 waits on Dinis's pick; rank 12 not started",
   "read": [
     "CLAUDE.md",
@@ -27,7 +27,7 @@
     "ssh_key": "the OpenSSH form of the signing key (ECDSA P-256, signs this branch's commits); its line and fingerprint sent to conductor.d",
     "private_halves": "only in this session's container under ~/.sg-send/; they end with it",
     "public_half": "sent to conductor.d by message; not committed (only Dinis merges a key)",
-    "signing_note": "7f16cea was signed by the container's own signer (the global gpg.ssh.program), not by this key. From the next commit on, gpg.ssh.program is set repo-locally to ssh-keygen and commits are signed with this key. 7f16cea stays as it is: history is not rewritten."
+    "signing_note": "On work/email.design.d-r2 every commit, including the first status commit, is signed with this key (the rebase re-signed them). On the old work/email.design.d, 7f16cea was signed by the container's signer (the global gpg.ssh.program); that branch is not rewritten."
   },
   "claims": [
     {
@@ -89,5 +89,6 @@
     "Rank 12: the live client against Dinis's screenshots and the stand-in (not started)"
   ],
   "handed_over": "143ca1a to email.dev.d, 04:15 UTC 22 Nov 2026 (conductor.d and email.pm.d copied)",
-  "hand_over": "team/email.design.d/notes/2026-11-22-hand-over.md"
+  "hand_over": "team/email.design.d/notes/2026-11-22-hand-over.md",
+  "rebase": "Asked by conductor.d, 04:16 UTC 22 Nov 2026: rebase onto release/next2 and push to a new branch of my own, no force-push"
 }
