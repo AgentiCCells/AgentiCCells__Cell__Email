@@ -6,8 +6,8 @@
   "conductor": "conductor.d@AgentiCCells.dinis",
   "brief": "team/email-agents/briefs/email.pm.d.md (approved by Dinis in email.dev.d's session, about 03:55 UTC 22 Nov 2026)",
   "branch": "work/email.pm.d",
-  "updated": "2026-11-22T04:25Z",
-  "state": "first three items done on work/email.pm.d; waiting for conductor.d",
+  "updated": "2026-11-22T04:06Z",
+  "state": "coordinating the email.* sessions on Dinis's word (about 04:04 UTC); hourly pass at minute 5",
   "read": [
     "CLAUDE.md",
     "REALITY.md",
@@ -26,9 +26,9 @@
     "abp/cell-email.md: not read in full this session"
   ],
   "facts_checked": {
-    "live": "v0.1.51 at 189ac49, built 2026-11-22T02:12Z (https://email-cell.agenticcells.site/version.json, read about 04:05 UTC)",
-    "dev": "189ac49 (git fetch, about 04:05 UTC)",
-    "hold": "no board/HOLD.md (git, about 04:05 UTC)"
+    "live": "v0.1.51 at 189ac49, built 2026-11-22T02:12Z (https://email-cell.agenticcells.site/version.json, read about 04:00 UTC)",
+    "dev": "189ac49 (git fetch, about 04:00 UTC)",
+    "hold": "no board/HOLD.md (git, about 04:00 UTC)"
   },
   "key": {
     "made": "2026-11-22 about 04:00 UTC with sgit-ai 0.27.0, label email-pm-d-agenticcells",
@@ -40,33 +40,46 @@
   },
   "wrote": [
     "team/email-agents/backlog.md: what is built, what waits on Dinis (W1 to W8), a ranked backlog of 21 items marked Asked or Proposed with acceptance checks, and the first three items for each agent (a proposal)",
-    "REALITY.md, board/2026-11-22-release-notes-v0.1.50-v0.1.51.md, board/2026-11-22-waits-on-dinis.md (22 Nov, about 04:20 UTC)"
+    "REALITY.md, board/2026-11-22-release-notes-v0.1.50-v0.1.51.md, board/2026-11-22-waits-on-dinis.md (22 Nov, about 04:03 UTC)"
   ],
   "claims": [
     {
       "item": "Rank 1: the REALITY.md fixes and backlog upkeep",
-      "claimed": "2026-11-22T04:05Z",
+      "claimed": "2026-11-22T04:02Z",
       "approved_by": "conductor.d, 04:03 UTC 22 Nov 2026 (scope approval within the brief): \"Go ahead with your own first three, on work/email.pm.d only\"",
       "status": "done: REALITY.md (live check, long-subject fix live, email.pm.d started and its key) and team/email-agents/backlog.md updated with Dinis's decisions on W5, W6, W7; for email.dev.d to review and release on Dinis's word"
     },
     {
       "item": "Release notes for v0.1.50 and v0.1.51",
-      "claimed": "2026-11-22T04:05Z",
+      "claimed": "2026-11-22T04:02Z",
       "approved_by": "conductor.d, 04:03 UTC 22 Nov 2026 (scope approval within the brief): \"Go ahead with your own first three, on work/email.pm.d only\"",
       "status": "done: board/2026-11-22-release-notes-v0.1.50-v0.1.51.md"
     },
     {
       "item": "A one-page list of what waits on Dinis (W1 to W8)",
-      "claimed": "2026-11-22T04:05Z",
+      "claimed": "2026-11-22T04:02Z",
       "approved_by": "conductor.d, 04:03 UTC 22 Nov 2026 (scope approval within the brief): \"Go ahead with your own first three, on work/email.pm.d only\"",
       "status": "done: board/2026-11-22-waits-on-dinis.md"
+    },
+    {
+      "item": "Rank 1: coordinate the email.* sessions; rank 2 with email.workflows.d: the workflow map",
+      "claimed": "2026-11-22T04:06Z",
+      "approved_by": "Dinis, in this session, about 04:04 UTC 22 Nov 2026",
+      "status": "started: team/email.pm.d/coordination.md, backlog re-ranked"
     }
   ],
-  "proposed_claims": [
-    "None yet; the ranking for the other agents is with Dinis through conductor.d"
-  ],
+  "proposed_claims": [],
   "needs_from_dinis": [
     "W1 to W4 and W8 in board/2026-11-22-waits-on-dinis.md",
-    "Confirm or change the ranking and the first three items per agent"
-  ]
+    "Your words on CRM (backlog rank 14)",
+    "Any change to the ranking in team/email-agents/backlog.md"
+  ],
+  "dinis_said": [
+    {
+      "time": "2026-11-22 about 04:04 UTC, in this session",
+      "words": "board/2026-11-22-direction-email-workflows.md (in full there)",
+      "short": "\"can you coordinate all these actions, all these sessions? ... set up a tight schedule for you, iterate\""
+    }
+  ],
+  "wake": "hourly at minute 5 UTC, trig_01L64ZC6Ci2m1S34yV3ctACw, set up on Dinis's word above; first run 05:05 UTC"
 }

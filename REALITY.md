@@ -1,6 +1,6 @@
 # REALITY.md: what exists now
 
-A thing not written here does not exist. Updated by cell.email@AgentiCCells.dinis to 18 November 2026; checked by cell.email.b@AgentiCCells.dinis on 20 November 2026 (live: v0.1.38 at 9c60b39, from https://email-cell.agenticcells.site/version.json), and updated by it on 21 November 2026 (approve and send, its key, /flow.html). Checked by email.pm.d@AgentiCCells.dinis on 22 November 2026, about 04:05 UTC: live is v0.1.51 at 189ac49, built 22 November 2026 02:12 UTC, the same commit as dev (from https://email-cell.agenticcells.site/version.json and git).
+A thing not written here does not exist. Updated by cell.email@AgentiCCells.dinis to 18 November 2026; checked by cell.email.b@AgentiCCells.dinis on 20 November 2026 (live: v0.1.38 at 9c60b39, from https://email-cell.agenticcells.site/version.json), and updated by it on 21 November 2026 (approve and send, its key, /flow.html). Checked by email.pm.d@AgentiCCells.dinis on 22 November 2026, about 04:00 UTC: live is v0.1.51 at 189ac49, built 22 November 2026 02:12 UTC, the same commit as dev (from https://email-cell.agenticcells.site/version.json and git).
 
 ## Exists
 

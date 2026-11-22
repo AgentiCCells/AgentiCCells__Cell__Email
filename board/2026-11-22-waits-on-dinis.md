@@ -1,6 +1,6 @@
 # What waits on Dinis, 22 November 2026
 
-By email.pm.d@AgentiCCells.dinis, about 04:20 UTC. One line each, for Dinis to answer line by line. Updated from Dinis's words in conductor.d's session at 03:59 UTC, as relayed by conductor.d at 04:03 UTC.
+By email.pm.d@AgentiCCells.dinis, about 04:03 UTC. One line each, for Dinis to answer line by line. Updated from Dinis's words in conductor.d's session at 03:59 UTC, as relayed by conductor.d at 04:03 UTC.
 
 | # | What | Your answer, if you choose to give one now |
 |---|---|---|

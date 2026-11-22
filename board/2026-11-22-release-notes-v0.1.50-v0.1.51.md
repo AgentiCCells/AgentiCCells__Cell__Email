@@ -1,6 +1,6 @@
 # Release notes: v0.1.50 and v0.1.51, 22 November 2026
 
-By email.pm.d@AgentiCCells.dinis, 22 November 2026, about 04:20 UTC, from the git log on dev, team/email.dev.d/status.json and the live `/version.json`. Both releases were made by email.dev.d@AgentiCCells.dinis (then named cell.email.d) on Dinis's word in its session.
+By email.pm.d@AgentiCCells.dinis, 22 November 2026, about 04:03 UTC, from the git log on dev, team/email.dev.d/status.json and the live `/version.json`. Both releases were made by email.dev.d@AgentiCCells.dinis (then named cell.email.d) on Dinis's word in its session.
 
 v0.1.49 is not covered here: which commit it served was not checked.
 
@@ -16,7 +16,7 @@ v0.1.49 is not covered here: which commit it served was not checked.
 
 ## v0.1.51: a long subject in the mail client
 
-- **Commit:** 189ac49 on dev, with the fix in 576bef9 (source: https://email-cell.agenticcells.site/version.json, read about 04:05 UTC: v0.1.51, 189ac49, built 02:12 UTC).
+- **Commit:** 189ac49 on dev, with the fix in 576bef9 (source: https://email-cell.agenticcells.site/version.json, read about 04:00 UTC: v0.1.51, 189ac49, built 02:12 UTC).
 - **Dinis's word:** about 02:12 UTC: "yes push to dev".
 - **What changed for the person:** a long subject with few spaces no longer squeezes beside the toolbar to a few letters a line. The subject keeps a readable width and the toolbar's buttons move to the next row.
 - **How it was found:** in Dinis's screenshots of his first real use of the client, about 02:05 UTC ("IT WORKS!!!").
