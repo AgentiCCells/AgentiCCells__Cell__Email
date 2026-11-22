@@ -1,11 +1,14 @@
 {
-  "agent": "cell.email.d@AgentiCCells.dinis",
+  "agent": "email.dev.d@AgentiCCells.dinis",
+  "formerly": "cell.email.d@AgentiCCells.dinis",
+  "renamed": "Dinis, in this session, 22 Nov 2026 about 02:12 UTC: \"next lets rename this current agent to email.dev.d@AgentiCCells.dinis\"",
+  "focus": "dev: the code, its tests and releases, and integrating the other email.* agents' work",
   "session": "named in the Claude-Session trailer of each of this cell's commits (the leak scan refuses session ids in committed text)",
   "conductor": "conductor.d@AgentiCCells.dinis",
   "twin_of": "cell.email.b@AgentiCCells.dinis",
-  "updated": "2026-11-22T02:05Z",
-  "state": "releasing claim 1 to dev on Dinis's word",
-  "branch": "work/cell.email.d",
+  "updated": "2026-11-22T02:20Z",
+  "state": "claim 1 live (v0.1.50); the mail client title fix released (189ac49); briefs for six email.* agents written for Dinis",
+  "branch": "work/email.dev.d",
   "brief": "approved by Dinis in conductor.d's session, 22 Nov 2026 01:39 UTC: \"yes start cell.email.d with your proposals\"",
   "read": [
     "CLAUDE.md",
@@ -33,7 +36,8 @@
     "ssh_key": "the OpenSSH form of the signing key (ECDSA P-256, used to sign this branch's commits)",
     "private_halves": "only in this session's container under ~/.sg-send/, passphrase-encrypted; they end with the container",
     "public_half": "sent to conductor.d by message; not committed to team/keys (only Dinis merges a key)",
-    "path": "merged to dev by Dinis (pull request #1, c81937b); cell.email.b's key stays active"
+    "path": "merged to dev by Dinis (pull request #1, c81937b); cell.email.b's key stays active",
+    "note": "the key entry (team/keys/cell-email-d-agenticcells.json) names cell.email.d; its agent field should become email.dev.d@AgentiCCells.dinis through the key path (only Dinis merges a key)"
   },
   "claims": [
     {
@@ -41,13 +45,18 @@
       "claimed": "2026-11-22T02:00Z",
       "approved_by": "conductor.d, 01:43 UTC 22 Nov 2026 (scope approval within the brief)",
       "limits": "fixtures only: no real mail, no Gmail call, no token, no connector; no push to dev",
-      "status": "released to dev on Dinis's word in this session, about 02:03 UTC 22 Nov: \"yes push it to dev\"",
+      "status": "live on dev since v0.1.50 (c35e65c), on Dinis's word \"yes push it to dev\"",
       "result": {
         "note": "team/cell.email.d/notes/2026-11-22-decide-in-page.md",
         "tests": "112 pass (95 before, 17 new in tests/decide-page.test.mjs), node --test, 22 Nov 2026",
         "gates": "abp-check, build, validate, check-app, leak scan: OK",
         "browser": "run in Chromium 157 against fixture entries signed in Node; connect.html loads with no errors"
       }
+    },
+    {
+      "item": "Mail client: a long subject squeezed beside the toolbar",
+      "claimed": "2026-11-22T02:08Z",
+      "status": "released to dev as 189ac49 on Dinis's word in this session, about 02:12 UTC: \"yes push to dev\""
     }
   ],
   "proposed_claims": [
