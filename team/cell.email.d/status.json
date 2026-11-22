@@ -3,8 +3,8 @@
   "session": "named in the Claude-Session trailer of each of this cell's commits (the leak scan refuses session ids in committed text)",
   "conductor": "conductor.d@AgentiCCells.dinis",
   "twin_of": "cell.email.b@AgentiCCells.dinis",
-  "updated": "2026-11-22T02:00Z",
-  "state": "building claim 1 on work/cell.email.d; fixtures only",
+  "updated": "2026-11-22T02:30Z",
+  "state": "claim 1 built and pushed to work/cell.email.d; stopped, waiting for conductor.d",
   "branch": "work/cell.email.d",
   "brief": "approved by Dinis in conductor.d's session, 22 Nov 2026 01:39 UTC: \"yes start cell.email.d with your proposals\"",
   "read": [
@@ -24,7 +24,7 @@
     "dev": "d9d83a1 (git, 22 Nov 2026 01:45 UTC)",
     "live": "v0.1.48 at dde8d77 per cell.email.b's hand-over (21 Nov 23:00 UTC); not re-checked by this cell",
     "hold": "no board/HOLD.md on dev (git, 22 Nov 2026)",
-    "tests": "95 passing per cell.email.b's hand-over; not re-run by this cell yet"
+    "tests": "112 passing on work/cell.email.d (run by this cell, 22 Nov 2026)"
   },
   "key": {
     "made": "2026-11-22 about 01:45 UTC with sgit-ai 0.27.0, label cell-email-d-agenticcells",
@@ -41,7 +41,13 @@
       "claimed": "2026-11-22T02:00Z",
       "approved_by": "conductor.d, 01:43 UTC 22 Nov 2026 (scope approval within the brief)",
       "limits": "fixtures only: no real mail, no Gmail call, no token, no connector; no push to dev",
-      "status": "in progress"
+      "status": "built (fixtures only); not on dev, not live",
+      "result": {
+        "note": "team/cell.email.d/notes/2026-11-22-decide-in-page.md",
+        "tests": "112 pass (95 before, 17 new in tests/decide-page.test.mjs), node --test, 22 Nov 2026",
+        "gates": "abp-check, build, validate, check-app, leak scan: OK",
+        "browser": "run in Chromium 157 against fixture entries signed in Node; connect.html loads with no errors"
+      }
     }
   ],
   "proposed_claims": [
@@ -51,9 +57,11 @@
     }
   ],
   "needs_from_dinis": [
-    "Approval to merge this cell's public key into team/keys (fingerprint sha256:e11a6de219dacc73), and to mark cell.email.b's key as superseded, as its hand-over asks",
-    "Whether the hourly wake trig_01DLGQUfJbiz2gRbTupmx8fj (still firing into cell.email.b's session) should be turned off; this cell has no wake and asks for none",
-    "Read access to AgentiCCells__Site__Factory for this session, if Dinis wants this cell to read the email-cell brief there directly"
+    "Approval to merge this cell's key entry (via maestro.d) and to mark cell.email.b's key superseded",
+    "Where the page gets pinned approvers (proposal: the person pins their own key in the page, sealed in IndexedDB); until then every signed outbox entry is refused",
+    "Where agents' Ed25519 lane keys come from (proposal: team/keys entries, built into the page like trusted.js)",
+    "Whether and when to push this to dev (it deploys the live site); it changes nothing for entries without signed.json",
+    "The hourly wake on cell.email.b's session and Factory read access: put to Dinis by conductor.d"
   ],
   "standing_items_from_handover": [
     "the outbox key from conductor@PrompTugal.dinis (Dinis's first send waits on it)",
