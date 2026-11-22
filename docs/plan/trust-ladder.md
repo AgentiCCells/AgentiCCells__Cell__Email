@@ -44,7 +44,10 @@ The ladder is how to get from "me reviewing it" to "the sessions to also send" o
 - **ABP change (proposal):** C4 gains: "An outbox entry that carries `signed.json` is sent only if decide() in the page passes it; an entry without one keeps the person's-press path." This only adds refusals, so N8 holds as it is.
 - **Checked by:**
   - `tests/decide-page.test.mjs` and `tests/workflows.test.mjs`: a changed email, an unpinned approver, an unsigned policy and the kill switch are all refused;
-  - next, the page run with signed entries and pinned test approvers (this agent's next item).
+  - in the browser, 22 November 2026, 09:30 UTC (`sim/workflows/signed-page.mjs`, run recorded in `team/email.workflows.d/notes/runs/2026-11-22-signed-page-chromium.json`). Three made-up entries were opened through the gateway page against stand-ins for the vault service and Gmail: a signed outreach, the same entry with its To changed after signing, and an unsigned entry.
+    - **The page as built** (nothing pinned) refused both signed entries ("author has no registered key"). Approve and send was disabled for them, and the unsigned entry kept the press path.
+    - **A test copy of the page** with only its two empty pin lists filled with the run's made-up keys passed the signed outreach ("Full check (C4): passed") and refused the changed one ("not one that an agent proposed and signed"). Pressing Approve and send on the signed entry sent it once to the Gmail stand-in and recorded it in the outbox.
+    - So rung 1 works in the browser once keys and approvers are pinned; where they come from is W4 and W5.
 - **Step down:** unpin the approvers, or drop the lane keys from the page. Every signed entry is then refused, and unsigned entries keep rung 0. For an immediate stop, any agent may write a signed `gateway.stop`.
 
 ## Rung 2: signed approvals
@@ -110,4 +113,4 @@ The ladder is how to get from "me reviewing it" to "the sessions to also send" o
 
 ## Where this agent is on it
 
-Rung 0 is ready for W1 (`docs/plan/workflows.md`, "The first real send"). Rung 1 works in simulation and waits on W4, W5 and W15. This agent's next item is the page run with signed entries and pinned test approvers, which is rung 1 in the browser.
+Rung 0 is ready for W1 (`docs/plan/workflows.md`, "The first real send"). Rung 1 works in simulation and in the browser with test pins (`sim/workflows/signed-page.mjs`), and waits on W4, W5 and W15 for real pins.

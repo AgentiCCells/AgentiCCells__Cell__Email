@@ -6,8 +6,8 @@
   "started": "by conductor.d at Dinis's word in its session, 03:59 UTC on 22 Nov 2026: \"For the 6, start with PM, design, and workflows.\"",
   "brief": "team/email-agents/briefs/email.workflows.d.md (approved by Dinis in email.dev.d's session, about 03:55 UTC on 22 Nov 2026, as reported by email.dev.d)",
   "branch": "work/email.workflows.d-r2",
-  "updated": "2026-11-22T09:45Z",
-  "state": "backlog 9 (the trust ladder page) done; next: the page run with signed entries and pinned test approvers",
+  "updated": "2026-11-22T09:35Z",
+  "state": "trust ladder page and the signed-entry page run done; waiting for the next item",
   "read": [
     "CLAUDE.md",
     "REALITY.md (at 97638a8)",
@@ -99,7 +99,7 @@
       "item": "Next: the page run with signed entries and pinned test approvers (rung 1 in the browser; towards backlog 4)",
       "claimed": "2026-11-22T09:45Z",
       "approved_by": "email.pm.d, 09:27 UTC",
-      "status": "not started"
+      "status": "done: sim/workflows/signed-page.mjs; as built the page refuses signed entries (fail closed); with test pins it passes a good signed entry, refuses a changed one, and sends the good one once to the Gmail stand-in. Run in notes/runs/2026-11-22-signed-page-chromium.json"
     }
   ],
   "proposed_claims": [],

@@ -1,0 +1,68 @@
+{
+  "ran": "2026-11-22T09:30:17.511Z",
+  "browser": "157.0.8103.78",
+  "runs": [
+    {
+      "run": "as-built",
+      "entries": [
+        {
+          "entry": "a-signed",
+          "c4": "Full check (C4): refused (actions/drafter.email@AgentiCCells.dinis#1: author has no registered key).",
+          "status": "Not sendable: the full check (C4) refuses it: actions/drafter.email@AgentiCCells.dinis#1: author has no registered key.",
+          "approve_enabled": false
+        },
+        {
+          "entry": "b-signed-changed-to",
+          "c4": "Full check (C4): refused (actions/drafter.email@AgentiCCells.dinis#1: author has no registered key).",
+          "status": "Not sendable: the full check (C4) refuses it: actions/drafter.email@AgentiCCells.dinis#1: author has no registered key.",
+          "approve_enabled": false
+        },
+        {
+          "entry": "c-unsigned",
+          "c4": "Full check (C4): not run; this entry carries no signed proposal, so the full check did not run; sending rests on your press and the page's checks.",
+          "status": "Sends from owner@example.org to owner@example.org, exactly as shown.",
+          "approve_enabled": true
+        }
+      ],
+      "gmail": [
+        "GET profile",
+        "GET labels"
+      ],
+      "aborted": [],
+      "errors": [],
+      "vault_requests": 13
+    },
+    {
+      "run": "pinned",
+      "entries": [
+        {
+          "entry": "a-signed",
+          "c4": "Full check (C4): passed (first contact: the twin was last synced never, more than 30 minutes ago: every recipient is treated as a first contact).",
+          "status": "Sends from owner@example.org to morgan@example.net, exactly as shown.",
+          "approve_enabled": true
+        },
+        {
+          "entry": "b-signed-changed-to",
+          "c4": "Full check (C4): refused (the email shown is not one that an agent proposed and signed on the lanes (or it was already sent or withdrawn)).",
+          "status": "Not sendable: the full check (C4) refuses it: the email shown is not one that an agent proposed and signed on the lanes (or it was already sent or withdrawn).",
+          "approve_enabled": false
+        },
+        {
+          "entry": "c-unsigned",
+          "c4": "Full check (C4): not run; this entry carries no signed proposal, so the full check did not run; sending rests on your press and the page's checks.",
+          "status": "Sends from owner@example.org to owner@example.org, exactly as shown.",
+          "approve_enabled": true
+        }
+      ],
+      "gmail": [
+        "GET profile",
+        "GET labels",
+        "POST messages/send"
+      ],
+      "aborted": [],
+      "errors": [],
+      "sent_signed": "Sent (Gmail id standin-1) and recorded in the outbox.",
+      "vault_requests": 16
+    }
+  ]
+}

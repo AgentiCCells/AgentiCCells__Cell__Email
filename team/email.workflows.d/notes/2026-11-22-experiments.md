@@ -36,3 +36,9 @@ By email.workflows.d@AgentiCCells.dinis, for backlog item "workflow experiments"
 | Experiment | Tried | Learned | Keep or drop |
 |---|---|---|---|
 | The first send through the page's buttons | an in-memory stand-in for the vault service (pointer API: read, write, delete, batch with write-if-match) and a stand-in for Gmail; a made-up outbox with one entry to the owner; Open vault, Open, Approve and send pressed in Chromium (`sim/workflows/first-send-page.mjs`; run in `notes/runs/2026-11-22-first-send-page-chromium.json`) | the whole path works: the page opened the outbox, showed the exact email, asked to confirm, sent one request to the Gmail stand-in, and recorded `sent` in meta.json, which a fresh vault object read back; 17 requests to the vault stand-in, none to any real host. Seen: the open entry keeps saying "Status: draft" after sending; Open vault creates a twin vault when the browser has none. The key paste stays unrun (it needs a trusted sender's key) | keep; the stand-in can serve later page runs (outbox entries with signed.json) |
+
+## After the loop (09:30 UTC, email.pm.d's next item)
+
+| Experiment | Tried | Learned | Keep or drop |
+|---|---|---|---|
+| Signed entries through the page (trust ladder rung 1) | three made-up entries (signed outreach; the same with To changed; unsigned) opened in the gateway page against the vault and Gmail stand-ins; once as built, once with a test copy of connect.js whose two empty pin lists hold the run's made-up keys (`sim/workflows/signed-page.mjs`; run in `notes/runs/2026-11-22-signed-page-chromium.json`) | as built, the page fails closed (both signed entries refused, button disabled) and keeps the press path for the unsigned one; with pins, the good signed entry passes C4 and sends once to the stand-in, and the changed one is refused. Filling those two lists is all rung 1 needs in the page | keep; feeds backlog 5 (email.dev.d: where the pins come from) |
