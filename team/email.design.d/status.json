@@ -1,0 +1,47 @@
+{
+  "agent": "email.design.d@AgentiCCells.dinis",
+  "focus": "design: how /app/mail.html and /app/connect.html look and feel",
+  "conductor": "conductor.d@AgentiCCells.dinis",
+  "started_by": "conductor.d, at Dinis's word in its session, 03:59 UTC 22 Nov 2026: \"For the 6, start with PM, design, and workflows.\"",
+  "brief": "team/email-agents/briefs/email.design.d.md (approved by Dinis about 03:55 UTC 22 Nov 2026, in email.dev.d's session)",
+  "session": "named in the Claude-Session trailer of this agent's commits",
+  "branch": "work/email.design.d (from work/email.dev.d at 97638a8)",
+  "updated": "2026-11-22T04:15Z",
+  "state": "first steps done; waiting for conductor.d's reply before building anything",
+  "read": [
+    "CLAUDE.md",
+    "REALITY.md (at 97638a8)",
+    "team/email-agents/README.md and briefs/email.design.d.md",
+    "team/email.dev.d/status.json",
+    "board/handovers/2026-11-21-cell-email-b-to-cell-email-d.md (design round 1 notes)",
+    "src/app/mail.css (selectors and media queries), sim/mail-standin.cjs"
+  ],
+  "facts_checked": {
+    "hold": "no board/HOLD.md (git, 22 Nov 2026)",
+    "screens": "simulation: Chromium against the Gmail stand-in with made-up mail at 1440, 1120, 1000 and 390 px; findings in team/email.design.d/notes/2026-11-22-first-look.md"
+  },
+  "key": {
+    "made": "2026-11-22 about 04:00 UTC with sgit-ai 0.27.0, label email-design-d-agenticcells",
+    "fingerprint": "sha256:4e5d4b8694bc2ab5",
+    "signing_fingerprint": "sha256:a9f9fe47aa83d23f",
+    "ssh_key": "the OpenSSH form of the signing key (ECDSA P-256, signs this branch's commits); its line and fingerprint sent to conductor.d",
+    "private_halves": "only in this session's container under ~/.sg-send/; they end with it",
+    "public_half": "sent to conductor.d by message; not committed (only Dinis merges a key)"
+  },
+  "claims": [],
+  "proposed_claims": [
+    { "item": "Reader subject: smaller heading, break at / _ - first, at most three lines (first-look item 1)", "owner": "email.design.d (mail.css)", "status": "proposal, waiting for conductor.d" },
+    { "item": "Reader toolbar as one group at 1000 to 1200 px; no orphan separator (item 2)", "owner": "email.design.d (mail.css, mail.html)", "status": "proposal" },
+    { "item": "Phone: a More menu with Mark unread and Labels (item 3)", "owner": "email.design.d for markup and CSS; email.dev.d for any JavaScript", "status": "proposal" },
+    { "item": "Phone: Reply, Reply all, Forward on one row (item 4)", "owner": "email.design.d (mail.css)", "status": "proposal" },
+    { "item": "axe check and dark mode pass on mail.html and connect.html", "owner": "email.design.d", "status": "proposal" }
+  ],
+  "proposed_backlog_items_for_email_pm_d": [
+    "Gateway (/app/connect.html) shares the mail client's top bar (design round 1, item 5)",
+    "Group the home page's links",
+    "A phone path in sim/mail-standin.cjs so the 390 px run reaches the labels and Bin steps"
+  ],
+  "needs_from_dinis": [
+    "Nothing yet. Screenshots from a real phone, if he has any, would show what the stand-in cannot."
+  ]
+}
