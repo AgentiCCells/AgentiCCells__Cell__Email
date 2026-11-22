@@ -319,6 +319,118 @@ machine({
   ],
 });
 
+// ------------------------------------------------------------ level 2: steps inside the workflows (09:45 UTC, email.pm.d's candidate 3)
+
+machine({
+  id: 'open-vault', level: 2, title: 'Open the vaults',
+  goal: 'the twin vault and the outbox are open in the page, and the outbox entries listed',
+  status: 'built', code: 'src/app/connect.js (openVaults), src/app/vault.js', trigger: 'the person presses Open vault, or a pasted code carried a vault key',
+  needs: 'the vault keys and the SG/Send access token, kept sealed to the page key', approves: 'nobody: opening the person\'s own vaults', signed: 'vault commits (the vault library)',
+  product: { for: 'anyone whose agents hand them work through a vault', scale: 'one vault service call per object, in the browser; the service is the only shared part' },
+  states: {
+    pressed: { about: 'the page looks for the keys it keeps' },
+    twin_ready: { about: 'the twin vault is open, or was just made here (when the SG/Send token is kept and no twin key)' },
+    outbox_open: { about: 'the outbox vault is open and its entries listed', end: 'goal' },
+    twin_only: { about: 'no outbox key yet: only the twin is open', end: 'stop' },
+    nothing: { about: 'no key and no token: "paste the sealed QR code"', end: 'stop' },
+    failed: { about: 'the vault service refused or a key did not open', end: 'stop' },
+  },
+  moves: [
+    { from: 'pressed', to: 'twin_ready', on: 'twin key kept, or token kept and a twin made', by: 'vault', check: 'openTwinVault, createTwinVault' },
+    { from: 'pressed', to: 'nothing', on: 'no key and no token', by: 'page' },
+    { from: 'twin_ready', to: 'outbox_open', on: 'outbox key kept: open and list', by: 'vault', check: 'openTwinVault, ensureLoaded' },
+    { from: 'twin_ready', to: 'twin_only', on: 'no outbox key', by: 'page' },
+    { from: 'pressed', to: 'failed', on: 'vault error', by: 'vault' },
+    { from: 'twin_ready', to: 'failed', on: 'outbox error', by: 'vault' },
+  ],
+});
+
+machine({
+  id: 'read-message', level: 2, title: 'Read a conversation in the mail client',
+  goal: 'the person has read the conversation, and Gmail knows it is read',
+  status: 'built', code: 'src/app/mail.js (opening a thread), src/app/mailparse.js (labelChange)', trigger: 'the person opens a conversation',
+  needs: 'gmail.readonly to read; gmail.modify to mark it read', approves: 'the person, by opening it', signed: 'nothing',
+  product: { for: 'anyone with Gmail', scale: 'Gmail API quota per user; the HTML is shown in a sandboxed frame with remote images blocked' },
+  states: {
+    listed: { about: 'the conversation is in the list, bold if unread' },
+    shown: { about: 'its messages are shown; the last and the unread ones open' },
+    read: { about: 'UNREAD removed in Gmail (with Allow managing)', end: 'goal' },
+    shown_only: { about: 'read-only token: shown, but Gmail still says unread', end: 'goal' },
+    not_shown: { about: 'Gmail refused', end: 'stop' },
+  },
+  moves: [
+    { from: 'listed', to: 'shown', on: 'open', by: 'person' },
+    { from: 'listed', to: 'not_shown', on: 'error', by: 'google' },
+    { from: 'shown', to: 'read', on: 'unread and gmail.modify: remove UNREAD', by: 'page', check: 'labelChange(read)' },
+    { from: 'shown', to: 'shown_only', on: 'no gmail.modify', by: 'page' },
+  ],
+});
+
+machine({
+  id: 'label-archive', level: 2, title: 'Archive, Bin, star or mark unread, with Undo',
+  goal: 'the conversation is where the person put it in Gmail, and nothing was deleted for good',
+  status: 'built', code: 'src/app/mail.js (act, undoToast), src/app/mailparse.js (labelChange)', trigger: 'the person presses Archive, Bin, Star or Mark unread',
+  needs: 'gmail.modify (Allow managing)', approves: 'the person, by pressing', signed: 'nothing',
+  product: { for: 'anyone with Gmail', scale: 'one Gmail call per press; agents\' label changes would go through approved proposals instead (C3, plan)' },
+  states: {
+    open: { about: 'a conversation is open' },
+    moved: { about: 'archived or in Bin; a toast offers Undo' },
+    kept: { about: 'the move stands', end: 'goal' },
+    undone: { about: 'Undo put it back (INBOX added again, or out of Bin)', end: 'goal' },
+    marked: { about: 'starred, unstarred or marked unread', end: 'goal' },
+    failed: { about: 'Gmail refused; the toast says so', end: 'stop' },
+  },
+  moves: [
+    { from: 'open', to: 'moved', on: 'archive or bin', by: 'person', check: 'labelChange(archive), threads/trash' },
+    { from: 'open', to: 'marked', on: 'star or unread', by: 'person', check: 'labelChange' },
+    { from: 'open', to: 'failed', on: 'error', by: 'google' },
+    { from: 'moved', to: 'kept', on: 'toast closes', by: 'page' },
+    { from: 'moved', to: 'undone', on: 'press Undo', by: 'person', check: 'labelChange(inbox), threads/untrash' },
+  ],
+});
+
+machine({
+  id: 'firewall-clean', level: 2, title: 'Clean an incoming message before any agent reads it',
+  goal: 'agents see only the cleaned copy, with a verdict that decides what may answer it',
+  status: 'simulation', code: 'src/app/cell/clean.mjs (clean), tested on the simulated mailbox', trigger: 'a message arrives in the twin',
+  needs: 'the raw message (only the firewall reads it, N5)', approves: 'nobody: a hostile verdict means only a person may answer', signed: 'plan: the cleaned copy in clean/',
+  product: { for: 'anyone who lets agents read their mail', scale: 'one pass per message, in the browser or the firewall agent; a heuristic, not a guarantee' },
+  states: {
+    raw: { about: 'the message as it arrived' },
+    cleaned: { about: 'links numbered, hidden text quarantined, invisible characters removed, injections flagged' },
+    clean: { about: 'no flags of note: agents may draft a reply; an automation may answer it', end: 'goal' },
+    suspicious: { about: 'a risky link or hidden text: agents may draft, a person approves', end: 'goal' },
+    hostile: { about: 'it reads as instructions to an agent: no agent answers it until a person has read it', end: 'stop' },
+  },
+  moves: [
+    { from: 'raw', to: 'cleaned', on: 'clean()', by: 'agent', check: 'clean' },
+    { from: 'cleaned', to: 'clean', on: 'verdict clean', by: 'agent', check: 'clean' },
+    { from: 'cleaned', to: 'suspicious', on: 'verdict suspicious', by: 'agent', check: 'clean' },
+    { from: 'cleaned', to: 'hostile', on: 'verdict hostile', by: 'agent', check: 'clean' },
+  ],
+});
+
+machine({
+  id: 'follow-up-timer', level: 2, title: 'Notice a thread waiting on the other side',
+  goal: 'a follow-up is drafted for a thread where we wrote last and N days passed, and nothing is sent without a press',
+  status: 'simulation', code: 'sim/workflows/followups.mjs (dueFollowUps)', trigger: 'each twin sync (plan: also a daily check)',
+  needs: 'the synced twin; N, the days to wait (for Dinis)', approves: 'the person, for the follow-up itself', signed: 'the follow-up proposal, when drafted',
+  product: { for: 'anyone who loses track of who owes whom an answer', scale: 'a pass over the twin\'s threads; no Gmail call; the CRM component shows the same "who waits on whom"' },
+  states: {
+    watching: { about: 'we wrote last; the timer runs' },
+    due: { about: 'N days passed with no answer' },
+    drafted: { about: 'a follow-up entry is in the outbox, waiting for a press', end: 'goal' },
+    answered: { about: 'they wrote back before N days: nothing to do', end: 'stop' },
+    dismissed: { about: 'the person said no follow-up for this thread', end: 'stop' },
+  },
+  moves: [
+    { from: 'watching', to: 'due', on: 'N days, no answer', by: 'agent', check: 'dueFollowUps' },
+    { from: 'watching', to: 'answered', on: 'an inbound message in the thread', by: 'page' },
+    { from: 'due', to: 'drafted', on: 'draft the follow-up', by: 'agent', uses: 'follow-up' },
+    { from: 'due', to: 'dismissed', on: 'the person dismisses it', by: 'person' },
+  ],
+});
+
 // Who listens on each lane. PROPOSAL, from Dinis's words about 04:08 UTC: lane keys are "created by
 // vaults ... it just depends on the workflow and who's listening. Usually we have an observability
 // agent or specific agent or a feedback agent to capture it." The agent names below are roles, not
@@ -360,6 +472,11 @@ const EXTRA = {
   'twin-sync': [2, ['oauth', 'vault'], 'a sync writes every new header into the twin vault (done on Dinis\'s mailbox, 21 Nov)'],
   'send-from-client': [3, ['site', 'oauth', 'mail-client'], 'Dinis wrote, sent, received and replied from the client on 22 Nov (his screenshots, REALITY.md); tests/mail.test.mjs covers reply and forward headers'],
   'campaign-policy': [5, ['policy', 'lanes', 'pki', 'agents'], 'a made-up campaign policy holds a listed English or Portuguese email for Dinis, refuses each thing his defaults forbid, and passes a signed entry from the outreach agent to his press (sim/workflows/round4.test.mjs)'],
+  'open-vault': [4, ['site', 'page-key', 'vault'], 'Open vault opens the outbox and lists its entries in Chromium against the vault stand-in (sim/workflows/first-send-page.mjs, key-paste-page.mjs)'],
+  'read-message': [1, ['site', 'oauth', 'mail-client'], 'opening an unread conversation with gmail.modify removes UNREAD (tests/mail.test.mjs; checked in Chromium against a stand-in for Gmail, REALITY.md)'],
+  'label-archive': [1, ['site', 'oauth', 'mail-client'], 'archive removes INBOX and Undo adds it back; nothing is ever deleted for good (sim/workflows/round5.test.mjs, tests/mail.test.mjs)'],
+  'firewall-clean': [2, ['agents', 'policy'], 'on the simulated mailbox, the two injection messages are hostile and the rest clean, and the checker refuses an agent\'s reply to a hostile one (sim/workflows/round5.test.mjs)'],
+  'follow-up-timer': [3, ['vault', 'agents'], 'on the simulated twin at 16 Nov with N = 5, exactly the unanswered thread to Kim is due, and its follow-up passes to the press (sim/workflows/round5.test.mjs)'],
   'gateway-stop': [2, ['lanes'], 'after a signed gateway.stop, decideEntry() refuses every signed entry (sim/workflows/round2.test.mjs)'],
 };
 for (const m of M) {

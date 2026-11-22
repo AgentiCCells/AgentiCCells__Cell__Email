@@ -6,8 +6,8 @@
   "started": "by conductor.d at Dinis's word in its session, 03:59 UTC on 22 Nov 2026: \"For the 6, start with PM, design, and workflows.\"",
   "brief": "team/email-agents/briefs/email.workflows.d.md (approved by Dinis in email.dev.d's session, about 03:55 UTC on 22 Nov 2026, as reported by email.dev.d)",
   "branch": "work/email.workflows.d-r2",
-  "updated": "2026-11-22T09:45Z",
-  "state": "key paste run done; next: level-2 machines",
+  "updated": "2026-11-22T10:00Z",
+  "state": "candidate 3 done (level-2 machines); waiting for the next item",
   "read": [
     "CLAUDE.md",
     "REALITY.md (at 97638a8)",
@@ -111,7 +111,7 @@
       "item": "Candidate 3: level-2 machines (open-vault, read-message, label and archive, the firewall's clean copy, the follow-up timer)",
       "claimed": "2026-11-22T09:45Z",
       "approved_by": "email.pm.d, 09:31 UTC",
-      "status": "in progress"
+      "status": "done: open-vault, read-message, label-archive, firewall-clean, follow-up-timer (19 machines in all); sim/workflows/followups.mjs; 5 tests in sim/workflows/round5.test.mjs drive them from clean(), dueFollowUps(), labelChange() and the checker on the made-up mailbox"
     }
   ],
   "proposed_claims": [],

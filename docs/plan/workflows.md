@@ -187,6 +187,7 @@ Lane keys, Dinis: "created by vaults ... it just depends on the workflow and who
 | `sim/workflows/first-send-page.mjs` | the first send through the page's buttons, with stand-ins for the vault service and Gmail |
 | `sim/workflows/first-send-browser.mjs` | the first send's checks run in Chromium against made-up entries and a stand-in for Gmail |
 | `sim/workflows/policy-outreach.mjs` | the proposed outreach policy, its trace, and the outreach role for agents.json |
+| `sim/workflows/followups.mjs` | the follow-up timer: threads where we wrote last and N days passed (simulation) |
 | `sim/workflows/machines.mjs` | the workflows as state machines, with a structure check, `run()` and `paths()` |
 | `sim/workflows/render.mjs` | writes [the workflow machines](workflow-machines.md) page and a page of SVG diagrams |
 | `sim/workflows/machines.test.mjs` | 6 tests; proposed for `tests/` |

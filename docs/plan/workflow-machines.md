@@ -2,7 +2,7 @@
 
 **Status: a proposal, generated** from `sim/workflows/machines.mjs` by `node sim/workflows/render.mjs`; do not edit by hand. Written by email.workflows.d@AgentiCCells.dinis at Dinis's word, 22 November 2026, about 04:08 UTC: "I want you to think in terms of state machines, and I want you to think about every action that happens here is actually a workflow". Each machine says whether it is built (in the page today), simulation (code and tests with made-up data) or plan. [The workflows page](workflows.md). [Back to the plan](index.md).
 
-Machines: 14. Structure check: every state can be reached, every non-end state has a way out, every goal can be reached, no workflow uses itself.
+Machines: 19. Structure check: every state can be reached, every non-end state has a way out, every goal can be reached, no workflow uses itself.
 
 ## The map, ranked by the sending bottleneck
 
@@ -18,12 +18,17 @@ Ranked by how much each workflow removes the bottleneck Dinis named on 22 Novemb
 | 4 | **trust-ladder**: The trust ladder: from every press to sessions sending | plan | Dinis decides to climb a rung, by a change to the ABP | each rung: the one below working, and an ABP change Dinis approves | Dinis, one rung at a time | more at each rung: proposals, then approvals, then batches, then send records | docs/plan/trust-ladder.md gives each rung what it needs, the ABP change, its checks and how to step down; no rung above 0 is used before Dinis approves it; the machine allows no skipped rung and a step down from each |
 | 4 | **connect**: Connect a Gmail account | built | the person presses Connect | gmail.metadata; then gmail.send, gmail.readonly or gmail.modify, one press each | the person, on Google's consent screen | nothing yet (the token is sealed to the page key) | Dinis connects and the page reads counts and labels (done 16 Nov); Allow sending grants gmail.send |
 | 4 | **outreach**: Write to someone new | simulation | a list of people to reach (for PrompTugal: conductor@PrompTugal.dinis's) | the outbox vault key; the agent's lane key | the person (a signed automation only for fixed templates to verified correspondents) | the agent's propose.send on its actions lane | a made-up outreach entry passes checkEntry() and the page; a changed one is refused (tests/workflows.test.mjs) |
+| 4 | **open-vault**: Open the vaults | built | the person presses Open vault, or a pasted code carried a vault key | the vault keys and the SG/Send access token, kept sealed to the page key | nobody: opening the person's own vaults | vault commits (the vault library) | Open vault opens the outbox and lists its entries in Chromium against the vault stand-in (sim/workflows/first-send-page.mjs, key-paste-page.mjs) |
 | 3 | **pin-approver**: Pin an approver | plan | the person sets up signed sending | key-by-qr; the approver's published key (team/keys, or a register) | the person, by pasting the code | the approver's key bundle | a fixture policy signed by a pinned approver passes decideEntry(); unpinned, it is refused |
 | 3 | **reply**: Answer a message | simulation | a message in the twin that needs an answer | the outbox vault key; the agent's lane key | the person (a signed automation only for fixed templates to verified correspondents) | the agent's propose.reply on its actions lane | a made-up reply under the automation passes; with the empty twin it is refused (tests/workflows.test.mjs) |
 | 3 | **send-from-client**: Write and send in the mail client | built | the person presses Write, Reply, Reply all or Forward | gmail.send and gmail.readonly (Allow reading) | the person, by pressing Send (no agent drafts it) | nothing | Dinis wrote, sent, received and replied from the client on 22 Nov (his screenshots, REALITY.md); tests/mail.test.mjs covers reply and forward headers |
+| 3 | **follow-up-timer**: Notice a thread waiting on the other side | simulation | each twin sync (plan: also a daily check) | the synced twin; N, the days to wait (for Dinis) | the person, for the follow-up itself | the follow-up proposal, when drafted | on the simulated twin at 16 Nov with N = 5, exactly the unanswered thread to Kim is due, and its follow-up passes to the press (sim/workflows/round5.test.mjs) |
 | 2 | **twin-sync**: Sync the mailbox into the twin | built | the person presses Sync (plan: a schedule) | gmail.metadata; the twin vault key | nobody: reading headers into the person's own vault | vault commits | a sync writes every new header into the twin vault (done on Dinis's mailbox, 21 Nov) |
 | 2 | **follow-up**: Follow up on our own unanswered email | simulation | a thread where we wrote last and N days passed | the outbox vault key; the agent's lane key | the person (a signed automation only for fixed templates to verified correspondents) | the agent's propose.reply on its actions lane | a made-up follow-up to an unanswered thread passes to the press |
 | 2 | **gateway-stop**: Stop the gateway (the kill switch) | simulation | any agent or person sees something wrong | a lane key; gateway.stop is open to every cell agent (agents.json) | nobody: stopping needs no approval; starting again needs a pinned approver | the gateway.stop entry on the approvals lane | after a signed gateway.stop, decideEntry() refuses every signed entry (sim/workflows/round2.test.mjs) |
+| 2 | **firewall-clean**: Clean an incoming message before any agent reads it | simulation | a message arrives in the twin | the raw message (only the firewall reads it, N5) | nobody: a hostile verdict means only a person may answer | plan: the cleaned copy in clean/ | on the simulated mailbox, the two injection messages are hostile and the rest clean, and the checker refuses an agent's reply to a hostile one (sim/workflows/round5.test.mjs) |
+| 1 | **read-message**: Read a conversation in the mail client | built | the person opens a conversation | gmail.readonly to read; gmail.modify to mark it read | the person, by opening it | nothing | opening an unread conversation with gmail.modify removes UNREAD (tests/mail.test.mjs; checked in Chromium against a stand-in for Gmail, REALITY.md) |
+| 1 | **label-archive**: Archive, Bin, star or mark unread, with Undo | built | the person presses Archive, Bin, Star or Mark unread | gmail.modify (Allow managing) | the person, by pressing | nothing | archive removes INBOX and Undo adds it back; nothing is ever deleted for good (sim/workflows/round5.test.mjs, tests/mail.test.mjs) |
 
 ## Building blocks against workflows
 
@@ -39,12 +44,17 @@ Which of the primitives we have each workflow uses. A workflow can run only when
 | trust-ladder |  |  |  |  | x | x | x | x |  |
 | connect | x | x | x |  |  |  |  |  |  |
 | outreach |  |  |  | x | x | x |  | x |  |
+| open-vault | x |  | x | x |  |  |  |  |  |
 | pin-approver | x |  | x |  |  |  | x |  |  |
 | reply |  |  |  | x | x | x |  | x |  |
 | send-from-client | x | x |  |  |  |  |  |  | x |
+| follow-up-timer |  |  |  | x |  |  |  | x |  |
 | twin-sync |  | x |  | x |  |  |  |  |  |
 | follow-up |  |  |  | x | x | x |  | x |  |
 | gateway-stop |  |  |  |  | x |  |  |  |  |
+| firewall-clean |  |  |  |  |  | x |  | x |  |
+| read-message | x | x |  |  |  |  |  |  | x |
+| label-archive | x | x |  |  |  |  |  |  | x |
 
 | Block | What it is | Status |
 |---|---|---|
@@ -87,6 +97,11 @@ Dinis, about 04:08 UTC: "it just depends on the workflow and who's listening. Us
 | 0 | **trust-ladder** | agent sessions send some kinds of email under a policy Dinis signed, and he still sees every send | pin-approver, gateway-stop | this is the scaling question itself: each rung moves work from the person to signed policy, so one person can stand behind more email |
 | 1 | **send-from-client** | an email the person wrote themselves leaves from their Gmail | none | it runs in each person's browser on their own token; no server; Dinis used it for real on 22 Nov ("IT WORKS!!!") |
 | 1 | **campaign-policy** | a policy Dinis signed that lists the campaign's addresses and his outreach defaults, so its agent's signed drafts can pass C4 | none | one signature covers a whole list, so the person approves the list once and each email once; the list is the limit an agent cannot pass |
+| 2 | **open-vault** | the twin vault and the outbox are open in the page, and the outbox entries listed | none | one vault service call per object, in the browser; the service is the only shared part |
+| 2 | **read-message** | the person has read the conversation, and Gmail knows it is read | none | Gmail API quota per user; the HTML is shown in a sandboxed frame with remote images blocked |
+| 2 | **label-archive** | the conversation is where the person put it in Gmail, and nothing was deleted for good | none | one Gmail call per press; agents' label changes would go through approved proposals instead (C3, plan) |
+| 2 | **firewall-clean** | agents see only the cleaned copy, with a verdict that decides what may answer it | none | one pass per message, in the browser or the firewall agent; a heuristic, not a guarantee |
+| 2 | **follow-up-timer** | a follow-up is drafted for a thread where we wrote last and N days passed, and nothing is sent without a press | follow-up | a pass over the twin's threads; no Gmail call; the CRM component shows the same "who waits on whom" |
 
 ## email: Email with agents, approved by a person
 
@@ -606,3 +621,186 @@ stop  listed > proposed > changed
 | listed | make the policy | proposed | agent | `outreachPolicy` |  |
 | proposed | Dinis signs | signed | person | `signPolicy, verifyPolicy` |  |
 | proposed | Dinis asks for changes | changed | person |  |  |
+
+## open-vault: Open the vaults
+
+- **Goal:** the twin vault and the outbox are open in the page, and the outbox entries listed
+- **Status:** built (`src/app/connect.js (openVaults), src/app/vault.js`)
+- **Trigger:** the person presses Open vault, or a pasted code carried a vault key
+- **Needs:** the vault keys and the SG/Send access token, kept sealed to the page key
+- **Approves:** nobody: opening the person's own vaults
+- **Signed:** vault commits (the vault library)
+- **Acceptance:** Open vault opens the outbox and lists its entries in Chromium against the vault stand-in (sim/workflows/first-send-page.mjs, key-paste-page.mjs)
+- **Bottleneck rank:** 4; **uses:** site, page-key, vault
+- **As a product:** for anyone whose agents hand them work through a vault. Scale: one vault service call per object, in the browser; the service is the only shared part
+
+| State | What it means | End |
+|---|---|---|
+| pressed | the page looks for the keys it keeps |  |
+| twin_ready | the twin vault is open, or was just made here (when the SG/Send token is kept and no twin key) |  |
+| outbox_open | the outbox vault is open and its entries listed | goal |
+| twin_only | no outbox key yet: only the twin is open | stop |
+| nothing | no key and no token: "paste the sealed QR code" | stop |
+| failed | the vault service refused or a key did not open | stop |
+
+Paths from the start to an end:
+
+```
+goal  pressed > twin_ready > outbox_open
+stop  pressed > twin_ready > twin_only
+stop  pressed > twin_ready > failed
+stop  pressed > nothing
+stop  pressed > failed
+```
+
+| From | Event | To | By | Checked by | Workflow |
+|---|---|---|---|---|---|
+| pressed | twin key kept, or token kept and a twin made | twin_ready | vault | `openTwinVault, createTwinVault` |  |
+| pressed | no key and no token | nothing | page |  |  |
+| twin_ready | outbox key kept: open and list | outbox_open | vault | `openTwinVault, ensureLoaded` |  |
+| twin_ready | no outbox key | twin_only | page |  |  |
+| pressed | vault error | failed | vault |  |  |
+| twin_ready | outbox error | failed | vault |  |  |
+
+## read-message: Read a conversation in the mail client
+
+- **Goal:** the person has read the conversation, and Gmail knows it is read
+- **Status:** built (`src/app/mail.js (opening a thread), src/app/mailparse.js (labelChange)`)
+- **Trigger:** the person opens a conversation
+- **Needs:** gmail.readonly to read; gmail.modify to mark it read
+- **Approves:** the person, by opening it
+- **Signed:** nothing
+- **Acceptance:** opening an unread conversation with gmail.modify removes UNREAD (tests/mail.test.mjs; checked in Chromium against a stand-in for Gmail, REALITY.md)
+- **Bottleneck rank:** 1; **uses:** site, oauth, mail-client
+- **As a product:** for anyone with Gmail. Scale: Gmail API quota per user; the HTML is shown in a sandboxed frame with remote images blocked
+
+| State | What it means | End |
+|---|---|---|
+| listed | the conversation is in the list, bold if unread |  |
+| shown | its messages are shown; the last and the unread ones open |  |
+| read | UNREAD removed in Gmail (with Allow managing) | goal |
+| shown_only | read-only token: shown, but Gmail still says unread | goal |
+| not_shown | Gmail refused | stop |
+
+Paths from the start to an end:
+
+```
+goal  listed > shown > read
+goal  listed > shown > shown_only
+stop  listed > not_shown
+```
+
+| From | Event | To | By | Checked by | Workflow |
+|---|---|---|---|---|---|
+| listed | open | shown | person |  |  |
+| listed | error | not_shown | google |  |  |
+| shown | unread and gmail.modify: remove UNREAD | read | page | `labelChange(read)` |  |
+| shown | no gmail.modify | shown_only | page |  |  |
+
+## label-archive: Archive, Bin, star or mark unread, with Undo
+
+- **Goal:** the conversation is where the person put it in Gmail, and nothing was deleted for good
+- **Status:** built (`src/app/mail.js (act, undoToast), src/app/mailparse.js (labelChange)`)
+- **Trigger:** the person presses Archive, Bin, Star or Mark unread
+- **Needs:** gmail.modify (Allow managing)
+- **Approves:** the person, by pressing
+- **Signed:** nothing
+- **Acceptance:** archive removes INBOX and Undo adds it back; nothing is ever deleted for good (sim/workflows/round5.test.mjs, tests/mail.test.mjs)
+- **Bottleneck rank:** 1; **uses:** site, oauth, mail-client
+- **As a product:** for anyone with Gmail. Scale: one Gmail call per press; agents' label changes would go through approved proposals instead (C3, plan)
+
+| State | What it means | End |
+|---|---|---|
+| open | a conversation is open |  |
+| moved | archived or in Bin; a toast offers Undo |  |
+| kept | the move stands | goal |
+| undone | Undo put it back (INBOX added again, or out of Bin) | goal |
+| marked | starred, unstarred or marked unread | goal |
+| failed | Gmail refused; the toast says so | stop |
+
+Paths from the start to an end:
+
+```
+goal  open > moved > kept
+goal  open > moved > undone
+goal  open > marked
+stop  open > failed
+```
+
+| From | Event | To | By | Checked by | Workflow |
+|---|---|---|---|---|---|
+| open | archive or bin | moved | person | `labelChange(archive), threads/trash` |  |
+| open | star or unread | marked | person | `labelChange` |  |
+| open | error | failed | google |  |  |
+| moved | toast closes | kept | page |  |  |
+| moved | press Undo | undone | person | `labelChange(inbox), threads/untrash` |  |
+
+## firewall-clean: Clean an incoming message before any agent reads it
+
+- **Goal:** agents see only the cleaned copy, with a verdict that decides what may answer it
+- **Status:** simulation (`src/app/cell/clean.mjs (clean), tested on the simulated mailbox`)
+- **Trigger:** a message arrives in the twin
+- **Needs:** the raw message (only the firewall reads it, N5)
+- **Approves:** nobody: a hostile verdict means only a person may answer
+- **Signed:** plan: the cleaned copy in clean/
+- **Acceptance:** on the simulated mailbox, the two injection messages are hostile and the rest clean, and the checker refuses an agent's reply to a hostile one (sim/workflows/round5.test.mjs)
+- **Bottleneck rank:** 2; **uses:** agents, policy
+- **As a product:** for anyone who lets agents read their mail. Scale: one pass per message, in the browser or the firewall agent; a heuristic, not a guarantee
+
+| State | What it means | End |
+|---|---|---|
+| raw | the message as it arrived |  |
+| cleaned | links numbered, hidden text quarantined, invisible characters removed, injections flagged |  |
+| clean | no flags of note: agents may draft a reply; an automation may answer it | goal |
+| suspicious | a risky link or hidden text: agents may draft, a person approves | goal |
+| hostile | it reads as instructions to an agent: no agent answers it until a person has read it | stop |
+
+Paths from the start to an end:
+
+```
+goal  raw > cleaned > clean
+goal  raw > cleaned > suspicious
+stop  raw > cleaned > hostile
+```
+
+| From | Event | To | By | Checked by | Workflow |
+|---|---|---|---|---|---|
+| raw | clean() | cleaned | agent | `clean` |  |
+| cleaned | verdict clean | clean | agent | `clean` |  |
+| cleaned | verdict suspicious | suspicious | agent | `clean` |  |
+| cleaned | verdict hostile | hostile | agent | `clean` |  |
+
+## follow-up-timer: Notice a thread waiting on the other side
+
+- **Goal:** a follow-up is drafted for a thread where we wrote last and N days passed, and nothing is sent without a press
+- **Status:** simulation (`sim/workflows/followups.mjs (dueFollowUps)`)
+- **Trigger:** each twin sync (plan: also a daily check)
+- **Needs:** the synced twin; N, the days to wait (for Dinis)
+- **Approves:** the person, for the follow-up itself
+- **Signed:** the follow-up proposal, when drafted
+- **Acceptance:** on the simulated twin at 16 Nov with N = 5, exactly the unanswered thread to Kim is due, and its follow-up passes to the press (sim/workflows/round5.test.mjs)
+- **Bottleneck rank:** 3; **uses:** vault, agents
+- **As a product:** for anyone who loses track of who owes whom an answer. Scale: a pass over the twin's threads; no Gmail call; the CRM component shows the same "who waits on whom"
+
+| State | What it means | End |
+|---|---|---|
+| watching | we wrote last; the timer runs |  |
+| due | N days passed with no answer |  |
+| drafted | a follow-up entry is in the outbox, waiting for a press | goal |
+| answered | they wrote back before N days: nothing to do | stop |
+| dismissed | the person said no follow-up for this thread | stop |
+
+Paths from the start to an end:
+
+```
+goal  watching > due > drafted
+stop  watching > due > dismissed
+stop  watching > answered
+```
+
+| From | Event | To | By | Checked by | Workflow |
+|---|---|---|---|---|---|
+| watching | N days, no answer | due | agent | `dueFollowUps` |  |
+| watching | an inbound message in the thread | answered | page |  |  |
+| due | draft the follow-up | drafted | agent |  | follow-up |
+| due | the person dismisses it | dismissed | person |  |  |
