@@ -6,15 +6,21 @@
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="bar.css">
 <link rel="stylesheet" href="app.css">
 <title>Your mailbox twin · Email AgenticCell</title>
 <meta name="description" content="The browser gateway: connect Gmail, show the page's QR code, paste the sealed QR code back, and your vaults open.">
 </head>
 <body>
+<header class="bar">
+  <a class="brand" href="connect.html" title="The gateway"><img src="/assets/logo.svg" alt="" width="28" height="28"><span class="brand-name">Email AgenticCell</span></a>
+  <nav class="pages" aria-label="Pages"><a href="connect.html" aria-current="page">Gateway</a><a href="mail.html">Mail</a></nav>
+  <div class="bar-end"><a href="../version.html" title="Version details">__VERSION__</a><a href="https://github.com/AgentiCCells/AgentiCCells__Cell__Email" title="The code on GitHub (give it a star)" rel="noopener">★ GitHub</a></div>
+</header>
 <main>
 <header class="top">
-<h1><img src="/assets/logo.svg" alt="" width="40" height="40">Your mailbox twin</h1>
-<p class="lede">Three steps: connect Gmail, swap keys with your agent, open the vault. <a class="version" href="../version.html" title="Version details">__VERSION__</a> <a class="version" href="https://github.com/AgentiCCells/AgentiCCells__Cell__Email" title="The code on GitHub (give it a star)" rel="noopener">★ GitHub</a></p>
+<h1>Your mailbox twin</h1>
+<p class="lede">Three steps: connect Gmail, swap keys with your agent, open the vault.</p>
 </header>
 
 <section class="step step-connect" aria-labelledby="step1-title">
