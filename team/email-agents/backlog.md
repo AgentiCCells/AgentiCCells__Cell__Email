@@ -33,6 +33,7 @@ Facts used here: live site v0.1.51 at 189ac49, built 22 November 2026 02:12 UTC 
 | W11 | More screenshots of the mail client on real mail, if Dinis has them | rank 12 (the live client review) has only what REALITY.md describes | email.design.d, 04:10 UTC 22 Nov |
 | W12 | Which one or two of the five inbox concepts to take further (rank 7, done) | Building any of them waits on his pick | email.design.d, 04:17 UTC 22 Nov |
 | W13 | Release release/next2 to dev: email.pm.d's backlog and notes, email.workflows.d's signed.json writer and state machines, email.design.d's reader fix and shared top bar, the checker's recipient rules, key entries; all signed by their agents | Only Dinis's word in email.dev.d's session sends it live | email.dev.d status, pass of 05:05 UTC |
+| W14 | Start email.twins.d (then contacts, crm), on Dinis's yes in conductor.d's session | Ranks 19 to 21 and 33 wait on it | conductor.d, 05:07 UTC 22 Nov |
 
 The one-page form for Dinis: `board/2026-11-22-waits-on-dinis.md`.
 
