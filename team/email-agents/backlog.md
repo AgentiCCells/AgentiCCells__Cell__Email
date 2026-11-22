@@ -66,15 +66,20 @@ Rank 1 is first. "Agent" is the proposed owner by the path rules in `team/email-
 | 26 | `docs/plan/crm.md`: how a CRM draft becomes an outbox entry with its `client_ref`, agreed with crm.ios@sgit.dinis | email.crm.d | Proposed (brief; format v1 was agreed 16 Nov) | the page exists, marked plan, and names each field and its source in the twin format |
 | 27 | Message bodies in the twin | email.twins.d | Proposed; needs a policy change and Dinis's approval first (N5) | not to start until Dinis approves the ABP change |
 | 28 | A phone path in the Gmail stand-in script (`sim/mail-standin.cjs`), so phone layouts can be checked with made-up mail | email.dev.d (owns the stand-in) | Proposed by email.design.d, relayed by conductor.d at 04:06 UTC 22 Nov | the stand-in runs at a phone viewport and saves screenshots of the list, a conversation and the composer |
+| 29 | Move `sim/workflows/` tests (workflows.test.mjs) into `tests/` so the gates run them | email.dev.d (owns tests/) | Proposed by email.workflows.d (bb18ba7), relayed by conductor.d 04:09 UTC 22 Nov | `node --test tests/*.test.mjs` runs the 9 workflow tests |
+| 30 | Add `lane_key` (Ed25519 SPKI) to team/keys entries, the source of agents' lane keys (W5) | email.dev.d; key entries merge only on Dinis's word | Proposed by email.workflows.d (bb18ba7), relayed by conductor.d 04:09 UTC 22 Nov | each email.* key entry carries lane_key; decide() in the page reads it in a test; feeds rank 5 |
+| 31 | Add `recipients.allow_cc` and `recipients.one_domain` to the email policy checker | email.dev.d (owns src/app/cell/checker.mjs) | Proposed by email.workflows.d (bb18ba7), relayed by conductor.d 04:09 UTC 22 Nov | tests: cc refused unless allowed; three recipients from one organisation pass, two organisations refused (Dinis's outreach defaults, 16 Nov) |
+| 32 | Load the twin into fullCheck so replies are recognised and not treated as first contact | email.dev.d with email.twins.d | Proposed by email.workflows.d (bb18ba7), relayed by conductor.d 04:09 UTC 22 Nov | a fixture reply to a known thread passes fullCheck as a reply; an unknown address is a first contact |
+| 33 | Link docs/plan/workflows.md from docs/plan/index.md | email.dev.d (index.md has no named owner; dev holds the rest) | Proposed by email.workflows.d (bb18ba7), relayed by conductor.d 04:09 UTC 22 Nov | the plan index links the page; validate OK |
 
 ## 4. First three items per agent
 
 Set by email.pm.d on Dinis's word in its session, about 04:04 UTC 22 Nov: "can you coordinate all these actions, all these sessions? ... set up a tight schedule for you, iterate". Dinis can change any of these.
 
 - **email.pm.d:** rank 1 (coordination, hourly); rank 2 with email.workflows.d (the map); release notes per release.
-- **email.workflows.d:** ranks 2, 3, 7.
+- **email.workflows.d:** done first: docs/plan/workflows.md (outreach, reply, follow-up) and the signed.json writer in sim/workflows/ (bb18ba7). Next: ranks 2, 3, 7.
 - **email.design.d:** ranks 6, 9, 11.
-- **email.dev.d:** rank 5 (lane keys from team/keys now; approvers when W4 is answered); rank 4 with email.workflows.d; integrating the others' branches and releasing on Dinis's word.
+- **email.dev.d:** ranks 29 to 33 (small, from email.workflows.d's first work; 30 feeds rank 5); rank 5 (lane keys from team/keys now; approvers when W4 is answered); rank 4 with email.workflows.d; integrating the others' branches and releasing on Dinis's word.
 - **email.twins.d, email.contacts.d, email.crm.d:** not started; their first items when conductor.d starts them (twins 18, 19, 20; contacts 21, 22, 23; crm 14 first, then 26, 24, 25).
 
 ## 5. REALITY.md: what the live check found
