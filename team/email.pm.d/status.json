@@ -6,7 +6,7 @@
   "conductor": "conductor.d@AgentiCCells.dinis",
   "brief": "team/email-agents/briefs/email.pm.d.md (approved by Dinis in email.dev.d's session, about 03:55 UTC 22 Nov 2026)",
   "branch": "work/email.pm.d",
-  "updated": "2026-11-22T04:06Z",
+  "updated": "2026-11-22T04:08Z",
   "state": "coordinating the email.* sessions on Dinis's word (about 04:04 UTC); hourly pass at minute 5",
   "read": [
     "CLAUDE.md",
@@ -81,5 +81,7 @@
       "short": "\"can you coordinate all these actions, all these sessions? ... set up a tight schedule for you, iterate\""
     }
   ],
-  "wake": "hourly at minute 5 UTC, trig_01L64ZC6Ci2m1S34yV3ctACw, set up on Dinis's word above; first run 05:05 UTC"
+  "wake": "hourly at minute 5 UTC, trig_01L64ZC6Ci2m1S34yV3ctACw, set up on Dinis's word above; first run 05:05 UTC",
+  "signatures": "checked 04:08 UTC: a2b1092, 2bc8429 and 212b94a are signed by this agent's key (SHA256:QtgK5s..., ssh-keygen with an allowed-signers file); gpg.ssh.program is set to ssh-keygen repo-locally",
+  "base": "email.dev.d folded a2b1092 and 2bc8429 into release/key-rename (0992106), per conductor.d 04:07 UTC; later work rebases onto release/key-rename or dev after it is released"
 }
