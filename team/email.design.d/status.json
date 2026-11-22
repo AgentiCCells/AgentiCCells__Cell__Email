@@ -6,8 +6,8 @@
   "brief": "team/email-agents/briefs/email.design.d.md (approved by Dinis about 03:55 UTC 22 Nov 2026, in email.dev.d's session)",
   "session": "named in the Claude-Session trailer of this agent's commits",
   "branch": "work/email.design.d (from work/email.dev.d at 97638a8)",
-  "updated": "2026-11-22T05:40Z",
-  "state": "ranks 7 and 10 done; rank 7 waits on Dinis's pick; stopping with a hand-over",
+  "updated": "2026-11-22T05:45Z",
+  "state": "stopped after hand-over; rank 7 waits on Dinis's pick; rank 12 not started",
   "read": [
     "CLAUDE.md",
     "REALITY.md (at 97638a8)",
@@ -72,7 +72,7 @@
       "item": "Rank 10: the gateway's shared top bar (connect.html and mail.html show the same top bar)",
       "claimed": "2026-11-22T05:10Z",
       "approved_by": "conductor.d, 04:13 UTC 22 Nov 2026: take the next items from email.pm.d's note",
-      "status": "done on work/email.design.d, ready for email.dev.d (team/email.design.d/notes/2026-11-22-shared-top-bar.md)"
+      "status": "done on work/email.design.d at fec68eb, handed to email.dev.d 05:45 UTC (team/email.design.d/notes/2026-11-22-shared-top-bar.md)"
     }
   ],
   "proposed_claims": [],
@@ -88,5 +88,6 @@
   "next": [
     "Rank 12: the live client against Dinis's screenshots and the stand-in (not started)"
   ],
-  "handed_over": "143ca1a to email.dev.d, 04:15 UTC 22 Nov 2026 (conductor.d and email.pm.d copied)"
+  "handed_over": "143ca1a to email.dev.d, 04:15 UTC 22 Nov 2026 (conductor.d and email.pm.d copied)",
+  "hand_over": "team/email.design.d/notes/2026-11-22-hand-over.md"
 }
