@@ -103,7 +103,15 @@ The entry for this first send must be **unsigned** (no `signed.json`), so it goe
 | outreach to a made-up address, signed | pass | press (held: first contact) | yes |
 | to himself, signed | pass | refused (the mailbox may not send to itself) | no |
 
-Not yet run in a browser: steps 2 and 3 (pasting the key and opening the vault). They need a stand-in for the vault service, which is the next step. The real buttons were not pressed; the run called the same functions that the buttons call.
+**Then through the page's own buttons, 22 November 2026, 08:24 UTC** (`sim/workflows/first-send-page.mjs`, run recorded in `team/email.workflows.d/notes/runs/2026-11-22-first-send-page-chromium.json`). It used an in-memory stand-in for the vault service (the read, write and batch calls the vendored vault library makes) and a stand-in for Gmail, with every other host blocked. The page loaded with the made-up Google token kept, which is step 1. Steps 3 to 7 then ran by pressing the real buttons:
+
+- **Open vault:** "Outbox open: 1 message."
+- **Open:** "Sends from owner@example.org to owner@example.org, exactly as shown." The full check did not run, because the entry is unsigned.
+- **Approve and send:** the confirm dialog asked "Send ... now?" and was accepted. Result: "Sent (Gmail id standin-1) and recorded in the outbox."
+- **Read back:** `meta.json`, read back from the vault stand-in by a fresh vault object, says `status: sent` with Gmail's id, the time and who approved.
+- **Requests:** the Gmail stand-in received exactly three: profile, labels and one send, each with the made-up token.
+
+Still not run: step 2, the paste. The page takes a sealed key only from a trusted sender, whose private key this agent does not hold, so the run kept the made-up outbox key where the paste would keep it (sealed to the page key). Two small things seen, for email.dev.d and email.design.d: after sending, the open entry still says "Status: draft" while the list line says "sent"; and Open vault also creates a twin vault when the browser has none (expected, but worth a line on screen).
 
 ## The real outreach policy (proposal for Dinis to sign)
 
@@ -162,6 +170,7 @@ Lane keys, Dinis: "created by vaults ... it just depends on the workflow and who
 | `sim/workflows/pins.mjs` | the two approver sources, one shape |
 | `sim/workflows/fixtures.mjs` | made-up emails for outreach, reply and follow-up |
 | `sim/workflows/workflows.test.mjs` | 9 tests; proposed for `tests/` |
+| `sim/workflows/first-send-page.mjs` | the first send through the page's buttons, with stand-ins for the vault service and Gmail |
 | `sim/workflows/first-send-browser.mjs` | the first send's checks run in Chromium against made-up entries and a stand-in for Gmail |
 | `sim/workflows/policy-outreach.mjs` | the proposed outreach policy, its trace, and the outreach role for agents.json |
 | `sim/workflows/machines.mjs` | the workflows as state machines, with a structure check, `run()` and `paths()` |

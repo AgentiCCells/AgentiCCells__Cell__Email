@@ -418,7 +418,7 @@ stop  opened > ready > confirming > sending > failed
 ## first-send: Dinis's first real send, to himself
 
 - **Goal:** one outbox entry sent from Dinis's own Gmail to himself and recorded in the outbox vault
-- **Status:** plan (`every step is built in src/app/connect.js; the whole has never run (it waits on the outbox key, W1); its checks and send ran in Chromium on made-up entries (sim/workflows/first-send-browser.mjs)`)
+- **Status:** plan (`every step is built in src/app/connect.js; the whole has never run (it waits on the outbox key, W1); its checks and send ran in Chromium on made-up entries (sim/workflows/first-send-browser.mjs), and steps 3 to 7 through the page's own buttons against stand-ins for the vault service and Gmail (sim/workflows/first-send-page.mjs); the key paste has not run`)
 - **Trigger:** conductor@PrompTugal.dinis gives Dinis a sealed QR code with the outbox vault key, made for his page's public key
 - **Needs:** the outbox vault key (W1); gmail.send; the page key
 - **Approves:** Dinis's press

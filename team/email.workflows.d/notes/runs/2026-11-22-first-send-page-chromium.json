@@ -1,0 +1,76 @@
+{
+  "ran": "2026-11-22T08:24:45.086Z",
+  "browser": "157.0.8103.78",
+  "steps": [
+    {
+      "name": "set-up (not a page step)",
+      "detail": "made-up outbox vault rk5ze852 in the stand-in, one entry to owner@example.org; its key kept sealed to the page key where the paste would keep it"
+    },
+    {
+      "name": "Connect (token already kept)",
+      "detail": "Connected as owner@example.org: 12 messages, 8 threads. Sending is allowed."
+    },
+    {
+      "name": "Open vault",
+      "detail": "Twin vault fyhesl1b created and open; its key is kept in this browser. Outbox open: 1 message."
+    },
+    {
+      "name": "Open the entry",
+      "detail": "Sends from owner@example.org to owner@example.org, exactly as shown."
+    },
+    {
+      "name": "Approve and send, confirmed",
+      "detail": "Sent (Gmail id standin-1) and recorded in the outbox."
+    },
+    {
+      "name": "meta.json read back",
+      "detail": "{\"status\":\"sent\",\"gmail_id\":\"standin-1\",\"approved_by\":\"owner@example.org in the page\",\"sent_at\":\"set\"}"
+    }
+  ],
+  "gmail": [
+    {
+      "method": "GET",
+      "path": "profile",
+      "auth": "the made-up token"
+    },
+    {
+      "method": "GET",
+      "path": "labels",
+      "auth": "the made-up token"
+    },
+    {
+      "method": "POST",
+      "path": "messages/send",
+      "auth": "the made-up token"
+    }
+  ],
+  "aborted": [],
+  "errors": [],
+  "dialogs": [
+    "Send \"First send from the page (test)\" from owner@example.org to owner@example.org now?"
+  ],
+  "sent": {
+    "headers": [
+      "To: owner@example.org",
+      "Subject: First send from the page (test)",
+      "MIME-Version: 1.0",
+      "Content-Type: text/plain; charset=\"UTF-8\"",
+      "Content-Transfer-Encoding: base64"
+    ],
+    "text": "This is a made-up first send, to myself.\r\n"
+  },
+  "meta": {
+    "to": [
+      "owner@example.org"
+    ],
+    "cc": [],
+    "subject": "First send from the page (test)",
+    "status": "sent",
+    "workflow": "first-send",
+    "sent_at": "2026-11-22T08:24:48Z",
+    "gmail_id": "standin-1",
+    "gmail_thread_id": "standin-t1",
+    "approved_by": "owner@example.org in the page"
+  },
+  "vault_requests": 17
+}

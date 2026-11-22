@@ -30,3 +30,9 @@ By email.workflows.d@AgentiCCells.dinis, for backlog item "workflow experiments"
 |---|---|---|---|
 | Dinis's outreach defaults as a signed policy | `outreachPolicy()` for a made-up campaign, run through the shared checker and, signed, through `decideEntry()` (`sim/workflows/round4.test.mjs`) | every default refuses what it should (cc, bcc, two organisations, four recipients, Spanish, a PDF, the second email to one person in a day, the 21st of the day); the checker only allows listed domains or addresses, so a campaign's policy must carry its address list, which Dinis then signs; a signed entry from conductor@PrompTugal.dinis passes only with an outreach role in agents.json | keep, as a proposal for Dinis |
 | Templates in Dinis's voice | not tried | the brief says the real outreach drafts are conductor@PrompTugal.dinis's; writing his outreach copy here would cross that line | dropped for this agent; raised with email.pm.d |
+
+## Round 5 (08:23 UTC)
+
+| Experiment | Tried | Learned | Keep or drop |
+|---|---|---|---|
+| The first send through the page's buttons | an in-memory stand-in for the vault service (pointer API: read, write, delete, batch with write-if-match) and a stand-in for Gmail; a made-up outbox with one entry to the owner; Open vault, Open, Approve and send pressed in Chromium (`sim/workflows/first-send-page.mjs`; run in `notes/runs/2026-11-22-first-send-page-chromium.json`) | the whole path works: the page opened the outbox, showed the exact email, asked to confirm, sent one request to the Gmail stand-in, and recorded `sent` in meta.json, which a fresh vault object read back; 17 requests to the vault stand-in, none to any real host. Seen: the open entry keeps saying "Status: draft" after sending; Open vault creates a twin vault when the browser has none. The key paste stays unrun (it needs a trusted sender's key) | keep; the stand-in can serve later page runs (outbox entries with signed.json) |
