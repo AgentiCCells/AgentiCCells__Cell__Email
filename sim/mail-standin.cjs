@@ -7,7 +7,7 @@ const { chromium } = require('playwright');
 const b64u = (s) => Buffer.from(s, 'utf8').toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
 const now = Date.now(), H = 3600e3;
 const people = [['Ana Silva','ana@example.com'],['Bo Chen','bo@example.net'],['Project updates','updates@example.org'],['Cy Patel','cy@example.com'],['Dee Okafor','dee@example.com'],['Travel desk','travel@example.net'],['Eli Moreau','eli@example.com'],['Finance team','finance@example.org']];
-const subjects = ['Plans for the pilot','Re: Draft agreement','Weekly summary: 12 changes','Lunch on Thursday?','Slides for Monday','Your trip to Lisbon','Notes from the call','Invoice 2026-114'];
+const subjects = ['[example-org/Example__Project__Repository] Run failed: Pages - dev (a1b2c3d)','Re: Draft agreement','Weekly summary: 12 changes','Lunch on Thursday?','Slides for Monday','Your trip to Lisbon','Notes from the call','Invoice 2026-114'];
 const threads = people.map(([n,a],i) => {
   const t = { id: 't'+i, historyId: '1', messages: [] };
   const count = i === 1 ? 3 : 1;
@@ -23,7 +23,7 @@ const threads = people.map(([n,a],i) => {
 });
 (async () => {
   const b = await chromium.launch(); const out = process.argv[2];
-  const ctx = await b.newContext({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 });
+  const ctx = await b.newContext({ viewport: { width: Number(process.env.W) || 1440, height: 900 }, deviceScaleFactor: 2 });
   const p = await ctx.newPage();
   const blocked = [];
   p.on('pageerror', e => console.log('pageerror', e.message));

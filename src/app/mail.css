@@ -62,7 +62,7 @@ kbd{font:600 var(--t-xs) ui-monospace,Menlo,Consolas,monospace;border:1px solid 
 .side-head{margin:1.1rem 0 .3rem 1.25rem;font-weight:600;color:var(--muted);font-size:var(--t-xs);text-transform:uppercase;letter-spacing:.04em}
 
 .list-pane,.read-pane{background:var(--panel);border-radius:var(--r-l);border:1px solid var(--line);display:flex;flex-direction:column;min-height:0;overflow:hidden}
-.toolbar{display:flex;align-items:center;gap:.25rem;padding:.4rem .5rem;border-bottom:1px solid var(--line);min-height:52px;flex:none}
+.toolbar{display:flex;flex-wrap:wrap;align-items:center;gap:.25rem;padding:.4rem .5rem;border-bottom:1px solid var(--line);min-height:52px;flex:none}
 .list-title{font-size:var(--t-l);font-weight:600;margin:0 0 0 .25rem}
 .range{color:var(--muted);font-size:var(--t-s);font-variant-numeric:tabular-nums;margin-right:.25rem}
 
@@ -109,7 +109,9 @@ kbd{font:600 var(--t-xs) ui-monospace,Menlo,Consolas,monospace;border:1px solid 
 /* reading */
 .thread{display:flex;flex-direction:column;min-height:0;flex:1}
 .thread[hidden]{display:none}
-.thread-subject{font-size:var(--t-xl);font-weight:600;margin:0 .5rem;line-height:1.25;overflow-wrap:anywhere;flex:1}
+/* flex-basis 16rem: a long subject takes its own line and the buttons wrap below it, instead of the
+   subject being squeezed to a few letters a line (seen by Dinis, 22 November 2026). */
+.thread-subject{font-size:var(--t-xl);font-weight:600;margin:0 .5rem;line-height:1.25;overflow-wrap:anywhere;flex:1 1 16rem;min-width:0}
 .back{display:none}
 .note{display:flex;align-items:center;gap:.4rem;margin:0;padding:.5rem 1.25rem;font-size:var(--t-xs);color:var(--muted);border-bottom:1px solid var(--line)}
 #messages{overflow-y:auto;flex:1;padding:.5rem 1.25rem 2rem}
