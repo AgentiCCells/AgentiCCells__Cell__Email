@@ -26,15 +26,36 @@
     "signing_fingerprint": "sha256:a9f9fe47aa83d23f",
     "ssh_key": "the OpenSSH form of the signing key (ECDSA P-256, signs this branch's commits); its line and fingerprint sent to conductor.d",
     "private_halves": "only in this session's container under ~/.sg-send/; they end with it",
-    "public_half": "sent to conductor.d by message; not committed (only Dinis merges a key)"
+    "public_half": "sent to conductor.d by message; not committed (only Dinis merges a key)",
+    "signing_note": "7f16cea was signed by the container's own signer (the global gpg.ssh.program), not by this key. From the next commit on, gpg.ssh.program is set repo-locally to ssh-keygen and commits are signed with this key. 7f16cea stays as it is: history is not rewritten."
   },
   "claims": [],
   "proposed_claims": [
-    { "item": "Reader subject: smaller heading, break at / _ - first, at most three lines (first-look item 1)", "owner": "email.design.d (mail.css)", "status": "proposal, waiting for conductor.d" },
-    { "item": "Reader toolbar as one group at 1000 to 1200 px; no orphan separator (item 2)", "owner": "email.design.d (mail.css, mail.html)", "status": "proposal" },
-    { "item": "Phone: a More menu with Mark unread and Labels (item 3)", "owner": "email.design.d for markup and CSS; email.dev.d for any JavaScript", "status": "proposal" },
-    { "item": "Phone: Reply, Reply all, Forward on one row (item 4)", "owner": "email.design.d (mail.css)", "status": "proposal" },
-    { "item": "axe check and dark mode pass on mail.html and connect.html", "owner": "email.design.d", "status": "proposal" }
+    {
+      "item": "Reader subject: smaller heading, break at / _ - first, at most three lines (first-look item 1)",
+      "owner": "email.design.d (mail.css)",
+      "status": "proposal, waiting for conductor.d"
+    },
+    {
+      "item": "Reader toolbar as one group at 1000 to 1200 px; no orphan separator (item 2)",
+      "owner": "email.design.d (mail.css, mail.html)",
+      "status": "proposal"
+    },
+    {
+      "item": "Phone: a More menu with Mark unread and Labels (item 3)",
+      "owner": "email.design.d for markup and CSS; email.dev.d for any JavaScript",
+      "status": "proposal"
+    },
+    {
+      "item": "Phone: Reply, Reply all, Forward on one row (item 4)",
+      "owner": "email.design.d (mail.css)",
+      "status": "proposal"
+    },
+    {
+      "item": "axe check and dark mode pass on mail.html and connect.html",
+      "owner": "email.design.d",
+      "status": "proposal"
+    }
   ],
   "proposed_backlog_items_for_email_pm_d": [
     "Gateway (/app/connect.html) shares the mail client's top bar (design round 1, item 5)",
