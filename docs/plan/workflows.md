@@ -9,7 +9,12 @@ What this page covers, from the brief: the outbox and its entries, approvals, te
 - 16 November 2026, about 22:15 UTC, on conductor@PrompTugal.dinis's outreach workflow: "yes I agree with that workflow, and let's see how it works in practice". Agents draft into the PrompTugal outreach vault; Dinis approves and sends in the page; every send passes the email policy checker; the twin writes "replied". (From `board/handovers/2026-11-16-first-run.md`.)
 - The same evening, on the outreach defaults: "yes use those defaults and we will see how they work in practice". The defaults: every email approved by Dinis in the page; one recipient (up to three from one organisation, no cc or bcc); 20 a day, one per recipient a day; English and Portuguese; only small inline images.
 - 21 November 2026, 21:48 UTC, "yes" to ABP 1.1.4: until decide() runs in the page, a person's press of Approve and send on one email, after the page's checks, is the approval.
-- 22 November 2026, 03:59 UTC, relayed by conductor.d: agents' lane keys come from team/keys ("Yeah, teams.keys, that's a good one"). Where pinned approvers come from is still open (below).
+- 22 November 2026, 03:59 UTC, relayed by conductor.d: agents' lane keys come from team/keys ("Yeah, teams.keys, that's a good one").
+- 22 November 2026, about 04:08 UTC, in this agent's session: "the pinned approvals are defined by the agentic workflows and the keys that are published, and from a browser point of view ... we should be using the QR codes to transmit keys" and "the lane keys ... are created by vaults ... it just depends on the workflow and who's listening". And: "I want you to think in terms of state machines, and I want you to think about every action that happens here is actually a workflow". His full words: `team/email.workflows.d/notes/2026-11-22-dinis-workflows-as-state-machines.md`.
+
+## Every action is a workflow
+
+The workflows are now written as state machines, each with a goal (its end state), the moves between states, who makes each move, and which code decides it. A workflow can use whole workflows as single steps. The map, the paths through each machine and what each one needs to scale are on [the workflow machines](workflow-machines.md) page, generated from `sim/workflows/machines.mjs`.
 
 ## One path for every workflow
 
@@ -78,10 +83,12 @@ One limit: the chain grows with every proposal, and every entry carries all of i
 
 Lane keys: from team/keys, as Dinis said. Proposal: each agent's entry gains `lane_key`, an Ed25519 public key (SPKI PEM). The sgit `sign` key is ECDSA P-256, which the lanes do not use. The page would build the entries in, the way `trusted.js` is built.
 
-Pinned approvers: open, and this page does not pick. `sim/workflows/pins.mjs` gives both options the one shape `decideEntry()` takes (`{ registry, approvers }`), and the tests show they give the same verdict:
+Pinned approvers: Dinis, about 04:08 UTC: they "are defined by the agentic workflows and the keys that are published", and in the browser keys travel by QR code. So pinning an approver is itself a workflow (`pin-approver` on the machines page): the approver's key arrives through the QR key exchange the page already has (`key-by-qr`), is checked against the key they published, and the person confirms. `sim/workflows/pins.mjs` gives the published-key sources one shape, the one `decideEntry()` takes (`{ registry, approvers }`):
 
-- (a) `fromTeamKeys()`: the approver's lane key is pinned from the cell's own site, from team/keys.
-- (b) `fromRegister()`: the page pins only the approver's identity, and looks up the key in a register (pki.sgit.ai's, in a real page; a made-up one in the tests).
+- `fromTeamKeys()`: the published key is in team/keys, on the cell's own site.
+- `fromRegister()`: the identity is pinned and the key looked up in a register (pki.sgit.ai's, in a real page; a made-up one in the tests).
+
+Lane keys, Dinis: "created by vaults ... it just depends on the workflow and who's listening", usually an observability or feedback agent. To work out next: which listener reads which lane, per workflow.
 
 ## Open, for Dinis (proposals)
 
@@ -100,3 +107,6 @@ Pinned approvers: open, and this page does not pick. `sim/workflows/pins.mjs` gi
 | `sim/workflows/pins.mjs` | the two approver sources, one shape |
 | `sim/workflows/fixtures.mjs` | made-up emails for outreach, reply and follow-up |
 | `sim/workflows/workflows.test.mjs` | 9 tests; proposed for `tests/` |
+| `sim/workflows/machines.mjs` | the workflows as state machines, with a structure check, `run()` and `paths()` |
+| `sim/workflows/render.mjs` | writes [the workflow machines](workflow-machines.md) page and a page of SVG diagrams |
+| `sim/workflows/machines.test.mjs` | 6 tests; proposed for `tests/` |
