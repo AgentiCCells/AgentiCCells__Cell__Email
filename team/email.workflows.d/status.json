@@ -1,0 +1,52 @@
+{
+  "agent": "email.workflows.d@AgentiCCells.dinis",
+  "focus": "workflows: from draft to sent; the outbox and its entries, approvals, templates in the signer's voice, follow-ups, signed automations in the email policy, and agents' signed proposals (signed.json)",
+  "session": "named in the Claude-Session trailer of each of this agent's commits (the leak scan refuses session ids in committed text)",
+  "conductor": "conductor.d@AgentiCCells.dinis",
+  "started": "by conductor.d at Dinis's word in its session, 03:59 UTC on 22 Nov 2026: \"For the 6, start with PM, design, and workflows.\"",
+  "brief": "team/email-agents/briefs/email.workflows.d.md (approved by Dinis in email.dev.d's session, about 03:55 UTC on 22 Nov 2026, as reported by email.dev.d)",
+  "branch": "work/email.workflows.d",
+  "updated": "2026-11-22T04:10Z",
+  "state": "started; read the brief and the files it names; key made; waiting for conductor.d's reply before building anything",
+  "read": [
+    "CLAUDE.md",
+    "REALITY.md (at 97638a8)",
+    "team/email-agents/README.md",
+    "team/email-agents/briefs/email.workflows.d.md",
+    "team/email.dev.d/status.json",
+    "team/email.dev.d/notes/2026-11-22-decide-in-page.md",
+    "board/2026-11-21-approve-and-send.md",
+    "src/app/send.js",
+    "src/app/cell/decide.mjs",
+    "policy/email-policy.json"
+  ],
+  "facts_checked": {
+    "base": "97638a8 on work/email.dev.d (git, 22 Nov 2026)",
+    "hold": "no board/HOLD.md at 97638a8 (git, 22 Nov 2026)",
+    "backlog": "team/email-agents/backlog.md does not exist yet at 97638a8; email.pm.d is to write it"
+  },
+  "key": {
+    "made": "2026-11-22 about 04:01 UTC with sgit-ai 0.27.0, label email-workflows-d-agenticcells",
+    "fingerprint": "sha256:4da4bd396d0d9c19",
+    "signing_fingerprint": "sha256:e5a47707dbd787ff",
+    "ssh_key": "the OpenSSH form of the signing key (ECDSA P-256), used to sign this branch's commits",
+    "private_halves": "only in this session's container under ~/.sg-send/: the sgit key pair passphrase-encrypted, and an unencrypted OpenSSH copy of the signing half (mode 0600) for git to sign with; they end with the container",
+    "public_half": "sent to conductor.d by message; not committed to team/keys (only Dinis merges a key)"
+  },
+  "claims": [],
+  "proposed_claims": [
+    {
+      "item": "Brief step 4: docs/plan/workflows.md as a proposal. Three workflows (outreach, reply, follow-up), each with who drafts, who approves, what the page checks (send.js's checks, and decideEntry() when signed.json is present) and what the outbox records in meta.json. The PrompTugal outreach workflow, approved by Dinis on 16 November, as the first; the workflow only, no real drafts or names.",
+      "status": "proposed; waiting for conductor.d"
+    },
+    {
+      "item": "Brief step 5: how a drafting agent writes signed.json (its lane chain with a propose.send or propose.reply entry, email-policy.json and agents.json with their policy signatures), with made-up fixtures in sim/ and a test that decideEntry() gives 'press' for them and 'refuse' for a changed email. Keys made fresh in the test, never committed. The test file goes to email.dev.d as a proposal, since tests/ is the dev's.",
+      "status": "proposed; waiting for conductor.d"
+    }
+  ],
+  "needs_from_dinis": [
+    "The two open questions in email.dev.d's decide-in-page note matter to every signed workflow: where the page gets pinned approvers, and where agents' Ed25519 lane keys come from. Until both exist every signed outbox entry is refused, so this agent's fixtures can pass only in tests.",
+    "Merging this agent's public key into team/keys (only Dinis merges a key)."
+  ],
+  "limits": "no connector, no token, no real mail, no contact with anyone, no push to dev or main, no session, scheduled task or workflow started"
+}
