@@ -6,7 +6,7 @@
   "session": "named in the Claude-Session trailer of each of this cell's commits (the leak scan refuses session ids in committed text)",
   "conductor": "conductor.d@AgentiCCells.dinis",
   "twin_of": "cell.email.b@AgentiCCells.dinis",
-  "updated": "2026-11-22T05:55Z",
+  "updated": "2026-11-22T06:10Z",
   "state": "release/next2 holds pm, workflows and design work with their own signatures; ready for Dinis's word",
   "branch": "release/next2 (the next release; supersedes release/next); work/email.dev.d",
   "brief": "approved by Dinis in conductor.d's session, 22 Nov 2026 01:39 UTC: \"yes start cell.email.d with your proposals\"",
@@ -64,26 +64,26 @@
       "question": "pki.sgit.ai register (keeps ABP N8) or this cell's own site (needs an ABP change)?"
     },
     {
-      "item": "rank 31: recipients.allow_cc and recipients.one_domain in the checker",
+      "item": "rank 32: recipients.allow_cc and recipients.one_domain in the checker",
       "claimed": "2026-11-22T04:55Z",
       "status": "done on release/next (tests/checker-recipients.test.mjs, 4 tests); defaults keep today's behaviour"
     },
     {
-      "item": "rank 29: move sim/workflows/workflows.test.mjs into tests/",
+      "item": "rank 30: move sim/workflows/workflows.test.mjs into tests/",
       "claimed": "2026-11-22T04:55Z",
       "status": "done on release/next2: tests/workflows.test.mjs and tests/workflow-machines.test.mjs, imports fixed, run in CI"
     },
     {
-      "item": "rank 33: link docs/plan/workflows.md from docs/plan/index.md",
+      "item": "rank 34: link docs/plan/workflows.md from docs/plan/index.md",
       "claimed": "2026-11-22T04:55Z",
       "status": "done on release/next2: item 9 in docs/plan/index.md"
     },
     {
-      "item": "rank 30: lane_key on team/keys entries, built into the page",
+      "item": "rank 31: lane_key on team/keys entries, built into the page",
       "status": "blocked on W9: a narrow leak-scan allowlist line needs Dinis's yes"
     },
     {
-      "item": "rank 32: load the synced twin into fullCheck so replies pass",
+      "item": "rank 33: load the synced twin into fullCheck so replies pass",
       "status": "not claimed yet; touches email.twins.d's area (twin.js, vault.js), which has no agent started"
     },
     {
@@ -108,5 +108,7 @@
     "the pki.sgit.ai passkey round trip (Dinis's passkey)",
     "deleting work/page-design and work/cell-email-b-onboarding (a person)"
   ],
-  "account_b": "Dinis, relayed by conductor.d (22 Nov 2026, 01:40 UTC): \"don't worry about the .b account\". So this cell does not wait for cell.email.b or claim items with it. It still never writes in team/cell.email.b/ or pushes to .b branches."
+  "account_b": "Dinis, relayed by conductor.d (22 Nov 2026, 01:40 UTC): \"don't worry about the .b account\". So this cell does not wait for cell.email.b or claim items with it. It still never writes in team/cell.email.b/ or pushes to .b branches.",
+  "backlog_numbers": "as in team/email-agents/backlog.md at 2bb8a6f (email.pm.d, 05:05 UTC)",
+  "handover": "team/email.dev.d/notes/2026-11-22-hand-over.md"
 }
