@@ -1,0 +1,32 @@
+/* The top bar every app page shares (/app/connect.html and /app/mail.html): the logo and name, the
+   Gateway and Mail switch, and the page's own items at the right (version and GitHub on the gateway,
+   the account menu in Mail). It carries its own colours so it looks the same on both pages.
+   Backlog rank 10, design round 1's shared top bar; by email.design.d@AgentiCCells.dinis, 22 November 2026. */
+.bar{
+  --cb-fg:#211d18;--cb-muted:#6b6358;--cb-line:#e6ddcf;--cb-panel:#fffdf9;--cb-hover:#f4ede2;--cb-sel:#f3e4d2;--cb-accent:#8a4b12;
+  display:flex;align-items:center;gap:.75rem;padding:.5rem 1rem;height:64px;flex:none;color:var(--cb-fg)}
+@media(prefers-color-scheme:dark){.bar{--cb-fg:#ece6dc;--cb-muted:#a69d90;--cb-line:#2e2820;--cb-panel:#1c1915;--cb-hover:#26211b;--cb-sel:#3a2a19;--cb-accent:#e9a866}}
+.brand{min-width:220px;display:flex;align-items:center;gap:.5rem;color:var(--cb-fg);text-decoration:none;font-size:16px;font-weight:600;white-space:nowrap}
+.brand img{flex:none}
+/* min-width: the brand is as wide as Mail's folders column, so Gateway and Mail sit in the same place on both pages */
+.brand-sub{color:var(--cb-muted);font-weight:400}
+.pages{display:flex;gap:.25rem;flex:none}
+.pages a{color:var(--cb-muted);text-decoration:none;font-size:14px;font-weight:500;padding:.35rem .75rem;border-radius:999px;white-space:nowrap}
+.pages a:hover{background:var(--cb-hover);color:var(--cb-fg)}
+.pages a[aria-current="page"]{background:var(--cb-sel);color:var(--cb-fg);font-weight:600}
+.bar-end{margin-left:auto;display:flex;align-items:center;gap:.5rem}
+.bar-end > a{font:600 12px ui-monospace,Menlo,Consolas,monospace;color:var(--cb-muted);border:1px solid var(--cb-line);background:var(--cb-panel);border-radius:6px;padding:.2rem .5rem;text-decoration:none;white-space:nowrap}
+.bar-end > a:hover{color:var(--cb-fg);background:var(--cb-hover)}
+.account{position:relative}
+.account summary{list-style:none;cursor:pointer;border-radius:50%;display:block}
+.account summary::-webkit-details-marker{display:none}
+.account .menu{position:absolute;right:0;top:calc(100% + 8px);min-width:15rem;background:var(--cb-panel);border:1px solid var(--cb-line);border-radius:10px;box-shadow:0 1px 2px rgba(60,40,10,.06),0 6px 20px rgba(60,40,10,.08);padding:.5rem;z-index:25;display:grid}
+.account .menu a,.account .menu p{padding:.5rem .75rem;border-radius:6px;text-decoration:none;color:var(--cb-fg);margin:0}
+.account .menu a:hover{background:var(--cb-hover)}
+.account .menu .me{color:var(--cb-muted);font-size:13px;border-bottom:1px solid var(--cb-line);border-radius:0;margin-bottom:.25rem;overflow-wrap:anywhere}
+@media(max-width:720px){
+  .bar{gap:.4rem;padding:.5rem}
+  .brand{min-width:0}
+  .brand-name{display:none}
+  .pages a{padding:.35rem .55rem}
+}

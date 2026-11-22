@@ -14,7 +14,7 @@
 }}
 *{box-sizing:border-box}
 body{margin:0;font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--fg);-webkit-text-size-adjust:100%}
-main{max-width:62rem;margin:0 auto;padding:2rem 1.5rem 3rem}
+main{max-width:62rem;margin:0 auto;padding:1rem 1.5rem 3rem}
 a{color:var(--accent)}
 code{font:.9em ui-monospace,Menlo,Consolas,monospace}
 p{margin:0}
@@ -50,7 +50,10 @@ main:has(#open-vault:not([hidden])) .step-swap .num::after{content:"\2713";font-
 .step-connect,.step-vault{display:grid;grid-template-columns:10rem 1fr;align-items:start;gap:.75rem 1rem}
 .step-connect .step-head,.step-vault .step-head,.step-body{min-height:2.6rem}
 .step-body{display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1rem;min-width:0}
-#status{overflow-wrap:anywhere}
+/* The status text on its own line and its buttons on the next, so Open Mail no longer sits inside the
+   sentence and stretches the line (email.design.d, 22 November 2026). */
+#status{overflow-wrap:anywhere;display:flex;flex-wrap:wrap;align-items:center;gap:.5rem}
+#who{flex:1 1 100%}
 #status:has(#who:empty){display:none}
 .step-connect:has(#revoke:not([hidden])) #status{color:var(--ok);font-weight:500}
 .step-connect:has(#revoke:not([hidden])) #status #revoke{margin-left:.35rem;color:var(--muted);font-weight:400}
@@ -123,4 +126,3 @@ details.about p{max-width:48rem}
 .mail-text{white-space:pre-wrap;overflow-wrap:anywhere;font:inherit;margin:0 0 .6rem;padding:.6rem;background:var(--well);border-radius:4px;max-height:24rem;overflow:auto}
 a.button-link{display:inline-block;font-weight:600;font-size:.95rem;padding:.6rem 1.15rem;border-radius:8px;background:var(--accent);color:var(--on-accent);text-decoration:none}
 a.button-link[hidden]{display:none}
-.lede .version{font:600 .75rem ui-monospace,Menlo,Consolas,monospace;color:var(--muted);background:var(--accent-soft);border-radius:6px;padding:.15rem .45rem;text-decoration:none;margin-left:.5rem}

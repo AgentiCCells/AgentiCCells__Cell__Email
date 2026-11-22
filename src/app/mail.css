@@ -28,21 +28,11 @@ button{font:inherit;color:inherit;cursor:pointer}
 .i-s{width:16px;height:16px}
 kbd{font:600 var(--t-xs) ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:4px;padding:0 .35em;background:var(--well)}
 
-/* top bar */
-.bar{display:flex;align-items:center;gap:.75rem;padding:.5rem 1rem;height:64px;flex:none}
-.brand{display:flex;align-items:center;gap:.5rem;color:var(--fg);text-decoration:none;font-size:var(--t-l);font-weight:600;min-width:15.5rem;white-space:nowrap}
-.brand-sub{color:var(--muted);font-weight:400}
+/* top bar: the shared parts are in bar.css; the search box is Mail's own */
 .search{position:relative;flex:1;max-width:40rem}
 .search .i{position:absolute;left:14px;top:50%;transform:translateY(-50%);color:var(--muted);pointer-events:none}
 .search input{width:100%;height:42px;border:1px solid var(--line);border-radius:var(--r-m);background:var(--panel);color:var(--fg);padding:0 1rem 0 2.6rem;font:inherit;font-size:var(--t-l)}
 .search input:focus{outline:2px solid var(--accent);outline-offset:1px}
-.account{position:relative;margin-left:auto}
-.account summary{list-style:none;cursor:pointer;border-radius:50%;display:block}
-.account summary::-webkit-details-marker{display:none}
-.account .menu{position:absolute;right:0;top:calc(100% + 8px);min-width:15rem;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-m);box-shadow:var(--shadow);padding:.5rem;z-index:25;display:grid}
-.account .menu a,.account .menu p{padding:.5rem .75rem;border-radius:var(--r-s);text-decoration:none;color:var(--fg);margin:0}
-.account .menu a:hover{background:var(--hover)}
-.account .menu .me{color:var(--muted);font-size:var(--t-s);border-bottom:1px solid var(--line);border-radius:0;margin-bottom:.25rem;overflow-wrap:anywhere}
 .icon{border:0;background:none;width:40px;height:40px;border-radius:50%;display:inline-grid;place-items:center;color:var(--muted);flex:none;padding:0}
 .icon:hover:not(:disabled){background:var(--hover);color:var(--fg)}
 .icon:disabled{opacity:.35;cursor:default}
@@ -185,7 +175,7 @@ kbd{font:600 var(--t-xs) ui-monospace,Menlo,Consolas,monospace;border:1px solid 
 }
 @media(max-width:720px){
   .bar{gap:.25rem;padding:.5rem}
-  .brand-name,.brand-sub{display:none}
+  .brand-name,.brand-sub,.pages{display:none}
   .brand{min-width:0}
   #menu{display:inline-grid}
   .shell{grid-template-columns:minmax(0,1fr);padding:0 .5rem .5rem}

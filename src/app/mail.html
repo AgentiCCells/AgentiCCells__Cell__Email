@@ -6,6 +6,7 @@
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="bar.css?v=__VERSION__">
 <link rel="stylesheet" href="mail.css?v=__VERSION__">
 <title>Mail · Email AgenticCell</title>
 <meta name="description" content="A mail client in the browser: reads and sends straight from Gmail with the person's own token, without the vault.">
@@ -44,12 +45,13 @@
 <header class="bar">
   <h1 class="sr-only">Email AgenticCell Mail</h1>
   <button id="menu" class="icon" type="button" aria-label="Show folders" title="Folders"><svg class="i"><use href="#i-menu"/></svg></button>
-  <a class="brand" href="connect.html" title="Back to the gateway"><img src="/assets/logo.svg" alt="" width="28" height="28"><span class="brand-name">Email AgenticCell</span> <span class="brand-sub">Mail</span></a>
+  <a class="brand" href="connect.html" title="Back to the gateway"><img src="/assets/logo.svg" alt="" width="28" height="28"><span class="brand-name">Email AgenticCell</span></a>
+  <nav class="pages" aria-label="Pages"><a href="connect.html">Gateway</a><a href="mail.html" aria-current="page">Mail</a></nav>
   <form id="search-form" class="search" role="search">
     <svg class="i" aria-hidden="true"><use href="#i-search"/></svg>
     <input id="search" type="search" placeholder="Search mail" aria-label="Search mail" autocomplete="off" spellcheck="false">
   </form>
-  <details class="account">
+  <div class="bar-end"><details class="account">
     <summary aria-label="Account and about" title="Account and about"><span id="me-initial" class="avatar sm" aria-hidden="true">?</span></summary>
     <div class="menu">
       <p id="me" class="me">Not connected</p>
@@ -57,7 +59,7 @@
       <a href="../version.html" id="version">Version __VERSION__</a>
       <a href="https://github.com/AgentiCCells/AgentiCCells__Cell__Email" rel="noopener">★ The code on GitHub</a>
     </div>
-  </details>
+  </details></div>
 </header>
 
 <button id="compose" class="compose" type="button"><svg class="i"><use href="#i-pen"/></svg><span>Write</span></button>
