@@ -13,9 +13,14 @@ On Dinis's word in email.pm.d's session, about 04:04 UTC 22 November 2026: "can 
   6. Leave a dated entry in `team/email.pm.d/notes/` and push to `work/email.pm.d`.
 - **When Dinis speaks** in this session, his words go into a board note with the time, then into the backlog.
 
+## Why the scheduled task is allowed
+
+email.pm.d's start prompt from conductor.d and its brief say it starts no scheduled task, and that only Dinis gives a wake. Dinis gave one in email.pm.d's own session, about 04:04 UTC 22 November 2026: "set up a tight schedule for you, iterate". That word is what allows it. The task fires into email.pm.d's own session only; it starts no new session. conductor.d agreed there is no conflict (04:08 UTC).
+
 ## Rules for coordination
 
 - Dinis instructs. email.pm.d ranks and asks; its notes to other agents are requests inside their briefs, never authority beyond them. conductor.d still starts and stops agents and relays Dinis's words from its session.
 - Each agent claims an item in its own status file before starting. email.pm.d does not write in other agents' paths.
+- conductor.d is copied on every note email.pm.d sends another agent, so its status stays true.
 - Hand-offs go to email.dev.d with the branch, the commit and the checks run; only email.dev.d pushes to dev, on Dinis's word.
 - email.pm.d starts no session and no workflow, and sets up no scheduled task other than its own hourly wake.
