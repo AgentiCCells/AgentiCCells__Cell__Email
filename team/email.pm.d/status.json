@@ -1,0 +1,55 @@
+{
+  "agent": "email.pm.d@AgentiCCells.dinis",
+  "focus": "pm: what to build next, and why; the backlog, user stories in Dinis's words, acceptance checks, release notes; REALITY.md against the live site",
+  "started": "by conductor.d@AgentiCCells.dinis at Dinis's word in its session, 22 Nov 2026 03:59 UTC: \"For the 6, start with PM, design, and workflows.\"",
+  "session": "named in the Claude-Session trailer of this agent's commits (the leak scan refuses session ids in committed text)",
+  "conductor": "conductor.d@AgentiCCells.dinis",
+  "brief": "team/email-agents/briefs/email.pm.d.md (approved by Dinis in email.dev.d's session, about 03:55 UTC 22 Nov 2026)",
+  "branch": "work/email.pm.d",
+  "updated": "2026-11-22T04:15Z",
+  "state": "first steps done; waiting for conductor.d's reply before claiming anything",
+  "read": [
+    "CLAUDE.md",
+    "REALITY.md",
+    "team/email-agents/README.md",
+    "team/email-agents/briefs/ (all seven briefs' roles and first steps; this agent's brief in full)",
+    "team/email.dev.d/status.json and team/email.dev.d/notes/2026-11-22-decide-in-page.md (opening)",
+    "board/2026-11-20-onboarding-cell-email-b.md",
+    "board/2026-11-21-approve-and-send.md",
+    "board/handovers/2026-11-16-first-run.md",
+    "board/handovers/2026-11-21-cell-email-b-to-cell-email-d.md",
+    "docs/plan/features.md",
+    "docs/plan/needs.md"
+  ],
+  "not_read": [
+    "docs/plan/architecture.md, browser-gateway.md, lanes.md, policy.md, twin.md, google-oauth.md, index.md: listed, not yet read",
+    "abp/cell-email.md: not read in full this session"
+  ],
+  "facts_checked": {
+    "live": "v0.1.51 at 189ac49, built 2026-11-22T02:12Z (https://email-cell.agenticcells.site/version.json, read about 04:05 UTC)",
+    "dev": "189ac49 (git fetch, about 04:05 UTC)",
+    "hold": "no board/HOLD.md (git, about 04:05 UTC)"
+  },
+  "key": {
+    "made": "2026-11-22 about 04:00 UTC with sgit-ai 0.27.0, label email-pm-d-agenticcells",
+    "fingerprint": "sha256:2bac4a38dfe626e4",
+    "signing_fingerprint": "sha256:5b84eb2d1f636974",
+    "private_halves": "only in this session's container under ~/.sg-send/, passphrase in a 0600 file; they end with the container",
+    "public_half": "sent to conductor.d by message; not committed to team/keys (only Dinis merges a key)",
+    "ssh_key": "the OpenSSH form of the signing key (ECDSA P-256, signs this branch's commits); its fingerprint is in the message to conductor.d (the leak scan refuses long base64 in committed text)"
+  },
+  "wrote": [
+    "team/email-agents/backlog.md: what is built, what waits on Dinis (W1 to W8), a ranked backlog of 21 items marked Asked or Proposed with acceptance checks, and the first three items for each agent (a proposal)"
+  ],
+  "claims": [],
+  "proposed_claims": [
+    "Rank 1: keep the backlog and REALITY.md true, starting with the three REALITY.md fixes in backlog section 5",
+    "Release notes for v0.1.50 and v0.1.51 in board/",
+    "A one-page list of what waits on Dinis (W1 to W8) that he can answer line by line"
+  ],
+  "needs_from_dinis": [
+    "Confirm or change the ranking and the first three items per agent in team/email-agents/backlog.md",
+    "Whether email.pm.d may edit REALITY.md directly for the three fixes, or should hand them to email.dev.d",
+    "Merge this agent's public key, if wanted (only Dinis merges a key)"
+  ]
+}
