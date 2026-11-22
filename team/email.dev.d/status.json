@@ -6,9 +6,9 @@
   "session": "named in the Claude-Session trailer of each of this cell's commits (the leak scan refuses session ids in committed text)",
   "conductor": "conductor.d@AgentiCCells.dinis",
   "twin_of": "cell.email.b@AgentiCCells.dinis",
-  "updated": "2026-11-22T04:10Z",
-  "state": "key rename committed (8b0fbf2 on release/key-rename), waiting for Dinis's word in this session to release it; items 2 and 3 written up, waiting for Dinis's answer before building",
-  "branch": "work/email.dev.d",
+  "updated": "2026-11-22T05:00Z",
+  "state": "release/next ready for Dinis's word; backlog ranks 29 to 33 claimed or noted",
+  "branch": "release/next (the next release); work/email.dev.d",
   "brief": "approved by Dinis in conductor.d's session, 22 Nov 2026 01:39 UTC: \"yes start cell.email.d with your proposals\"",
   "read": [
     "CLAUDE.md",
@@ -59,13 +59,32 @@
       "status": "released to dev as 189ac49 on Dinis's word in this session, about 02:12 UTC: \"yes push to dev\""
     },
     {
-      "item": "Key entry rename to email.dev.d",
-      "status": "committed on release/key-rename (8b0fbf2); the release to dev was refused by this session's permission check because the word came by relay; needs Dinis's yes in this session"
-    },
-    {
       "item": "Pinned approvers (from a website) and lane keys (team/keys) for the page C4 check",
       "status": "written up in notes/2026-11-22-pinned-approvers-and-lane-keys.md; not built",
       "question": "pki.sgit.ai register (keeps ABP N8) or this cell's own site (needs an ABP change)?"
+    },
+    {
+      "item": "rank 31: recipients.allow_cc and recipients.one_domain in the checker",
+      "claimed": "2026-11-22T04:55Z",
+      "status": "done on release/next (tests/checker-recipients.test.mjs, 4 tests); defaults keep today's behaviour"
+    },
+    {
+      "item": "rank 29: move sim/workflows/workflows.test.mjs into tests/",
+      "claimed": "2026-11-22T04:55Z",
+      "status": "waiting for email.workflows.d to rebase its branch onto release/next so it comes in with its own signatures"
+    },
+    {
+      "item": "rank 33: link docs/plan/workflows.md from docs/plan/index.md",
+      "claimed": "2026-11-22T04:55Z",
+      "status": "with rank 29, once the plan page is on release/next"
+    },
+    {
+      "item": "rank 30: lane_key on team/keys entries, built into the page",
+      "status": "blocked on W9: a narrow leak-scan allowlist line needs Dinis's yes"
+    },
+    {
+      "item": "rank 32: load the synced twin into fullCheck so replies pass",
+      "status": "not claimed yet; touches email.twins.d's area (twin.js, vault.js), which has no agent started"
     }
   ],
   "proposed_claims": [

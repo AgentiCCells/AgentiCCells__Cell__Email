@@ -50,6 +50,11 @@ export function check(p, ctx) {
   if (!recipients.length) deny('recipients', 'no recipients');
   if (recipients.length > (r.max ?? 1)) deny('recipients', `${recipients.length} recipients, the most allowed is ${r.max ?? 1}`);
   if (bcc.length && !r.allow_bcc) deny('recipients', 'bcc is not allowed');
+  // Dinis's outreach defaults, 16 November 2026: "one recipient (up to three from one organisation,
+  // no cc or bcc)". allow_cc defaults to true and one_domain to false, so a policy that does not
+  // name them checks as before (email.workflows.d's proposal; added by email.dev.d, 22 November 2026).
+  if (cc.length && r.allow_cc === false) deny('recipients', 'cc is not allowed');
+  if (r.one_domain === true && new Set(recipients.map(domainOf)).size > 1) deny('recipients', `the recipients are in ${new Set(recipients.map(domainOf)).size} domains; this policy allows one organisation per email`);
   for (const a of recipients) {
     if (!/^[^\s@<>"]+@[^\s@<>"]+\.[^\s@<>"]+$/.test(a)) { deny('recipients', `${a} is not an address`); continue; }
     if ((r.deny_addresses || []).map(lower).includes(a)) deny('recipients', `${a} is on the deny list`);
