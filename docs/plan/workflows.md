@@ -111,7 +111,20 @@ The entry for this first send must be **unsigned** (no `signed.json`), so it goe
 - **Read back:** `meta.json`, read back from the vault stand-in by a fresh vault object, says `status: sent` with Gmail's id, the time and who approved.
 - **Requests:** the Gmail stand-in received exactly three: profile, labels and one send, each with the made-up token.
 
-Still not run: step 2, the paste. The page takes a sealed key only from a trusted sender, whose private key this agent does not hold, so the run kept the made-up outbox key where the paste would keep it (sealed to the page key). Two small things seen, for email.dev.d and email.design.d: after sending, the open entry still says "Status: draft" while the list line says "sent"; and Open vault also creates a twin vault when the browser has none (expected, but worth a line on screen).
+**Step 2, the paste, 22 November 2026, 09:34 UTC** (`sim/workflows/key-paste-page.mjs`, run recorded in `team/email.workflows.d/notes/runs/2026-11-22-key-paste-chromium.json`). A made-up test sender, made in its own browser context with pki.sgit.ai's vendored `keys.js`, stood in for conductor@PrompTugal.dinis. It made a made-up outbox in the vault stand-in, then sealed its key and a made-up SG/Send token to the page's public key as an m1 code, and the code was pasted into the page. The test sender was trusted only in a **test copy** of `trusted.js` served to this browser. The test copy of `connect.js` named the made-up outbox's id where the page names the real one (`co57gzld`). Neither copy is in `src/app/`, `team/keys` or the site.
+
+| Code pasted | What the page said |
+|---|---|
+| signed by the trusted test sender | "Kept in this browser: the outbox key, the SG/Send access token. From test sender (made up), signature checked." It then opened the outbox by itself ("Outbox open: 1 message"), and Approve and send sent the entry and recorded it |
+| signed by a sender the page does not know | "Kept in this browser: the outbox key, the SG/Send access token." (no word about the sender) |
+| sealed to another page's key | "Not opened: sealed to another key, not this page's." |
+
+So every step of the first send has now run in Chromium with made-up keys and data, against stand-ins.
+
+Things seen, for email.dev.d and email.design.d:
+1. A code signed by an unknown sender is kept, as intended: Dinis, 16 Nov, "I'm acting like that sender by copying and pasting the QR codes". But the page says nothing about it, although `openSealed()` returns "a code you brought yourself (not signed by a trusted sender)" and `connect.js` drops that text. Proposal: show it.
+2. After sending, the open entry still says "Status: draft", while the list line says "sent".
+3. Open vault also creates a twin vault when the browser has none. That is expected, but worth a line on screen.
 
 ## The real outreach policy (proposal for Dinis to sign)
 
@@ -170,6 +183,7 @@ Lane keys, Dinis: "created by vaults ... it just depends on the workflow and who
 | `sim/workflows/pins.mjs` | the two approver sources, one shape |
 | `sim/workflows/fixtures.mjs` | made-up emails for outreach, reply and follow-up |
 | `sim/workflows/workflows.test.mjs` | 9 tests; proposed for `tests/` |
+| `sim/workflows/key-paste-page.mjs` | step 2, the paste, with a made-up trusted test sender in a test copy of the page |
 | `sim/workflows/first-send-page.mjs` | the first send through the page's buttons, with stand-ins for the vault service and Gmail |
 | `sim/workflows/first-send-browser.mjs` | the first send's checks run in Chromium against made-up entries and a stand-in for Gmail |
 | `sim/workflows/policy-outreach.mjs` | the proposed outreach policy, its trace, and the outreach role for agents.json |

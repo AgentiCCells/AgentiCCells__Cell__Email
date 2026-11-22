@@ -199,7 +199,7 @@ machine({
 machine({
   id: 'first-send', level: 1, title: 'Dinis\'s first real send, to himself',
   goal: 'one outbox entry sent from Dinis\'s own Gmail to himself and recorded in the outbox vault',
-  status: 'plan', code: 'every step is built in src/app/connect.js; the whole has never run (it waits on the outbox key, W1); its checks and send ran in Chromium on made-up entries (sim/workflows/first-send-browser.mjs), and steps 3 to 7 through the page\'s own buttons against stand-ins for the vault service and Gmail (sim/workflows/first-send-page.mjs); the key paste has not run',
+  status: 'plan', code: 'every step is built in src/app/connect.js; the whole has never run (it waits on the outbox key, W1); its checks and send ran in Chromium on made-up entries (sim/workflows/first-send-browser.mjs), and steps 3 to 7 through the page\'s own buttons against stand-ins for the vault service and Gmail (sim/workflows/first-send-page.mjs), and step 2, the paste, with a made-up trusted test sender in a test copy (sim/workflows/key-paste-page.mjs)',
   trigger: 'conductor@PrompTugal.dinis gives Dinis a sealed QR code with the outbox vault key, made for his page\'s public key',
   needs: 'the outbox vault key (W1); gmail.send; the page key', approves: 'Dinis\'s press', signed: 'the sealed key code (by its sender); the entry itself must be unsigned: a signed entry to the mailbox itself is refused by the policy',
   product: { for: 'the first person to use the cell for real', scale: 'one person, one email; it proves the path, it does not scale anything' },
