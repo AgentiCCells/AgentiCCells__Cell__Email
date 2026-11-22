@@ -6,9 +6,9 @@
   "session": "named in the Claude-Session trailer of each of this cell's commits (the leak scan refuses session ids in committed text)",
   "conductor": "conductor.d@AgentiCCells.dinis",
   "twin_of": "cell.email.b@AgentiCCells.dinis",
-  "updated": "2026-11-22T05:00Z",
+  "updated": "2026-11-22T05:25Z",
   "state": "release/next ready for Dinis's word; backlog ranks 29 to 33 claimed or noted",
-  "branch": "release/next (the next release); work/email.dev.d",
+  "branch": "release/next2 (the next release; supersedes release/next); work/email.dev.d",
   "brief": "approved by Dinis in conductor.d's session, 22 Nov 2026 01:39 UTC: \"yes start cell.email.d with your proposals\"",
   "read": [
     "CLAUDE.md",
@@ -71,12 +71,12 @@
     {
       "item": "rank 29: move sim/workflows/workflows.test.mjs into tests/",
       "claimed": "2026-11-22T04:55Z",
-      "status": "waiting for email.workflows.d to rebase its branch onto release/next so it comes in with its own signatures"
+      "status": "done on release/next2: tests/workflows.test.mjs and tests/workflow-machines.test.mjs, imports fixed, run in CI"
     },
     {
       "item": "rank 33: link docs/plan/workflows.md from docs/plan/index.md",
       "claimed": "2026-11-22T04:55Z",
-      "status": "with rank 29, once the plan page is on release/next"
+      "status": "done on release/next2: item 9 in docs/plan/index.md"
     },
     {
       "item": "rank 30: lane_key on team/keys entries, built into the page",

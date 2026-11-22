@@ -1,8 +1,7 @@
 // The three workflows end to end with made-up mail: a drafting agent writes an outbox entry
 // with signed.json (sim/workflows/signed.mjs), and the page's own code (send.js's checks and
 // decideEntry(), abp/cell-email C4) says whether the person's press may send it.
-// PROPOSAL for tests/ (email.dev.d's): kept here until email.dev.d takes it. If moved to tests/,
-// change '../../' to '../' and './' to '../sim/workflows/' in the imports.
+// Moved from sim/workflows/ into tests/ by email.dev.d@AgentiCCells.dinis, 22 November 2026, so CI runs it.
 // SIMULATION: the simulated twin, made-up mail, keys made fresh for each run; nothing committed.
 // By email.workflows.d@AgentiCCells.dinis, 22 November 2026. Apache-2.0.
 import { test } from 'node:test';
@@ -10,13 +9,13 @@ import assert from 'node:assert/strict';
 import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { signPolicy } from '../../cell/policy/signed.mjs';
-import { messageOf } from '../../src/app/send.js';
-import { decideEntry, emptyTwin } from '../../src/app/cell/decide.mjs';
-import { keys, agents, policy, simTwin, pins } from '../../tests/helpers.mjs';
-import { writeEntry, checkEntry, saveEntry, laneEmail } from './signed.mjs';
-import { fromTeamKeys, fromRegister } from './pins.mjs';
-import * as F from './fixtures.mjs';
+import { signPolicy } from '../cell/policy/signed.mjs';
+import { messageOf } from '../src/app/send.js';
+import { decideEntry, emptyTwin } from '../src/app/cell/decide.mjs';
+import { keys, agents, policy, simTwin, pins } from './helpers.mjs';
+import { writeEntry, checkEntry, saveEntry, laneEmail } from '../sim/workflows/signed.mjs';
+import { fromTeamKeys, fromRegister } from '../sim/workflows/pins.mjs';
+import * as F from '../sim/workflows/fixtures.mjs';
 
 const D = 'drafter.email@AgentiCCells.dinis', O = 'person:owner';
 const NOW = '2026-11-16T12:00:00Z';

@@ -2,17 +2,18 @@
 // machines follow what the real code decides on made-up mail.
 // PROPOSAL for tests/ (email.dev.d's); SIMULATION: made-up mail, keys made fresh for each run.
 // By email.workflows.d@AgentiCCells.dinis, 22 November 2026. Apache-2.0.
+// Moved from sim/workflows/ into tests/ by email.dev.d@AgentiCCells.dinis, 22 November 2026, so CI runs it.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { MACHINES, byId, checkMachines, run, paths } from './machines.mjs';
-import { markdownPage, svg } from './render.mjs';
-import { writeEntry, checkEntry } from './signed.mjs';
-import { signPolicy } from '../../cell/policy/signed.mjs';
-import { keys, agents, policy, simTwin, pins } from '../../tests/helpers.mjs';
-import * as F from './fixtures.mjs';
+import { MACHINES, byId, checkMachines, run, paths } from '../sim/workflows/machines.mjs';
+import { markdownPage, svg } from '../sim/workflows/render.mjs';
+import { writeEntry, checkEntry } from '../sim/workflows/signed.mjs';
+import { signPolicy } from '../cell/policy/signed.mjs';
+import { keys, agents, policy, simTwin, pins } from './helpers.mjs';
+import * as F from '../sim/workflows/fixtures.mjs';
 
-const root = new URL('../../', import.meta.url).pathname;
+const root = new URL('../', import.meta.url).pathname;
 
 test('machines: well formed', () => {
   assert.deepEqual(checkMachines(), []);
