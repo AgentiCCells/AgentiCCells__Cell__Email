@@ -193,6 +193,138 @@ machine({
   ],
 });
 
+
+// ------------------------------------------------------------------ round 2 (05:13 UTC): the sending bottleneck first
+
+machine({
+  id: 'first-send', level: 1, title: 'Dinis\'s first real send, to himself',
+  goal: 'one outbox entry sent from Dinis\'s own Gmail to himself and recorded in the outbox vault',
+  status: 'plan', code: 'every step is built in src/app/connect.js; the whole has never run (it waits on the outbox key, W1)',
+  trigger: 'conductor@PrompTugal.dinis gives Dinis a sealed QR code with the outbox vault key, made for his page\'s public key',
+  needs: 'the outbox vault key (W1); gmail.send; the page key', approves: 'Dinis\'s press', signed: 'the sealed key code (by its sender); the send record is not yet signed',
+  product: { for: 'the first person to use the cell for real', scale: 'one person, one email; it proves the path, it does not scale anything' },
+  states: {
+    waiting_key: { about: 'no outbox key in the page' },
+    key_kept: { about: 'the outbox vault key is kept, sealed to the page key' },
+    vault_open: { about: 'the outbox vault is open and its entries listed' },
+    entry_open: { about: 'one entry addressed to Dinis himself is open' },
+    can_send: { about: 'gmail.send is granted' },
+    done: { about: 'sent to himself and recorded', end: 'goal' },
+    stuck: { about: 'a step refused; the reason is shown and recorded', end: 'stop' },
+  },
+  moves: [
+    { from: 'waiting_key', to: 'key_kept', on: 'paste the sealed code', by: 'person', uses: 'key-by-qr' },
+    { from: 'key_kept', to: 'vault_open', on: 'press Open vault', by: 'person', check: 'openVaults' },
+    { from: 'vault_open', to: 'entry_open', on: 'open the entry to himself', by: 'person', check: 'showMail' },
+    { from: 'entry_open', to: 'can_send', on: 'press Allow sending', by: 'person', uses: 'connect' },
+    { from: 'can_send', to: 'done', on: 'approve and send', by: 'person', uses: 'approve-and-send' },
+    { from: 'vault_open', to: 'stuck', on: 'the vault does not open', by: 'vault' },
+    { from: 'entry_open', to: 'stuck', on: 'the page says not sendable', by: 'page', check: 'problems, decideEntry' },
+  ],
+});
+
+machine({
+  id: 'gateway-stop', level: 2, title: 'Stop the gateway (the kill switch)',
+  goal: 'nothing can be sent until a pinned approver starts the gateway again',
+  status: 'simulation', code: 'src/app/cell/lanes.mjs (gatewayStopped), src/app/cell/decide.mjs',
+  trigger: 'any agent or person sees something wrong', needs: 'a lane key; gateway.stop is open to every cell agent (agents.json)',
+  approves: 'nobody: stopping needs no approval; starting again needs a pinned approver', signed: 'the gateway.stop entry on the approvals lane',
+  product: { for: 'everyone who lets agents near their mail', scale: 'one entry stops every send for that mailbox; it costs nothing to add more agents who may stop' },
+  states: {
+    running: { about: 'signed proposals are checked and may pass' },
+    stopping: { about: 'a gateway.stop entry is on the approvals lane' },
+    stopped: { about: 'decide() refuses every proposal (kill switch)', end: 'goal' },
+    not_signed: { about: 'the stop entry does not verify, so it does not count; the person is told', end: 'stop' },
+  },
+  moves: [
+    { from: 'running', to: 'stopping', on: 'write gateway.stop', by: 'agent' },
+    { from: 'stopping', to: 'stopped', on: 'the lanes verify', by: 'page', check: 'mergeLanes, gatewayStopped' },
+    { from: 'stopping', to: 'not_signed', on: 'the lanes do not verify', by: 'page', check: 'mergeLanes' },
+  ],
+});
+
+machine({
+  id: 'trust-ladder', level: 0, title: 'The trust ladder: from every press to sessions sending',
+  goal: 'agent sessions send some kinds of email under a policy Dinis signed, and he still sees every send',
+  status: 'plan', trigger: 'Dinis decides to climb a rung, by a change to the ABP',
+  needs: 'each rung: the one below working, and an ABP change Dinis approves', approves: 'Dinis, one rung at a time', signed: 'more at each rung: proposals, then approvals, then the policy and automations',
+  product: { for: 'anyone whose bottleneck is pressing send', scale: 'this is the scaling question itself: each rung moves work from the person to signed policy, so one person can stand behind more email' },
+  states: {
+    press_every_email: { about: 'today (ABP 1.1.4): the person presses for every email; agents sign nothing' },
+    signed_proposals: { about: 'agents sign what they draft; the page runs C4 and refuses changes (built in simulation; needs W4 and W5)' },
+    signed_approvals: { about: 'the press itself is a signed approve entry on the lanes; the page holds a lane key' },
+    automations: { about: 'fixed templates to verified correspondents go without a press, under a signed automation; needs an unattended gateway (ABP N1)' },
+    sessions_send: { about: 'agent sessions send the kinds of email the signed policy allows; Dinis reads the outbox', end: 'goal' },
+    held: { about: 'Dinis keeps the current rung', end: 'stop' },
+  },
+  moves: [
+    { from: 'press_every_email', to: 'signed_proposals', on: 'pin approvers and lane keys', by: 'person', uses: 'pin-approver' },
+    { from: 'signed_proposals', to: 'signed_approvals', on: 'ABP change: approvals are signed', by: 'person' },
+    { from: 'signed_approvals', to: 'automations', on: 'ABP change: signed automations may send', by: 'person' },
+    { from: 'automations', to: 'sessions_send', on: 'ABP change: sessions send under policy', by: 'person' },
+    { from: 'signed_proposals', to: 'held', on: 'Dinis keeps this rung', by: 'person' },
+    { from: 'signed_approvals', to: 'held', on: 'Dinis keeps this rung', by: 'person' },
+    { from: 'automations', to: 'held', on: 'Dinis keeps this rung', by: 'person' },
+  ],
+});
+
+machine({
+  id: 'send-from-client', level: 1, title: 'Write and send in the mail client',
+  goal: 'an email the person wrote themselves leaves from their Gmail',
+  status: 'built', code: 'src/app/mail.js, src/app/mailparse.js (respond)', trigger: 'the person presses Write, Reply, Reply all or Forward',
+  needs: 'gmail.send and gmail.readonly (Allow reading)', approves: 'the person, by pressing Send (no agent drafts it)', signed: 'nothing',
+  product: { for: 'anyone with Gmail who wants a plain client on their own token', scale: 'it runs in each person\'s browser on their own token; no server; Dinis used it for real on 22 Nov ("IT WORKS!!!")' },
+  states: {
+    composing: { about: 'the composer is open, prefilled for a reply or forward' },
+    sending: { about: 'one call to Gmail' },
+    sent: { about: 'Gmail has it; it shows in the conversation', end: 'goal' },
+    discarded: { about: 'closed without sending', end: 'stop' },
+    failed: { about: 'Gmail refused; the text stays in the composer', end: 'stop' },
+  },
+  moves: [
+    { from: 'composing', to: 'sending', on: 'press Send', by: 'person' },
+    { from: 'composing', to: 'discarded', on: 'close', by: 'person' },
+    { from: 'sending', to: 'sent', on: '200 with an id', by: 'google' },
+    { from: 'sending', to: 'failed', on: 'error', by: 'google' },
+  ],
+});
+
+// The building blocks we have (email.pm.d's rank 2: "the primitives we have ... against the email
+// workflows they make possible"). status as for machines.
+export const PRIMITIVES = Object.freeze({
+  site: { name: 'the cell\'s site and its pages', status: 'built' },
+  oauth: { name: 'Google OAuth scopes on the person\'s mailbox (metadata, send, readonly, modify)', status: 'built' },
+  'page-key': { name: 'the page\'s own key pair and QR codes (k1 to show, m1 sealed)', status: 'built' },
+  vault: { name: 'sgit vaults the person owns (twin, outbox)', status: 'built' },
+  lanes: { name: 'signed lane entries (Ed25519, hash chains, per-agent rights)', status: 'simulation' },
+  policy: { name: 'the email policy, signed, and its checker (C4)', status: 'simulation' },
+  pki: { name: 'pki.sgit.ai: identities and the web of trust', status: 'built' },
+  agents: { name: 'agent sessions that draft', status: 'plan' },
+  'mail-client': { name: 'the mail client /app/mail.html', status: 'built' },
+});
+
+// Per machine: the acceptance check (when the workflow counts as working), how much it removes the
+// sending bottleneck (5 most, 1 least; this agent's judgement, a proposal), and the primitives it uses.
+const EXTRA = {
+  email: [5, ['site', 'oauth', 'page-key', 'vault', 'lanes', 'policy', 'agents'], 'Dinis sends ten real emails drafted by agents in one sitting, each one checked and recorded'],
+  'first-send': [5, ['site', 'oauth', 'page-key', 'vault'], 'Dinis\'s email to himself arrives, and meta.json in the outbox vault says sent, with Gmail\'s id'],
+  'approve-and-send': [5, ['site', 'oauth', 'vault', 'policy'], 'run in Chromium against a made-up outbox: a good entry reaches recorded, a changed or Bcc entry stops at not_sendable, and no Gmail call is made in the test'],
+  'key-by-qr': [5, ['site', 'page-key', 'pki'], 'a code sealed by a trusted sender is kept; one from anyone else is refused (built; checked in Chromium with a test sender)'],
+  outreach: [4, ['vault', 'lanes', 'policy', 'agents'], 'a made-up outreach entry passes checkEntry() and the page; a changed one is refused (tests/workflows.test.mjs)'],
+  connect: [4, ['site', 'oauth', 'page-key'], 'Dinis connects and the page reads counts and labels (done 16 Nov); Allow sending grants gmail.send'],
+  'trust-ladder': [4, ['lanes', 'policy', 'pki', 'agents'], 'each rung is a page of its own with what it needs and the ABP change, and no rung is used before Dinis approves it'],
+  'pin-approver': [3, ['site', 'page-key', 'pki'], 'a fixture policy signed by a pinned approver passes decideEntry(); unpinned, it is refused'],
+  reply: [3, ['vault', 'lanes', 'policy', 'agents'], 'a made-up reply under the automation passes; with the empty twin it is refused (tests/workflows.test.mjs)'],
+  'follow-up': [2, ['vault', 'lanes', 'policy', 'agents'], 'a made-up follow-up to an unanswered thread passes to the press'],
+  'twin-sync': [2, ['oauth', 'vault'], 'a sync writes every new header into the twin vault (done on Dinis\'s mailbox, 21 Nov)'],
+  'send-from-client': [3, ['site', 'oauth', 'mail-client'], 'Dinis wrote, sent, received and replied from the client on 22 Nov (his screenshots, REALITY.md); tests/mail.test.mjs covers reply and forward headers'],
+  'gateway-stop': [2, ['lanes'], 'after a signed gateway.stop, decideEntry() refuses every signed entry (sim/workflows/round2.test.mjs)'],
+};
+for (const m of M) {
+  const x = EXTRA[m.id];
+  if (x) [m.bottleneck, m.primitives, m.acceptance] = x;
+}
+
 export const MACHINES = Object.freeze(M);
 export const byId = (id) => M.find((m) => m.id === id);
 const ACTORS = new Set(['person', 'page', 'agent', 'google', 'vault', 'register']);
@@ -205,8 +337,10 @@ export function checkMachines(machines = M) {
   for (const m of machines) {
     const names = Object.keys(m.states || {});
     const at = `${m.id}`;
-    for (const k of ['id', 'title', 'goal', 'status', 'trigger', 'approves', 'product']) if (!m[k]) out.push(`${at}: missing ${k}`);
+    for (const k of ['id', 'title', 'goal', 'status', 'trigger', 'approves', 'product', 'acceptance', 'bottleneck']) if (!m[k]) out.push(`${at}: missing ${k}`);
     if (!['built', 'simulation', 'plan'].includes(m.status)) out.push(`${at}: status ${m.status}`);
+    for (const pr of m.primitives || []) if (!PRIMITIVES[pr]) out.push(`${at}: unknown primitive ${pr}`);
+    if (!m.primitives?.length) out.push(`${at}: names no primitives`);
     if (!names.length) { out.push(`${at}: no states`); continue; }
     const ends = names.filter((s) => m.states[s].end);
     if (!ends.some((s) => m.states[s].end === 'goal')) out.push(`${at}: no goal state`);

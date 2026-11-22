@@ -6,8 +6,8 @@
   "started": "by conductor.d at Dinis's word in its session, 03:59 UTC on 22 Nov 2026: \"For the 6, start with PM, design, and workflows.\"",
   "brief": "team/email-agents/briefs/email.workflows.d.md (approved by Dinis in email.dev.d's session, about 03:55 UTC on 22 Nov 2026, as reported by email.dev.d)",
   "branch": "work/email.workflows.d-r2",
-  "updated": "2026-11-22T04:16Z",
-  "state": "looping through the night at Dinis's word (about 04:08 UTC): workflows as state machines, round 1 pushed",
+  "updated": "2026-11-22T05:35Z",
+  "state": "night loop round 2 pushed; next round about 06:35 UTC",
   "read": [
     "CLAUDE.md",
     "REALITY.md (at 97638a8)",
@@ -65,11 +65,17 @@
       "item": "Backlog rank 2 (email.pm.d's), and Dinis's direction: the workflow map as state machines. sim/workflows/machines.mjs (nine machines: email, connect, key-by-qr, pin-approver, twin-sync, outreach, reply, follow-up, approve-and-send), render.mjs (docs/plan/workflow-machines.md and SVG diagrams), machines.test.mjs",
       "claimed": "2026-11-22T04:10Z",
       "approved_by": "Dinis, in this session, about 04:08 UTC",
-      "status": "round 1 pushed; more rounds through the night",
+      "status": "round 2 pushed: 13 machines, each with an acceptance check, a bottleneck rank and the building blocks it uses; a building blocks against workflows matrix; new: first-send, gateway-stop, trust-ladder, send-from-client",
       "result": {
-        "tests": "15 pass in sim/workflows/ (9 + 6); 112 in tests/",
-        "gates": "see the commit"
+        "tests": "136 pass: tests/ (including tests/workflows.test.mjs and tests/workflow-machines.test.mjs, moved there by email.dev.d) and sim/workflows/round2.test.mjs (5, proposed for tests/)",
+        "experiments": "team/email.workflows.d/notes/2026-11-22-experiments.md"
       }
+    },
+    {
+      "item": "Backlog workflow experiments (rank 8 in email.pm.d's 05:05 backlog): each experiment noted, kept or dropped",
+      "claimed": "2026-11-22T05:15Z",
+      "approved_by": "email.pm.d's ranking on Dinis's word; conductor.d 04:10 UTC",
+      "status": "rounds 1 and 2 noted in team/email.workflows.d/notes/2026-11-22-experiments.md"
     }
   ],
   "proposed_claims": [],
@@ -104,7 +110,7 @@
   },
   "wake": "Dinis gave it about 04:08 UTC (\"you should be firing up either on schedule or triggered by a schedule ... as a loop throughout the night\"). A message to this session about every hour; none scheduled after 09:00 UTC on 22 Nov 2026 unless Dinis says so.",
   "branches": {
-    "current": "work/email.workflows.d-r2 (rebased onto release/next 77a0ee6, every commit re-signed with this agent's key)",
+    "current": "work/email.workflows.d-r2 (fast-forwarded to release/next2 bb19127 at 05:15 UTC; never force-pushed)",
     "old": "work/email.workflows.d (at 976348f, on 97638a8); left as it is for a person to delete",
     "why": "email.dev.d asked for a rebase onto release/next (04:09 UTC); this session's permission check refused a force-push; conductor.d, 04:14 UTC: \"Do not force-push; push the rebased history to a new branch of your own\""
   }

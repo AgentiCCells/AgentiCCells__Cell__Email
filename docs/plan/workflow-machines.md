@@ -2,21 +2,77 @@
 
 **Status: a proposal, generated** from `sim/workflows/machines.mjs` by `node sim/workflows/render.mjs`; do not edit by hand. Written by email.workflows.d@AgentiCCells.dinis at Dinis's word, 22 November 2026, about 04:08 UTC: "I want you to think in terms of state machines, and I want you to think about every action that happens here is actually a workflow". Each machine says whether it is built (in the page today), simulation (code and tests with made-up data) or plan. [The workflows page](workflows.md). [Back to the plan](index.md).
 
-Machines: 9. Structure check: every state can be reached, every non-end state has a way out, every goal can be reached, no workflow uses itself.
+Machines: 13. Structure check: every state can be reached, every non-end state has a way out, every goal can be reached, no workflow uses itself.
 
-## The map
+## The map, ranked by the sending bottleneck
 
-| Level | Workflow | Goal (its end state) | Status | Uses | Who approves | Scales by |
-|---|---|---|---|---|---|---|
-| 0 | **email**: Email with agents, approved by a person | every email that leaves was approved by its sender and recorded | plan | connect, key-by-qr, twin-sync, outreach, reply, follow-up, approve-and-send | the person | each person runs it in their own browser and vaults; no shared server, so many people add no load to us; the limit is how many emails one person can approve |
-| 1 | **connect**: Connect a Gmail account | the page holds a Google token, sealed to its own key, at the scopes the person allowed | built | none | the person, on Google's consent screen | Google's OAuth app limits (testing, then verification); the Internal audience allows one organisation only |
-| 1 | **key-by-qr**: Move a key by QR code | a key from a trusted sender is kept, sealed to the page's own key | built | none | the person shows their code and pastes the reply | one code per key per device; scales with people, not with us. Dinis, 22 Nov: "one super powerful workflows" |
-| 1 | **pin-approver**: Pin an approver | the page holds an approver's key that it will accept policy signatures and approvals from | plan | key-by-qr | the person, by pasting the code | one pin per approver per browser; Dinis, 22 Nov: approvers "are defined by the agentic workflows and the keys that are published", moved by QR code in the browser |
-| 1 | **twin-sync**: Sync the mailbox into the twin | the twin vault holds every new message's headers and labels | built | none | nobody: reading headers into the person's own vault | Gmail API quota per user; 500 new messages a press today |
-| 1 | **outreach**: Write to someone new | an outbox entry the page will let the person send | simulation | none | the person (a signed automation only for fixed templates to verified correspondents) | every email still needs one press; the limit is the person, which is why the trust ladder (backlog rank 8) matters |
-| 1 | **reply**: Answer a message | an outbox entry the page will let the person send | simulation | none | the person (a signed automation only for fixed templates to verified correspondents) | every email still needs one press; the limit is the person, which is why the trust ladder (backlog rank 8) matters |
-| 1 | **follow-up**: Follow up on our own unanswered email | an outbox entry the page will let the person send | simulation | none | the person (a signed automation only for fixed templates to verified correspondents) | every email still needs one press; the limit is the person, which is why the trust ladder (backlog rank 8) matters |
-| 1 | **approve-and-send**: Review, approve and send one email | one email sent from the person's Gmail and recorded in the outbox | built | none | the person's press (ABP 1.1.4) | one press per email; 20 a day (send.js) |
+Ranked by how much each workflow removes the bottleneck Dinis named on 22 November (about 04:04 UTC, in email.pm.d's session): sending email. 5 removes the most. The rank is this agent's judgement, a proposal.
+
+| Rank | Workflow | Status | Trigger | Needs | Who approves | What is signed | Acceptance check |
+|---|---|---|---|---|---|---|---|
+| 5 | **email**: Email with agents, approved by a person | plan | the person opens the site | a Google account, an sgit vault | the person | keys, policy, proposals, approvals, sends | Dinis sends ten real emails drafted by agents in one sitting, each one checked and recorded |
+| 5 | **key-by-qr**: Move a key by QR code | built | someone needs to give the page a key (a vault key, an access token, an approver key) | the page key pair (non-extractable, in IndexedDB); the sender in trusted.js or signed in with pki.sgit.ai | the person shows their code and pastes the reply | the sealed m1 code is signed by its sender | a code sealed by a trusted sender is kept; one from anyone else is refused (built; checked in Chromium with a test sender) |
+| 5 | **approve-and-send**: Review, approve and send one email | built | the person opens an outbox entry | gmail.send; the outbox vault key | the person's press (ABP 1.1.4) | the agent's proposal when signed.json is there (C4); the press is recorded, not yet signed | run in Chromium against a made-up outbox: a good entry reaches recorded, a changed or Bcc entry stops at not_sendable, and no Gmail call is made in the test |
+| 5 | **first-send**: Dinis's first real send, to himself | plan | conductor@PrompTugal.dinis gives Dinis a sealed QR code with the outbox vault key, made for his page's public key | the outbox vault key (W1); gmail.send; the page key | Dinis's press | the sealed key code (by its sender); the send record is not yet signed | Dinis's email to himself arrives, and meta.json in the outbox vault says sent, with Gmail's id |
+| 4 | **trust-ladder**: The trust ladder: from every press to sessions sending | plan | Dinis decides to climb a rung, by a change to the ABP | each rung: the one below working, and an ABP change Dinis approves | Dinis, one rung at a time | more at each rung: proposals, then approvals, then the policy and automations | each rung is a page of its own with what it needs and the ABP change, and no rung is used before Dinis approves it |
+| 4 | **connect**: Connect a Gmail account | built | the person presses Connect | gmail.metadata; then gmail.send, gmail.readonly or gmail.modify, one press each | the person, on Google's consent screen | nothing yet (the token is sealed to the page key) | Dinis connects and the page reads counts and labels (done 16 Nov); Allow sending grants gmail.send |
+| 4 | **outreach**: Write to someone new | simulation | a list of people to reach (for PrompTugal: conductor@PrompTugal.dinis's) | the outbox vault key; the agent's lane key | the person (a signed automation only for fixed templates to verified correspondents) | the agent's propose.send on its actions lane | a made-up outreach entry passes checkEntry() and the page; a changed one is refused (tests/workflows.test.mjs) |
+| 3 | **pin-approver**: Pin an approver | plan | the person sets up signed sending | key-by-qr; the approver's published key (team/keys, or a register) | the person, by pasting the code | the approver's key bundle | a fixture policy signed by a pinned approver passes decideEntry(); unpinned, it is refused |
+| 3 | **reply**: Answer a message | simulation | a message in the twin that needs an answer | the outbox vault key; the agent's lane key | the person (a signed automation only for fixed templates to verified correspondents) | the agent's propose.reply on its actions lane | a made-up reply under the automation passes; with the empty twin it is refused (tests/workflows.test.mjs) |
+| 3 | **send-from-client**: Write and send in the mail client | built | the person presses Write, Reply, Reply all or Forward | gmail.send and gmail.readonly (Allow reading) | the person, by pressing Send (no agent drafts it) | nothing | Dinis wrote, sent, received and replied from the client on 22 Nov (his screenshots, REALITY.md); tests/mail.test.mjs covers reply and forward headers |
+| 2 | **twin-sync**: Sync the mailbox into the twin | built | the person presses Sync (plan: a schedule) | gmail.metadata; the twin vault key | nobody: reading headers into the person's own vault | vault commits | a sync writes every new header into the twin vault (done on Dinis's mailbox, 21 Nov) |
+| 2 | **follow-up**: Follow up on our own unanswered email | simulation | a thread where we wrote last and N days passed | the outbox vault key; the agent's lane key | the person (a signed automation only for fixed templates to verified correspondents) | the agent's propose.reply on its actions lane | a made-up follow-up to an unanswered thread passes to the press |
+| 2 | **gateway-stop**: Stop the gateway (the kill switch) | simulation | any agent or person sees something wrong | a lane key; gateway.stop is open to every cell agent (agents.json) | nobody: stopping needs no approval; starting again needs a pinned approver | the gateway.stop entry on the approvals lane | after a signed gateway.stop, decideEntry() refuses every signed entry (sim/workflows/round2.test.mjs) |
+
+## Building blocks against workflows
+
+Which of the primitives we have each workflow uses. A workflow can run only when every block it uses is built.
+
+| Workflow | site | oauth | page-key | vault | lanes | policy | pki | agents | mail-client |
+|---|---|---|---|---|---|---|---|---|---|
+| email | x | x | x | x | x | x |  | x |  |
+| key-by-qr | x |  | x |  |  |  | x |  |  |
+| approve-and-send | x | x |  | x |  | x |  |  |  |
+| first-send | x | x | x | x |  |  |  |  |  |
+| trust-ladder |  |  |  |  | x | x | x | x |  |
+| connect | x | x | x |  |  |  |  |  |  |
+| outreach |  |  |  | x | x | x |  | x |  |
+| pin-approver | x |  | x |  |  |  | x |  |  |
+| reply |  |  |  | x | x | x |  | x |  |
+| send-from-client | x | x |  |  |  |  |  |  | x |
+| twin-sync |  | x |  | x |  |  |  |  |  |
+| follow-up |  |  |  | x | x | x |  | x |  |
+| gateway-stop |  |  |  |  | x |  |  |  |  |
+
+| Block | What it is | Status |
+|---|---|---|
+| site | the cell's site and its pages | built |
+| oauth | Google OAuth scopes on the person's mailbox (metadata, send, readonly, modify) | built |
+| page-key | the page's own key pair and QR codes (k1 to show, m1 sealed) | built |
+| vault | sgit vaults the person owns (twin, outbox) | built |
+| lanes | signed lane entries (Ed25519, hash chains, per-agent rights) | simulation |
+| policy | the email policy, signed, and its checker (C4) | simulation |
+| pki | pki.sgit.ai: identities and the web of trust | built |
+| agents | agent sessions that draft | plan |
+| mail-client | the mail client /app/mail.html | built |
+
+## Workflows of workflows
+
+| Level | Workflow | Goal (its end state) | Uses | Scales by |
+|---|---|---|---|---|
+| 0 | **email** | every email that leaves was approved by its sender and recorded | connect, key-by-qr, twin-sync, outreach, reply, follow-up, approve-and-send | each person runs it in their own browser and vaults; no shared server, so many people add no load to us; the limit is how many emails one person can approve |
+| 1 | **connect** | the page holds a Google token, sealed to its own key, at the scopes the person allowed | none | Google's OAuth app limits (testing, then verification); the Internal audience allows one organisation only |
+| 1 | **key-by-qr** | a key from a trusted sender is kept, sealed to the page's own key | none | one code per key per device; scales with people, not with us. Dinis, 22 Nov: "one super powerful workflows" |
+| 1 | **pin-approver** | the page holds an approver's key that it will accept policy signatures and approvals from | key-by-qr | one pin per approver per browser; Dinis, 22 Nov: approvers "are defined by the agentic workflows and the keys that are published", moved by QR code in the browser |
+| 1 | **twin-sync** | the twin vault holds every new message's headers and labels | none | Gmail API quota per user; 500 new messages a press today |
+| 1 | **outreach** | an outbox entry the page will let the person send | none | every email still needs one press; the limit is the person, which is why the trust ladder (backlog rank 8) matters |
+| 1 | **reply** | an outbox entry the page will let the person send | none | every email still needs one press; the limit is the person, which is why the trust ladder (backlog rank 8) matters |
+| 1 | **follow-up** | an outbox entry the page will let the person send | none | every email still needs one press; the limit is the person, which is why the trust ladder (backlog rank 8) matters |
+| 1 | **approve-and-send** | one email sent from the person's Gmail and recorded in the outbox | none | one press per email; 20 a day (send.js) |
+| 1 | **first-send** | one outbox entry sent from Dinis's own Gmail to himself and recorded in the outbox vault | key-by-qr, connect, approve-and-send | one person, one email; it proves the path, it does not scale anything |
+| 2 | **gateway-stop** | nothing can be sent until a pinned approver starts the gateway again | none | one entry stops every send for that mailbox; it costs nothing to add more agents who may stop |
+| 0 | **trust-ladder** | agent sessions send some kinds of email under a policy Dinis signed, and he still sees every send | pin-approver | this is the scaling question itself: each rung moves work from the person to signed policy, so one person can stand behind more email |
+| 1 | **send-from-client** | an email the person wrote themselves leaves from their Gmail | none | it runs in each person's browser on their own token; no server; Dinis used it for real on 22 Nov ("IT WORKS!!!") |
 
 ## email: Email with agents, approved by a person
 
@@ -26,6 +82,8 @@ Machines: 9. Structure check: every state can be reached, every non-end state ha
 - **Needs:** a Google account, an sgit vault
 - **Approves:** the person
 - **Signed:** keys, policy, proposals, approvals, sends
+- **Acceptance:** Dinis sends ten real emails drafted by agents in one sitting, each one checked and recorded
+- **Bottleneck rank:** 5; **uses:** site, oauth, page-key, vault, lanes, policy, agents
 - **As a product:** for one person and the agents that work for them. Scale: each person runs it in their own browser and vaults; no shared server, so many people add no load to us; the limit is how many emails one person can approve
 
 | State | What it means | End |
@@ -63,6 +121,8 @@ goal  start > connected > keyed > twinned > drafted > sent
 - **Needs:** gmail.metadata; then gmail.send, gmail.readonly or gmail.modify, one press each
 - **Approves:** the person, on Google's consent screen
 - **Signed:** nothing yet (the token is sealed to the page key)
+- **Acceptance:** Dinis connects and the page reads counts and labels (done 16 Nov); Allow sending grants gmail.send
+- **Bottleneck rank:** 4; **uses:** site, oauth, page-key
 - **As a product:** for anyone with Gmail. Scale: Google's OAuth app limits (testing, then verification); the Internal audience allows one organisation only
 
 | State | What it means | End |
@@ -96,6 +156,8 @@ stop  signed_out > consent > refused
 - **Needs:** the page key pair (non-extractable, in IndexedDB); the sender in trusted.js or signed in with pki.sgit.ai
 - **Approves:** the person shows their code and pastes the reply
 - **Signed:** the sealed m1 code is signed by its sender
+- **Acceptance:** a code sealed by a trusted sender is kept; one from anyone else is refused (built; checked in Chromium with a test sender)
+- **Bottleneck rank:** 5; **uses:** site, page-key, pki
 - **As a product:** for any two parties who must swap a secret without a server holding it. Scale: one code per key per device; scales with people, not with us. Dinis, 22 Nov: "one super powerful workflows"
 
 | State | What it means | End |
@@ -128,6 +190,8 @@ stop  shown > sealed > pasted > refused
 - **Needs:** key-by-qr; the approver's published key (team/keys, or a register)
 - **Approves:** the person, by pasting the code
 - **Signed:** the approver's key bundle
+- **Acceptance:** a fixture policy signed by a pinned approver passes decideEntry(); unpinned, it is refused
+- **Bottleneck rank:** 3; **uses:** site, page-key, pki
 - **As a product:** for a person who lets agents send under a policy they signed. Scale: one pin per approver per browser; Dinis, 22 Nov: approvers "are defined by the agentic workflows and the keys that are published", moved by QR code in the browser
 
 | State | What it means | End |
@@ -158,6 +222,8 @@ stop  none > offered > refused
 - **Needs:** gmail.metadata; the twin vault key
 - **Approves:** nobody: reading headers into the person's own vault
 - **Signed:** vault commits
+- **Acceptance:** a sync writes every new header into the twin vault (done on Dinis's mailbox, 21 Nov)
+- **Bottleneck rank:** 2; **uses:** oauth, vault
 - **As a product:** for anyone who wants their mail in a vault they own. Scale: Gmail API quota per user; 500 new messages a press today
 
 | State | What it means | End |
@@ -196,6 +262,8 @@ stop  idle > listing > failed
 - **Needs:** the outbox vault key; the agent's lane key
 - **Approves:** the person (a signed automation only for fixed templates to verified correspondents)
 - **Signed:** the agent's propose.send on its actions lane
+- **Acceptance:** a made-up outreach entry passes checkEntry() and the page; a changed one is refused (tests/workflows.test.mjs)
+- **Bottleneck rank:** 4; **uses:** vault, lanes, policy, agents
 - **As a product:** for anyone who writes to many new people. Scale: every email still needs one press; the limit is the person, which is why the trust ladder (backlog rank 8) matters
 
 | State | What it means | End |
@@ -228,6 +296,8 @@ stop  picked > drafted > dropped
 - **Needs:** the outbox vault key; the agent's lane key
 - **Approves:** the person (a signed automation only for fixed templates to verified correspondents)
 - **Signed:** the agent's propose.reply on its actions lane
+- **Acceptance:** a made-up reply under the automation passes; with the empty twin it is refused (tests/workflows.test.mjs)
+- **Bottleneck rank:** 3; **uses:** vault, lanes, policy, agents
 - **As a product:** for anyone with more mail than time. Scale: every email still needs one press; the limit is the person, which is why the trust ladder (backlog rank 8) matters
 
 | State | What it means | End |
@@ -260,6 +330,8 @@ stop  picked > drafted > dropped
 - **Needs:** the outbox vault key; the agent's lane key
 - **Approves:** the person (a signed automation only for fixed templates to verified correspondents)
 - **Signed:** the agent's propose.reply on its actions lane
+- **Acceptance:** a made-up follow-up to an unanswered thread passes to the press
+- **Bottleneck rank:** 2; **uses:** vault, lanes, policy, agents
 - **As a product:** for anyone with more mail than time. Scale: every email still needs one press; the limit is the person, which is why the trust ladder (backlog rank 8) matters
 
 | State | What it means | End |
@@ -292,6 +364,8 @@ stop  picked > drafted > dropped
 - **Needs:** gmail.send; the outbox vault key
 - **Approves:** the person's press (ABP 1.1.4)
 - **Signed:** the agent's proposal when signed.json is there (C4); the press is recorded, not yet signed
+- **Acceptance:** run in Chromium against a made-up outbox: a good entry reaches recorded, a changed or Bcc entry stops at not_sendable, and no Gmail call is made in the test
+- **Bottleneck rank:** 5; **uses:** site, oauth, vault, policy
 - **As a product:** for anyone who lets someone else draft for them. Scale: one press per email; 20 a day (send.js)
 
 | State | What it means | End |
@@ -326,3 +400,150 @@ stop  opened > ready > confirming > sending > failed
 | sending | error | failed | google |  |  |
 | sent | meta.json written and published | recorded | vault |  |  |
 | sent | vault error | unrecorded | vault |  |  |
+
+## first-send: Dinis's first real send, to himself
+
+- **Goal:** one outbox entry sent from Dinis's own Gmail to himself and recorded in the outbox vault
+- **Status:** plan (`every step is built in src/app/connect.js; the whole has never run (it waits on the outbox key, W1)`)
+- **Trigger:** conductor@PrompTugal.dinis gives Dinis a sealed QR code with the outbox vault key, made for his page's public key
+- **Needs:** the outbox vault key (W1); gmail.send; the page key
+- **Approves:** Dinis's press
+- **Signed:** the sealed key code (by its sender); the send record is not yet signed
+- **Acceptance:** Dinis's email to himself arrives, and meta.json in the outbox vault says sent, with Gmail's id
+- **Bottleneck rank:** 5; **uses:** site, oauth, page-key, vault
+- **As a product:** for the first person to use the cell for real. Scale: one person, one email; it proves the path, it does not scale anything
+
+| State | What it means | End |
+|---|---|---|
+| waiting_key | no outbox key in the page |  |
+| key_kept | the outbox vault key is kept, sealed to the page key |  |
+| vault_open | the outbox vault is open and its entries listed |  |
+| entry_open | one entry addressed to Dinis himself is open |  |
+| can_send | gmail.send is granted |  |
+| done | sent to himself and recorded | goal |
+| stuck | a step refused; the reason is shown and recorded | stop |
+
+Paths from the start to an end:
+
+```
+goal  waiting_key > key_kept > vault_open > entry_open > can_send > done
+stop  waiting_key > key_kept > vault_open > entry_open > stuck
+stop  waiting_key > key_kept > vault_open > stuck
+```
+
+| From | Event | To | By | Checked by | Workflow |
+|---|---|---|---|---|---|
+| waiting_key | paste the sealed code | key_kept | person |  | key-by-qr |
+| key_kept | press Open vault | vault_open | person | `openVaults` |  |
+| vault_open | open the entry to himself | entry_open | person | `showMail` |  |
+| entry_open | press Allow sending | can_send | person |  | connect |
+| can_send | approve and send | done | person |  | approve-and-send |
+| vault_open | the vault does not open | stuck | vault |  |  |
+| entry_open | the page says not sendable | stuck | page | `problems, decideEntry` |  |
+
+## gateway-stop: Stop the gateway (the kill switch)
+
+- **Goal:** nothing can be sent until a pinned approver starts the gateway again
+- **Status:** simulation (`src/app/cell/lanes.mjs (gatewayStopped), src/app/cell/decide.mjs`)
+- **Trigger:** any agent or person sees something wrong
+- **Needs:** a lane key; gateway.stop is open to every cell agent (agents.json)
+- **Approves:** nobody: stopping needs no approval; starting again needs a pinned approver
+- **Signed:** the gateway.stop entry on the approvals lane
+- **Acceptance:** after a signed gateway.stop, decideEntry() refuses every signed entry (sim/workflows/round2.test.mjs)
+- **Bottleneck rank:** 2; **uses:** lanes
+- **As a product:** for everyone who lets agents near their mail. Scale: one entry stops every send for that mailbox; it costs nothing to add more agents who may stop
+
+| State | What it means | End |
+|---|---|---|
+| running | signed proposals are checked and may pass |  |
+| stopping | a gateway.stop entry is on the approvals lane |  |
+| stopped | decide() refuses every proposal (kill switch) | goal |
+| not_signed | the stop entry does not verify, so it does not count; the person is told | stop |
+
+Paths from the start to an end:
+
+```
+goal  running > stopping > stopped
+stop  running > stopping > not_signed
+```
+
+| From | Event | To | By | Checked by | Workflow |
+|---|---|---|---|---|---|
+| running | write gateway.stop | stopping | agent |  |  |
+| stopping | the lanes verify | stopped | page | `mergeLanes, gatewayStopped` |  |
+| stopping | the lanes do not verify | not_signed | page | `mergeLanes` |  |
+
+## trust-ladder: The trust ladder: from every press to sessions sending
+
+- **Goal:** agent sessions send some kinds of email under a policy Dinis signed, and he still sees every send
+- **Status:** plan
+- **Trigger:** Dinis decides to climb a rung, by a change to the ABP
+- **Needs:** each rung: the one below working, and an ABP change Dinis approves
+- **Approves:** Dinis, one rung at a time
+- **Signed:** more at each rung: proposals, then approvals, then the policy and automations
+- **Acceptance:** each rung is a page of its own with what it needs and the ABP change, and no rung is used before Dinis approves it
+- **Bottleneck rank:** 4; **uses:** lanes, policy, pki, agents
+- **As a product:** for anyone whose bottleneck is pressing send. Scale: this is the scaling question itself: each rung moves work from the person to signed policy, so one person can stand behind more email
+
+| State | What it means | End |
+|---|---|---|
+| press_every_email | today (ABP 1.1.4): the person presses for every email; agents sign nothing |  |
+| signed_proposals | agents sign what they draft; the page runs C4 and refuses changes (built in simulation; needs W4 and W5) |  |
+| signed_approvals | the press itself is a signed approve entry on the lanes; the page holds a lane key |  |
+| automations | fixed templates to verified correspondents go without a press, under a signed automation; needs an unattended gateway (ABP N1) |  |
+| sessions_send | agent sessions send the kinds of email the signed policy allows; Dinis reads the outbox | goal |
+| held | Dinis keeps the current rung | stop |
+
+Paths from the start to an end:
+
+```
+goal  press_every_email > signed_proposals > signed_approvals > automations > sessions_send
+stop  press_every_email > signed_proposals > signed_approvals > automations > held
+stop  press_every_email > signed_proposals > signed_approvals > held
+stop  press_every_email > signed_proposals > held
+```
+
+| From | Event | To | By | Checked by | Workflow |
+|---|---|---|---|---|---|
+| press_every_email | pin approvers and lane keys | signed_proposals | person |  | pin-approver |
+| signed_proposals | ABP change: approvals are signed | signed_approvals | person |  |  |
+| signed_approvals | ABP change: signed automations may send | automations | person |  |  |
+| automations | ABP change: sessions send under policy | sessions_send | person |  |  |
+| signed_proposals | Dinis keeps this rung | held | person |  |  |
+| signed_approvals | Dinis keeps this rung | held | person |  |  |
+| automations | Dinis keeps this rung | held | person |  |  |
+
+## send-from-client: Write and send in the mail client
+
+- **Goal:** an email the person wrote themselves leaves from their Gmail
+- **Status:** built (`src/app/mail.js, src/app/mailparse.js (respond)`)
+- **Trigger:** the person presses Write, Reply, Reply all or Forward
+- **Needs:** gmail.send and gmail.readonly (Allow reading)
+- **Approves:** the person, by pressing Send (no agent drafts it)
+- **Signed:** nothing
+- **Acceptance:** Dinis wrote, sent, received and replied from the client on 22 Nov (his screenshots, REALITY.md); tests/mail.test.mjs covers reply and forward headers
+- **Bottleneck rank:** 3; **uses:** site, oauth, mail-client
+- **As a product:** for anyone with Gmail who wants a plain client on their own token. Scale: it runs in each person's browser on their own token; no server; Dinis used it for real on 22 Nov ("IT WORKS!!!")
+
+| State | What it means | End |
+|---|---|---|
+| composing | the composer is open, prefilled for a reply or forward |  |
+| sending | one call to Gmail |  |
+| sent | Gmail has it; it shows in the conversation | goal |
+| discarded | closed without sending | stop |
+| failed | Gmail refused; the text stays in the composer | stop |
+
+Paths from the start to an end:
+
+```
+goal  composing > sending > sent
+stop  composing > sending > failed
+stop  composing > discarded
+```
+
+| From | Event | To | By | Checked by | Workflow |
+|---|---|---|---|---|---|
+| composing | press Send | sending | person |  |  |
+| composing | close | discarded | person |  |  |
+| sending | 200 with an id | sent | google |  |  |
+| sending | error | failed | google |  |  |
