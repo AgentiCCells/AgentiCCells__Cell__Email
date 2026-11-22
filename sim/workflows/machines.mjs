@@ -199,9 +199,9 @@ machine({
 machine({
   id: 'first-send', level: 1, title: 'Dinis\'s first real send, to himself',
   goal: 'one outbox entry sent from Dinis\'s own Gmail to himself and recorded in the outbox vault',
-  status: 'plan', code: 'every step is built in src/app/connect.js; the whole has never run (it waits on the outbox key, W1)',
+  status: 'plan', code: 'every step is built in src/app/connect.js; the whole has never run (it waits on the outbox key, W1); its checks and send ran in Chromium on made-up entries (sim/workflows/first-send-browser.mjs)',
   trigger: 'conductor@PrompTugal.dinis gives Dinis a sealed QR code with the outbox vault key, made for his page\'s public key',
-  needs: 'the outbox vault key (W1); gmail.send; the page key', approves: 'Dinis\'s press', signed: 'the sealed key code (by its sender); the send record is not yet signed',
+  needs: 'the outbox vault key (W1); gmail.send; the page key', approves: 'Dinis\'s press', signed: 'the sealed key code (by its sender); the entry itself must be unsigned: a signed entry to the mailbox itself is refused by the policy',
   product: { for: 'the first person to use the cell for real', scale: 'one person, one email; it proves the path, it does not scale anything' },
   states: {
     waiting_key: { about: 'no outbox key in the page' },
@@ -287,6 +287,17 @@ machine({
     { from: 'sending', to: 'sent', on: '200 with an id', by: 'google' },
     { from: 'sending', to: 'failed', on: 'error', by: 'google' },
   ],
+});
+
+// Who listens on each lane. PROPOSAL, from Dinis's words about 04:08 UTC: lane keys are "created by
+// vaults ... it just depends on the workflow and who's listening. Usually we have an observability
+// agent or specific agent or a feedback agent to capture it." The agent names below are roles, not
+// agents that exist; none is started.
+export const LANE_LISTENERS = Object.freeze({
+  actions: { writes: 'drafting agents and people (agents.json roles)', listens: ['the page (decide, before a press)', 'a feedback agent (what was proposed and why, to improve drafts)'] },
+  approvals: { writes: 'pinned approvers; any cell agent may write gateway.stop', listens: ['the page (approvals and the kill switch)', 'an observability agent (who approved what, and every stop)'] },
+  reads: { writes: 'anyone who reads the twin', listens: ['an observability agent (which agent read which message)'] },
+  outbox: { writes: 'the gateway (today: the page, through meta.json)', listens: ['the CRM component (replied, who waits on whom)', 'an observability agent (sends per day, per agent)', 'a feedback agent (what was sent against what was proposed)'] },
 });
 
 // The building blocks we have (email.pm.d's rank 2: "the primitives we have ... against the email

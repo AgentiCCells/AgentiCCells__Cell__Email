@@ -1,0 +1,82 @@
+{
+  "ran": "2026-11-22T06:18:37.477Z",
+  "browser": "157.0.8103.78",
+  "gmail": [
+    {
+      "auth": "the made-up token",
+      "headers": [
+        "To: owner@example.org",
+        "Subject: First send from the page (test)",
+        "MIME-Version: 1.0",
+        "Content-Type: text/plain; charset=\"UTF-8\"",
+        "Content-Transfer-Encoding: base64"
+      ],
+      "text": "This is a made-up first send, to myself.\r\n"
+    },
+    {
+      "auth": "the made-up token",
+      "headers": [
+        "To: morgan@example.net",
+        "Subject: A short question about your workshop",
+        "MIME-Version: 1.0",
+        "Content-Type: text/plain; charset=\"UTF-8\"",
+        "Content-Transfer-Encoding: base64"
+      ],
+      "text": "Hello Morgan,\r\n\r\nI read the notes from your workshop last month and would like to ask two short questions about how you ran the exercises. Would you have twenty minutes in the next two weeks?\r\n\r\nKind regards,\r\nAlex"
+    }
+  ],
+  "aborted": [],
+  "errors": [],
+  "steps": [
+    {
+      "name": "to self, unsigned",
+      "to": [
+        "owner@example.org"
+      ],
+      "page": [],
+      "c4": {
+        "ran": false,
+        "verdict": "press",
+        "reasons": [
+          "this entry carries no signed proposal, so the full check did not run; sending rests on your press and the page's checks"
+        ]
+      },
+      "sendable": true,
+      "sent": "standin-1"
+    },
+    {
+      "name": "outreach, signed",
+      "to": [
+        "morgan@example.net"
+      ],
+      "page": [],
+      "c4": {
+        "ran": true,
+        "verdict": "press",
+        "reasons": [
+          "first contact: the twin was last synced never, more than 30 minutes ago: every recipient is treated as a first contact"
+        ]
+      },
+      "sendable": true,
+      "sent": "standin-1"
+    },
+    {
+      "name": "to self, signed",
+      "to": [
+        "owner@example.org"
+      ],
+      "page": [],
+      "c4": {
+        "ran": true,
+        "verdict": "refuse",
+        "reasons": [
+          "recipients: owner@example.org is not in an allowed domain or on the allow list",
+          "recipients: the mailbox may not send to itself",
+          "first contact: the twin was last synced never, more than 30 minutes ago: every recipient is treated as a first contact"
+        ]
+      },
+      "sendable": false,
+      "sent": null
+    }
+  ]
+}

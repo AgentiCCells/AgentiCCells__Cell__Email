@@ -6,8 +6,8 @@
   "started": "by conductor.d at Dinis's word in its session, 03:59 UTC on 22 Nov 2026: \"For the 6, start with PM, design, and workflows.\"",
   "brief": "team/email-agents/briefs/email.workflows.d.md (approved by Dinis in email.dev.d's session, about 03:55 UTC on 22 Nov 2026, as reported by email.dev.d)",
   "branch": "work/email.workflows.d-r2",
-  "updated": "2026-11-22T05:35Z",
-  "state": "night loop round 2 pushed; next round about 06:35 UTC",
+  "updated": "2026-11-22T06:30Z",
+  "state": "night loop round 3 pushed; next round about 07:30 UTC",
   "read": [
     "CLAUDE.md",
     "REALITY.md (at 97638a8)",
@@ -76,6 +76,12 @@
       "claimed": "2026-11-22T05:15Z",
       "approved_by": "email.pm.d's ranking on Dinis's word; conductor.d 04:10 UTC",
       "status": "rounds 1 and 2 noted in team/email.workflows.d/notes/2026-11-22-experiments.md"
+    },
+    {
+      "item": "Backlog: the first real send end to end once W1 lands: a step list for Dinis, checked in Chromium with made-up data",
+      "claimed": "2026-11-22T06:18Z",
+      "approved_by": "email.pm.d's ranking on Dinis's word; conductor.d 04:10 UTC",
+      "status": "step list in docs/plan/workflows.md; checks and send run in Chromium 157 against made-up entries and a stand-in for Gmail (run recorded in notes/runs/2026-11-22-first-send-chromium.json). Key paste and Open vault not yet run: they need a vault stand-in. Finding: the first send must be unsigned (a signed entry to the mailbox itself is refused by the policy)."
     }
   ],
   "proposed_claims": [],

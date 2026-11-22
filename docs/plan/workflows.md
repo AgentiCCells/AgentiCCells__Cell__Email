@@ -79,6 +79,32 @@ The text is in `body.txt`. The page trims the subject and addresses, so the writ
 
 One limit: the chain grows with every proposal, and every entry carries all of it. That is fine for tens of emails. For more, the lanes belong in the vault as append lanes (`docs/plan/lanes.md`), and `signed.json` would point at them.
 
+## The first real send: Dinis's step list (proposal)
+
+Backlog: "make the first real send possible end to end once W1 lands". Dinis, 21 November 2026, about 15:20 UTC: "the main thing I want to do is to make sure that I can actually open the email and I can start to send from there." The machine is `first-send` on [the workflow machines](workflow-machines.md) page.
+
+It waits on W1: conductor@PrompTugal.dinis gives Dinis a sealed QR code with the outbox vault key, made for his page's public key. Then, on his own device:
+
+1. Open `/app/connect.html` and press **Connect** (done before; the token is kept).
+2. **Swap keys:** paste or drop the sealed QR code. The page keeps the outbox key only if conductor@PrompTugal.dinis signed it.
+3. Press **Open vault**. The outbox lists its entries.
+4. Open the entry addressed to himself. Check To, Subject and text on screen.
+5. Press **Allow sending** if the page asks (it grants `gmail.send`).
+6. Press **Approve and send**, then confirm.
+7. Check his inbox for the email, and that the entry now says "sent", with Gmail's id.
+
+The entry for this first send must be **unsigned** (no `signed.json`), so it goes by the press path of ABP 1.1.4. A signed entry addressed to the mailbox itself is refused by the email policy ("the mailbox may not send to itself"), which is right for agents' sends.
+
+**Checked in Chromium 157, 22 November 2026, 06:18 UTC, with made-up entries** (`sim/workflows/first-send-browser.mjs`, run recorded in `team/email.workflows.d/notes/runs/2026-11-22-first-send-chromium.json`). The page's own modules ran the checks of steps 4 to 6 and built the message. A stand-in for Gmail received one request per sendable entry, carrying the made-up token and exactly the entry's To, Subject and text. Every other host was blocked, and none was asked for. Results:
+
+| Entry | Page checks | Full check (C4) | Sent to the stand-in |
+|---|---|---|---|
+| to himself, unsigned | pass | not run (the press decides) | yes |
+| outreach to a made-up address, signed | pass | press (held: first contact) | yes |
+| to himself, signed | pass | refused (the mailbox may not send to itself) | no |
+
+Not yet run in a browser: steps 2 and 3 (pasting the key and opening the vault). They need a stand-in for the vault service, which is the next step. The real buttons were not pressed; the run called the same functions that the buttons call.
+
 ## Where lane keys and approvers come from
 
 Lane keys: from team/keys, as Dinis said. Proposal: each agent's entry gains `lane_key`, an Ed25519 public key (SPKI PEM). The sgit `sign` key is ECDSA P-256, which the lanes do not use. The page would build the entries in, the way `trusted.js` is built.
@@ -107,6 +133,7 @@ Lane keys, Dinis: "created by vaults ... it just depends on the workflow and who
 | `sim/workflows/pins.mjs` | the two approver sources, one shape |
 | `sim/workflows/fixtures.mjs` | made-up emails for outreach, reply and follow-up |
 | `sim/workflows/workflows.test.mjs` | 9 tests; proposed for `tests/` |
+| `sim/workflows/first-send-browser.mjs` | the first send's checks run in Chromium against made-up entries and a stand-in for Gmail |
 | `sim/workflows/machines.mjs` | the workflows as state machines, with a structure check, `run()` and `paths()` |
 | `sim/workflows/render.mjs` | writes [the workflow machines](workflow-machines.md) page and a page of SVG diagrams |
 | `sim/workflows/machines.test.mjs` | 6 tests; proposed for `tests/` |

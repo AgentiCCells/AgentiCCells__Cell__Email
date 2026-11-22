@@ -13,7 +13,7 @@ Ranked by how much each workflow removes the bottleneck Dinis named on 22 Novemb
 | 5 | **email**: Email with agents, approved by a person | plan | the person opens the site | a Google account, an sgit vault | the person | keys, policy, proposals, approvals, sends | Dinis sends ten real emails drafted by agents in one sitting, each one checked and recorded |
 | 5 | **key-by-qr**: Move a key by QR code | built | someone needs to give the page a key (a vault key, an access token, an approver key) | the page key pair (non-extractable, in IndexedDB); the sender in trusted.js or signed in with pki.sgit.ai | the person shows their code and pastes the reply | the sealed m1 code is signed by its sender | a code sealed by a trusted sender is kept; one from anyone else is refused (built; checked in Chromium with a test sender) |
 | 5 | **approve-and-send**: Review, approve and send one email | built | the person opens an outbox entry | gmail.send; the outbox vault key | the person's press (ABP 1.1.4) | the agent's proposal when signed.json is there (C4); the press is recorded, not yet signed | run in Chromium against a made-up outbox: a good entry reaches recorded, a changed or Bcc entry stops at not_sendable, and no Gmail call is made in the test |
-| 5 | **first-send**: Dinis's first real send, to himself | plan | conductor@PrompTugal.dinis gives Dinis a sealed QR code with the outbox vault key, made for his page's public key | the outbox vault key (W1); gmail.send; the page key | Dinis's press | the sealed key code (by its sender); the send record is not yet signed | Dinis's email to himself arrives, and meta.json in the outbox vault says sent, with Gmail's id |
+| 5 | **first-send**: Dinis's first real send, to himself | plan | conductor@PrompTugal.dinis gives Dinis a sealed QR code with the outbox vault key, made for his page's public key | the outbox vault key (W1); gmail.send; the page key | Dinis's press | the sealed key code (by its sender); the entry itself must be unsigned: a signed entry to the mailbox itself is refused by the policy | Dinis's email to himself arrives, and meta.json in the outbox vault says sent, with Gmail's id |
 | 4 | **trust-ladder**: The trust ladder: from every press to sessions sending | plan | Dinis decides to climb a rung, by a change to the ABP | each rung: the one below working, and an ABP change Dinis approves | Dinis, one rung at a time | more at each rung: proposals, then approvals, then the policy and automations | each rung is a page of its own with what it needs and the ABP change, and no rung is used before Dinis approves it |
 | 4 | **connect**: Connect a Gmail account | built | the person presses Connect | gmail.metadata; then gmail.send, gmail.readonly or gmail.modify, one press each | the person, on Google's consent screen | nothing yet (the token is sealed to the page key) | Dinis connects and the page reads counts and labels (done 16 Nov); Allow sending grants gmail.send |
 | 4 | **outreach**: Write to someone new | simulation | a list of people to reach (for PrompTugal: conductor@PrompTugal.dinis's) | the outbox vault key; the agent's lane key | the person (a signed automation only for fixed templates to verified correspondents) | the agent's propose.send on its actions lane | a made-up outreach entry passes checkEntry() and the page; a changed one is refused (tests/workflows.test.mjs) |
@@ -55,6 +55,17 @@ Which of the primitives we have each workflow uses. A workflow can run only when
 | pki | pki.sgit.ai: identities and the web of trust | built |
 | agents | agent sessions that draft | plan |
 | mail-client | the mail client /app/mail.html | built |
+
+## Who listens on each lane (proposal)
+
+Dinis, about 04:08 UTC: "it just depends on the workflow and who's listening. Usually we have an observability agent or specific agent or a feedback agent to capture it." The listeners named here are roles; none of these agents exists yet.
+
+| Lane | Who writes | Who listens |
+|---|---|---|
+| actions | drafting agents and people (agents.json roles) | the page (decide, before a press); a feedback agent (what was proposed and why, to improve drafts) |
+| approvals | pinned approvers; any cell agent may write gateway.stop | the page (approvals and the kill switch); an observability agent (who approved what, and every stop) |
+| reads | anyone who reads the twin | an observability agent (which agent read which message) |
+| outbox | the gateway (today: the page, through meta.json) | the CRM component (replied, who waits on whom); an observability agent (sends per day, per agent); a feedback agent (what was sent against what was proposed) |
 
 ## Workflows of workflows
 
@@ -404,11 +415,11 @@ stop  opened > ready > confirming > sending > failed
 ## first-send: Dinis's first real send, to himself
 
 - **Goal:** one outbox entry sent from Dinis's own Gmail to himself and recorded in the outbox vault
-- **Status:** plan (`every step is built in src/app/connect.js; the whole has never run (it waits on the outbox key, W1)`)
+- **Status:** plan (`every step is built in src/app/connect.js; the whole has never run (it waits on the outbox key, W1); its checks and send ran in Chromium on made-up entries (sim/workflows/first-send-browser.mjs)`)
 - **Trigger:** conductor@PrompTugal.dinis gives Dinis a sealed QR code with the outbox vault key, made for his page's public key
 - **Needs:** the outbox vault key (W1); gmail.send; the page key
 - **Approves:** Dinis's press
-- **Signed:** the sealed key code (by its sender); the send record is not yet signed
+- **Signed:** the sealed key code (by its sender); the entry itself must be unsigned: a signed entry to the mailbox itself is refused by the policy
 - **Acceptance:** Dinis's email to himself arrives, and meta.json in the outbox vault says sent, with Gmail's id
 - **Bottleneck rank:** 5; **uses:** site, oauth, page-key, vault
 - **As a product:** for the first person to use the cell for real. Scale: one person, one email; it proves the path, it does not scale anything

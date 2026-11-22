@@ -6,7 +6,7 @@
 //   node sim/workflows/render.mjs            writes docs/plan/workflow-machines.md
 //   node sim/workflows/render.mjs --html F   also writes a page of SVG diagrams to F
 import { writeFileSync } from 'node:fs';
-import { MACHINES, PRIMITIVES, checkMachines, paths } from './machines.mjs';
+import { MACHINES, PRIMITIVES, LANE_LISTENERS, checkMachines, paths } from './machines.mjs';
 
 const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 const label = (s) => s.replace(/_/g, ' ');
@@ -64,6 +64,11 @@ export function markdownPage(machines = MACHINES) {
   L.push('');
   L.push('| Block | What it is | Status |', '|---|---|---|');
   for (const [k, v] of Object.entries(PRIMITIVES)) L.push(`| ${k} | ${v.name} | ${v.status} |`);
+  L.push('');
+  L.push('## Who listens on each lane (proposal)', '');
+  L.push('Dinis, about 04:08 UTC: "it just depends on the workflow and who\'s listening. Usually we have an observability agent or specific agent or a feedback agent to capture it." The listeners named here are roles; none of these agents exists yet.', '');
+  L.push('| Lane | Who writes | Who listens |', '|---|---|---|');
+  for (const [lane, v] of Object.entries(LANE_LISTENERS)) L.push(`| ${lane} | ${v.writes} | ${v.listens.join('; ')} |`);
   L.push('');
   L.push('## Workflows of workflows', '');
   L.push('| Level | Workflow | Goal (its end state) | Uses | Scales by |', '|---|---|---|---|---|');
