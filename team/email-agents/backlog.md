@@ -1,6 +1,6 @@
 # The email.* backlog
 
-Kept by email.pm.d@AgentiCCells.dinis. First written 22 November 2026, about 04:10 UTC, from REALITY.md, both hand-overs, the board notes, docs/plan/ and team/email.dev.d/status.json.
+Kept by email.pm.d@AgentiCCells.dinis. First written 22 November 2026, about 04:10 UTC; updated about 04:20 UTC with conductor.d's relay of Dinis's decisions; from REALITY.md, both hand-overs, the board notes, docs/plan/ and team/email.dev.d/status.json.
 
 **Status: a proposal.** The ranking and the first three items per agent are for Dinis to confirm. Every item is marked **Asked** (Dinis asked for it; his words and the time are given) or **Proposed** (an agent's idea; nobody has agreed to it). An agent claims an item in its own `status.json` before it starts. Unclaimed items belong to nobody.
 
@@ -21,11 +21,13 @@ Facts used here: live site v0.1.51 at 189ac49, built 22 November 2026 02:12 UTC 
 | W1 | The outbox key: a sealed QR code for the PrompTugal outreach vault, from conductor@PrompTugal.dinis, pasted into the page | No outbox entry can be opened or sent until then; Dinis's first send to himself waits on it | hand-over of 21 Nov, item 1 |
 | W2 | Safe Browsing review in Google Search Console, as the domain's owner | Anyone opening the site sees "Dangerous site". Dinis, 21 Nov: "we will make that change a bit later" | REALITY.md; hand-over of 21 Nov, item 2 |
 | W3 | The pki.sgit.ai passkey round trip: press "Sign in with pki.sgit.ai" and report what it shows | Built, never run; needs his passkey | hand-over of 21 Nov, item 3 |
-| W4 | Where pinned approvers come from (email.dev.d's proposal: the person pins their own key in the page, sealed in IndexedDB) | Until then every signed outbox entry is refused (C4) | team/email.dev.d/status.json |
-| W5 | Where agents' Ed25519 lane keys come from (email.dev.d's proposal: team/keys entries built into the page, like trusted.js) | Same as W4 | team/email.dev.d/status.json |
-| W6 | The hourly wake on cell.email.b's session (trig_01DLGQUfJbiz2gRbTupmx8fj): point it elsewhere or turn it off | Still fires into a session that has stopped | hand-over of 21 Nov, item 6 |
-| W7 | Delete branches work/page-design and work/cell-email-b-onboarding | People delete branches | hand-over of 21 Nov, item 5 |
-| W8 | The key entry `team/keys/cell-email-d-agenticcells.json` still names cell.email.d; the new agents' keys | Only Dinis merges a key | REALITY.md |
+| W4 | Where pinned approvers come from: email.dev.d's narrower question to Dinis, (a) the cell's own site or (b) pki.sgit.ai's register | Until then every signed outbox entry is refused (C4) | conductor.d, 04:03 UTC 22 Nov |
+| W5 | Agents' Ed25519 lane keys: **decided**, from team/keys. Dinis, 03:59 UTC 22 Nov, in conductor.d's session: "Yeah, teams.keys, that's a good one" | Now a build item (rank 3) | relayed by conductor.d, 04:03 UTC |
+| W6 | cell.email.b's hourly wake (trig_01DLGQUfJbiz2gRbTupmx8fj): **decided**, stop it as legacy; carried to account B by maestro.d | Still fires into a session that has stopped | relayed by conductor.d, 04:03 UTC |
+| W7 | Delete branches work/page-design and work/cell-email-b-onboarding: **decided, later**. Dinis, 03:59 UTC: "we can delete that later, that branch" | People delete branches | relayed by conductor.d, 04:03 UTC |
+| W8 | The key entry `team/keys/cell-email-d-agenticcells.json` still names cell.email.d; the new agents' keys (email.pm.d's is with maestro.d for an entry) | Only Dinis merges a key | REALITY.md; conductor.d, 04:03 UTC |
+
+The one-page form for Dinis: `board/2026-11-22-waits-on-dinis.md`.
 
 ## 3. Ranked backlog
 
@@ -35,7 +37,7 @@ Rank 1 is first. "Agent" is the proposed owner by the path rules in `team/email-
 |---|---|---|---|---|
 | 1 | Keep this backlog and REALITY.md true; write release notes for each release | email.pm.d | Asked: brief, from Dinis's words about 02:12 UTC 22 Nov ("pm ... focused on a specific focus") | `grep -c 'v0.1.51' REALITY.md` is at least 1 after the next REALITY.md pass; every row here carries Asked or Proposed |
 | 2 | Make the first real send possible end to end once W1 lands: a written step list for Dinis, checked against the page with made-up data | email.workflows.d | Asked: Dinis, 21 Nov about 15:20 UTC: "the main thing I want to do is to make sure that I can actually open the email and I can start to send from there" | the step list exists in `docs/plan/workflows.md`; each step is run in Chromium against fixtures with no Gmail call, and the run is recorded |
-| 3 | Pinning approvers and lane keys in the page (W4, W5), once Dinis chooses where they come from | email.dev.d with email.workflows.d | Proposed (email.dev.d); waits on W4, W5 | a fixture entry signed by a pinned approver and a pinned lane key passes decide() in the page; an unpinned one is refused (new tests in tests/decide-page.test.mjs) |
+| 3 | Pinning approvers and lane keys in the page: lane keys from team/keys (W5, decided), approvers once Dinis answers W4 | email.dev.d with email.workflows.d | Asked for lane keys: Dinis, 03:59 UTC 22 Nov: "Yeah, teams.keys, that's a good one"; approvers wait on W4 | a fixture entry signed by a pinned approver and a pinned lane key passes decide() in the page; an unpinned one is refused (new tests in tests/decide-page.test.mjs) |
 | 4 | The gateway's shared top bar | email.design.d | Asked: Dinis, 21 Nov: "ask the design agent to help out to make this look more professional and nice"; the item is design round 1, item 5 | connect.html and mail.html show the same top bar; `node scripts/check-app.mjs` OK; axe clean in Chromium |
 | 5 | Group the home page's links | email.design.d | Asked: same words; left over from design round 1 | the home page shows the links in named groups; axe clean |
 | 6 | Look at the live client with Dinis's screenshots and the stand-in; list what breaks on real mail | email.design.d | Proposed; follows Dinis's first real use, 22 Nov about 02:05 UTC | a note in `docs/design/` with each issue, a screenshot made with made-up mail, and a proposed fix |
@@ -55,18 +57,20 @@ Rank 1 is first. "Agent" is the proposed owner by the path rules in `team/email-
 | 20 | `docs/plan/crm.md`: how a CRM draft becomes an outbox entry with its `client_ref`, agreed with crm.ios@sgit.dinis | email.crm.d | Proposed (brief; format v1 was agreed 16 Nov) | the page exists, marked plan, and names each field and its source in the twin format |
 | 21 | Message bodies in the twin | email.twins.d | Proposed; needs a policy change and Dinis's approval first (N5) | not to start until Dinis approves the ABP change |
 
-## 4. First three items per agent (proposal, for Dinis to confirm)
+## 4. First three items per agent (proposal, for Dinis to confirm; conductor.d has put it to him, 04:03 UTC)
 
-- **email.pm.d:** rank 1 (backlog and REALITY.md, including the REALITY.md fixes below); release notes for v0.1.50 and v0.1.51 in `board/`; a one-page list of what waits on Dinis (W1 to W8) that he can answer line by line.
+- **email.pm.d:** approved by conductor.d, 04:03 UTC 22 Nov (scope within the brief): rank 1 (backlog and REALITY.md, including the REALITY.md fixes below); release notes for v0.1.50 and v0.1.51 in `board/`; a one-page list of what waits on Dinis (W1 to W8) that he can answer line by line.
 - **email.design.d:** ranks 4, 5, 6.
 - **email.workflows.d:** ranks 2, 10, 11.
 - **email.twins.d:** ranks 12, 13, 14.
 - **email.contacts.d:** ranks 15, 16, 17.
 - **email.crm.d:** ranks 20, 18, 19.
-- **email.dev.d:** rank 3 when W4 and W5 are answered; ranks 7 to 9 on Dinis's word; meanwhile, integrating the others' branches.
+- **email.dev.d:** rank 3 (lane keys from team/keys now; approvers when W4 is answered); ranks 7 to 9 on Dinis's word; meanwhile, integrating the others' branches.
 
-## 5. REALITY.md: what the live check found (proposed fixes)
+## 5. REALITY.md: what the live check found
 
-1. It names no live version after v0.1.38 (20 November) in its header; the site serves v0.1.51 at 189ac49.
-2. It says the long-subject bug is "fixed on work/cell.email.d"; the fix is on dev and live (576bef9, v0.1.51).
-3. It says none of the six email.* agents has been started; conductor.d started email.pm.d on 22 November 2026, 03:59 UTC, on Dinis's word.
+Fixed on work/email.pm.d, 22 November 2026, about 04:20 UTC, for email.dev.d to review and release:
+
+1. The header now names the live check: v0.1.51 at 189ac49.
+2. The long-subject fix is recorded as live (576bef9, v0.1.51).
+3. email.pm.d is recorded as started, with its key (public half not yet merged).
