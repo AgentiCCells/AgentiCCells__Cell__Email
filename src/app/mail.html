@@ -96,16 +96,18 @@
       <div class="toolbar">
         <button id="back" class="icon back" type="button" aria-label="Back to the list" title="Back"><svg class="i"><use href="#i-back"/></svg></button>
         <h2 id="thread-subject" class="thread-subject"></h2>
-        <button id="t-reply" class="icon" type="button" aria-label="Reply" title="Reply (r)"><svg class="i"><use href="#i-reply"/></svg></button>
-        <button id="t-replyall" class="icon" type="button" aria-label="Reply all" title="Reply all (a)"><svg class="i"><use href="#i-replyall"/></svg></button>
-        <button id="t-forward" class="icon" type="button" aria-label="Forward" title="Forward (f)"><svg class="i"><use href="#i-forward"/></svg></button>
-        <span id="manage" class="manage" hidden>
-          <span class="sep" aria-hidden="true"></span>
-          <button id="t-archive" class="icon" type="button" aria-label="Archive" title="Archive (e)"><svg class="i"><use href="#i-archive"/></svg></button>
-          <button id="t-bin" class="icon" type="button" aria-label="Move to Bin" title="Move to Bin (#)"><svg class="i"><use href="#i-bin"/></svg></button>
-          <button id="t-unread" class="icon" type="button" aria-label="Mark unread" title="Mark unread (Shift+U)"><svg class="i"><use href="#i-unread"/></svg></button>
-          <button id="t-star" class="icon" type="button" aria-label="Star" aria-pressed="false" title="Star (s)"><svg class="i"><use href="#i-star"/></svg></button>
-          <details id="t-labels" class="labels-menu"><summary class="icon" aria-label="Labels" title="Labels (l)"><svg class="i"><use href="#i-label"/></svg></summary><div id="label-list" class="menu"></div></details>
+        <span class="t-actions">
+          <button id="t-reply" class="icon" type="button" aria-label="Reply" title="Reply (r)"><svg class="i"><use href="#i-reply"/></svg></button>
+          <button id="t-replyall" class="icon" type="button" aria-label="Reply all" title="Reply all (a)"><svg class="i"><use href="#i-replyall"/></svg></button>
+          <button id="t-forward" class="icon" type="button" aria-label="Forward" title="Forward (f)"><svg class="i"><use href="#i-forward"/></svg></button>
+          <span id="manage" class="manage" hidden>
+            <span class="sep" aria-hidden="true"></span>
+            <button id="t-archive" class="icon" type="button" aria-label="Archive" title="Archive (e)"><svg class="i"><use href="#i-archive"/></svg></button>
+            <button id="t-bin" class="icon" type="button" aria-label="Move to Bin" title="Move to Bin (#)"><svg class="i"><use href="#i-bin"/></svg></button>
+            <button id="t-unread" class="icon" type="button" aria-label="Mark unread" title="Mark unread (Shift+U)"><svg class="i"><use href="#i-unread"/></svg></button>
+            <button id="t-star" class="icon" type="button" aria-label="Star" aria-pressed="false" title="Star (s)"><svg class="i"><use href="#i-star"/></svg></button>
+            <details id="t-labels" class="labels-menu"><summary class="icon" aria-label="Labels" title="Labels (l)"><svg class="i"><use href="#i-label"/></svg></summary><div id="label-list" class="menu"></div></details>
+          </span>
         </span>
       </div>
       <p class="note"><svg class="i i-s" aria-hidden="true"><use href="#i-shield"/></svg> <span id="note-text">Remote images are blocked. Opening a message here does not mark it read: this page has read-only access.</span></p>
