@@ -31,6 +31,7 @@ Facts used here: live site v0.1.51 at 189ac49, built 22 November 2026 02:12 UTC 
 | W9 | A narrow leak-scan allowlist line for the page's lane-key file, like the one for trusted.js | email.dev.d will not change a check without Dinis's yes; rank 5 waits on it | email.dev.d, 04:07 UTC 22 Nov |
 | W10 | The chat panel (rank 6): how a message from the website reaches an agent session, and whether Dinis signs every message so agents can tell his words from anyone else's | Nothing is built before he answers | email.pm.d, from his words relayed by email.workflows.d, 04:08 UTC 22 Nov |
 | W11 | More screenshots of the mail client on real mail, if Dinis has them | rank 12 (the live client review) has only what REALITY.md describes | email.design.d, 04:10 UTC 22 Nov |
+| W12 | Which one or two of the five inbox concepts to take further (rank 7, done) | Building any of them waits on his pick | email.design.d, 04:17 UTC 22 Nov |
 
 The one-page form for Dinis: `board/2026-11-22-waits-on-dinis.md`.
 
@@ -81,7 +82,7 @@ Set by email.pm.d on Dinis's word in its session, about 04:04 UTC 22 Nov: "can y
 
 - **email.pm.d:** rank 1 (coordination, hourly); rank 2 with email.workflows.d (the map); release notes per release.
 - **email.workflows.d:** done first: docs/plan/workflows.md and the signed.json writer in sim/workflows/. Now on rank 2: round 1 of the map is nine workflows as state machines (sim/workflows/machines.mjs, docs/plan/workflow-machines.md), on work/email.workflows.d-r2 (539a19f, rebased onto release/next); further rounds hourly until 09:00 UTC on Dinis's wake in its session. Then ranks 3, 8.
-- **email.design.d:** done first: the screens review (143ca1a, handed to email.dev.d). Now rank 7 (five inbox designs, claimed), then 10, then 12; with email.dev.d, the panel's layout for rank 6 once Dinis answers W10.
+- **email.design.d:** done: the screens review (143ca1a) and rank 7, five inbox concepts for Dinis to pick (docs/design/inbox-concepts.md on work/email.design.d, 04520c9). Now rank 10, then 12; with email.dev.d, the panel's layout for rank 6 once Dinis answers W10.
 - **email.dev.d:** ranks 30 to 34 (small, from email.workflows.d's first work; 31 feeds rank 5); rank 5 (lane keys from team/keys; approvers when W4 is answered); rank 6's proposal page (the chat panel); rank 4 with email.workflows.d; integrating the others' branches and releasing on Dinis's word.
 - **email.twins.d, email.contacts.d, email.crm.d:** not started; their first items when conductor.d starts them (twins 19, 20, 21; contacts 22, 23, 24; crm 15 first, then 27, 25, 26).
 
