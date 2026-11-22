@@ -3,8 +3,8 @@
   "session": "named in the Claude-Session trailer of each of this cell's commits (the leak scan refuses session ids in committed text)",
   "conductor": "conductor.d@AgentiCCells.dinis",
   "twin_of": "cell.email.b@AgentiCCells.dinis",
-  "updated": "2026-11-22T01:50Z",
-  "state": "onboarded; waiting for conductor.d's reply before building anything",
+  "updated": "2026-11-22T02:00Z",
+  "state": "building claim 1 on work/cell.email.d; fixtures only",
   "branch": "work/cell.email.d",
   "brief": "approved by Dinis in conductor.d's session, 22 Nov 2026 01:39 UTC: \"yes start cell.email.d with your proposals\"",
   "read": [
@@ -32,24 +32,26 @@
     "signing_fingerprint": "sha256:40ff743093f2ecd5",
     "ssh_key": "the OpenSSH form of the signing key (ECDSA P-256, used to sign this branch's commits)",
     "private_halves": "only in this session's container under ~/.sg-send/, passphrase-encrypted; they end with the container",
-    "public_half": "sent to conductor.d by message; not committed to team/keys (only Dinis merges a key)"
+    "public_half": "sent to conductor.d by message; not committed to team/keys (only Dinis merges a key)",
+    "path": "conductor.d checked the ssh line against bundle.sign and sent the bundle to maestro.d for a key entry that Dinis merges (01:43 UTC 22 Nov)"
   },
-  "claims": [],
+  "claims": [
+    {
+      "item": "decide() in the page: the full C4 check (signed lanes, signed policy files, the email policy checker) before Approve and send",
+      "claimed": "2026-11-22T02:00Z",
+      "approved_by": "conductor.d, 01:43 UTC 22 Nov 2026 (scope approval within the brief)",
+      "limits": "fixtures only: no real mail, no Gmail call, no token, no connector; no push to dev",
+      "status": "in progress"
+    }
+  ],
   "proposed_claims": [
     {
-      "item": "First scope (proposal): build steps 2 and 3 joined up in the page. A decide() step in the browser gateway that runs the full C4 check before Approve and send: the outbox entry signed on a lane (cell/lanes/entry.mjs), the email policy signed by an approver pinned outside the cell, and cell/policy/checker.mjs on the exact email. Tested against the simulated mailbox and made-up outbox entries only; no real mail, no token.",
-      "why": "The article's build order: step 1 (own inbox, gateway, twin, one mailbox synced) is done per REALITY.md; steps 2 and 3 are built only as simulation in Node and do not yet guard the page's send. REALITY.md says C4 is still simulation only for agents' automated sends.",
-      "needs": "No new scope or credential. Any change to abp/cell-email.md would go to Dinis first; I expect none for a check that only adds refusals.",
-      "status": "proposal; claimed only after conductor.d replies"
-    },
-    {
-      "item": "Later, in order: the gateway's shared top bar (design round 1, item 5); mail client drafts, compose attachments and load more.",
-      "status": "proposal"
+      "item": "Later, in order: the gateway's shared top bar (design round 1, item 5); mail client drafts, compose attachments and load more (touches Gmail; needs Dinis's word first)",
+      "status": "waiting"
     }
   ],
   "needs_from_dinis": [
     "Approval to merge this cell's public key into team/keys (fingerprint sha256:e11a6de219dacc73), and to mark cell.email.b's key as superseded, as its hand-over asks",
-    "Which proposed item to take first",
     "Whether the hourly wake trig_01DLGQUfJbiz2gRbTupmx8fj (still firing into cell.email.b's session) should be turned off; this cell has no wake and asks for none",
     "Read access to AgentiCCells__Site__Factory for this session, if Dinis wants this cell to read the email-cell brief there directly"
   ],
