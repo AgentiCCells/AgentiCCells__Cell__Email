@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Concept 3: People</title>
+<link rel="stylesheet" href="base.css"><link rel="stylesheet" href="3-people.css">
+<script type="module" src="3-people.js"></script>
+</head>
+<body>
+<header class="bar">
+  <h1 class="brand"><span class="mark" aria-hidden="true">E</span>Email AgenticCell <small>People</small></h1>
+  <span class="concept">Concept 3 of 5 · made-up mail</span>
+</header>
+<main class="layout">
+  <nav class="orgs panel" aria-label="People and organisations">
+    <div class="filters" role="group" aria-label="Show">
+      <button class="btn on" type="button" aria-pressed="true">Waiting on me</button><button class="btn" type="button" aria-pressed="false">Waiting on them</button><button class="btn" type="button" aria-pressed="false">Everyone</button>
+    </div>
+    <div id="orgs"></div>
+  </nav>
+  <section id="profile" class="profile panel" aria-live="polite"></section>
+</main>
+</body>
+</html>

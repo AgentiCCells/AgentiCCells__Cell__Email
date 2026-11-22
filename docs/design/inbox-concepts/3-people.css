@@ -1,0 +1,41 @@
+/* Concept 3: People. By email.design.d@AgentiCCells.dinis, 22 November 2026. Apache-2.0. */
+body{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.layout{flex:1;min-height:0;display:grid;grid-template-columns:360px minmax(0,1fr);gap:.75rem;padding:0 .75rem .75rem}
+.orgs,.profile{overflow:auto}
+.filters{display:flex;gap:.35rem;padding:.75rem;flex-wrap:wrap;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel);z-index:1}
+.filters .btn{height:30px;padding:0 .7rem;font-size:var(--t-s);border-radius:999px}
+.filters .on{background:var(--sel);border-color:var(--accent)}
+.org h2{font-size:var(--t-xs);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:.8rem 1rem .3rem}
+.who{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:0 .65rem;align-items:center;width:100%;border:0;background:none;text-align:left;padding:.55rem 1rem}
+.who:hover{background:var(--hover)}
+.who[aria-current="true"]{background:var(--sel)}
+.who .avatar{grid-row:span 2}
+.who b{font-weight:600}
+.owe{font-size:var(--t-xs);font-weight:600;border-radius:999px;padding:.05rem .5rem;white-space:nowrap}
+.owe.me{background:var(--accent);color:var(--on-accent)}
+.owe.them{background:var(--chip);color:var(--muted)}
+.profile-head{display:flex;gap:1rem;align-items:center;padding:1.25rem 1.5rem;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.profile-head .avatar{width:56px;height:56px;font-size:var(--t-l)}
+.profile-head h2{font-size:var(--t-xl)}
+.facts{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem;padding:1rem 1.5rem;border-bottom:1px solid var(--line)}
+.fact{background:var(--well);border:1px solid var(--line);border-radius:var(--r-m);padding:.6rem .8rem}
+.fact b{display:block;font-size:var(--t-l)}
+.next{margin:1rem 1.5rem 0;padding:.9rem 1rem;border-radius:var(--r-m);border:1px solid var(--accent);background:var(--sel);display:flex;gap:.75rem;align-items:center;flex-wrap:wrap}
+.next p{margin:0;flex:1 1 16rem}
+.timeline{list-style:none;margin:1rem 1.5rem 1.5rem;padding:0 0 0 1.1rem;border-left:2px solid var(--line)}
+.timeline li{position:relative;padding:.1rem 0 1rem .5rem}
+.timeline li::before{content:"";position:absolute;left:-1.5rem;top:.45rem;width:10px;height:10px;border-radius:50%;background:var(--panel);border:2px solid var(--line-strong)}
+.timeline li.open::before{border-color:var(--accent);background:var(--accent)}
+.timeline .t{font-weight:600}
+.back{display:none}
+@media(max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  body.open .orgs{display:none}
+  body:not(.open) .profile{display:none}
+  .facts{grid-template-columns:repeat(2,minmax(0,1fr));padding:1rem}
+  .profile-head{padding:1rem}
+  .next{margin:1rem 1rem 0}
+  .timeline{margin:1rem 1rem 1.5rem}
+  .back{display:inline-flex}
+  .concept{display:none}
+}

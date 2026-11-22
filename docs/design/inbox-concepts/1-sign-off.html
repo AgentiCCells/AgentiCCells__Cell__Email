@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Concept 1: Sign-off</title>
+<link rel="stylesheet" href="base.css"><link rel="stylesheet" href="1-sign-off.css">
+<script type="module" src="1-sign-off.js"></script>
+</head>
+<body>
+<header class="bar">
+  <h1 class="brand"><span class="mark" aria-hidden="true">E</span>Email AgenticCell <small>Sign-off</small></h1>
+  <span class="concept">Concept 1 of 5 · made-up mail</span>
+  <div class="spacer"></div>
+  <p id="meter" class="meter small"></p>
+</header>
+<main class="layout">
+  <nav class="queue panel" aria-label="Waiting for you">
+    <h2 class="qhead">Drafts to sign off <span id="n-drafts" class="count"></span></h2>
+    <ul id="drafts" class="qlist"></ul>
+    <h2 class="qhead">Waiting for your reply <span id="n-reply" class="count"></span></h2>
+    <ul id="replies" class="qlist"></ul>
+    <p class="sim">Everything else (updates, receipts, sent) is one press away in All mail.</p>
+  </nav>
+  <section id="desk" class="desk panel" aria-live="polite"></section>
+</main>
+</body>
+</html>

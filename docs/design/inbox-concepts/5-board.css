@@ -1,0 +1,28 @@
+/* Concept 5: Board. By email.design.d@AgentiCCells.dinis, 22 November 2026. Apache-2.0. */
+body{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+.legend{margin:0}
+.picker{display:none}
+.board{flex:1;min-height:0;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.6rem;padding:0 .75rem .75rem}
+.col{display:flex;flex-direction:column;min-height:0;background:var(--well);border:1px solid var(--line);border-radius:var(--r-l)}
+.col h2{font-size:var(--t-s);display:flex;align-items:center;gap:.4rem;padding:.75rem .85rem .5rem}
+.col h2 .chip{margin-left:auto}
+.col .why{margin:0 .85rem .5rem;font-size:var(--t-xs);color:var(--muted)}
+.col ul{list-style:none;margin:0;padding:0 .5rem .5rem;overflow:auto;display:grid;gap:.45rem;align-content:start}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-m);padding:.6rem .7rem;box-shadow:0 1px 2px rgba(60,40,10,.05);display:grid;gap:.3rem}
+.card .top{display:flex;align-items:center;gap:.45rem}
+.card .top b{font-weight:600}
+.card .top .xs{margin-left:auto}
+.card .s{font-size:var(--t-s);font-weight:500}
+.card .tags{display:flex;gap:.3rem;flex-wrap:wrap}
+.card .agent{font-size:var(--t-xs);color:var(--ok)}
+.card .warn{font-size:var(--t-xs);color:var(--err);font-weight:600}
+.card .go{justify-self:start;height:28px;font-size:var(--t-s);padding:0 .7rem}
+.col.mine{border-color:var(--accent);background:var(--sel)}
+@media(max-width:900px){
+  .concept,.legend{display:none}
+  .picker{display:flex;gap:.3rem;padding:0 .5rem .5rem;overflow-x:auto}
+  .picker button{border:1px solid var(--line-strong);background:var(--panel);border-radius:999px;padding:.35rem .75rem;font-size:var(--t-s);white-space:nowrap}
+  .picker button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+  .board{grid-template-columns:minmax(0,1fr);padding:0 .5rem .5rem}
+  .col:not(.shown){display:none}
+}
