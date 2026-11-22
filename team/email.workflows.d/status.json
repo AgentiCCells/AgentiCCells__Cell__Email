@@ -6,8 +6,8 @@
   "started": "by conductor.d at Dinis's word in its session, 03:59 UTC on 22 Nov 2026: \"For the 6, start with PM, design, and workflows.\"",
   "brief": "team/email-agents/briefs/email.workflows.d.md (approved by Dinis in email.dev.d's session, about 03:55 UTC on 22 Nov 2026, as reported by email.dev.d)",
   "branch": "work/email.workflows.d-r2",
-  "updated": "2026-11-22T08:35Z",
-  "state": "night loop round 5 pushed; the next firing (after 09:00 UTC) writes the hand-over and stops",
+  "updated": "2026-11-22T09:30Z",
+  "state": "stopped, waiting for Dinis; hand-over in team/email.workflows.d/notes/2026-11-22-hand-over.md",
   "read": [
     "CLAUDE.md",
     "REALITY.md (at 97638a8)",
@@ -121,7 +121,7 @@
     "words": "team/email.workflows.d/notes/2026-11-22-dinis-workflows-as-state-machines.md",
     "summary": "think in state machines; every action is a workflow; workflows of workflows; map from the simplest up, each as a product, and how it scales; visualise the paths; design and collaboration rounds; run as a loop through the night on a schedule"
   },
-  "wake": "Dinis gave it about 04:08 UTC (\"you should be firing up either on schedule or triggered by a schedule ... as a loop throughout the night\"). A message to this session about every hour; none scheduled after 09:00 UTC on 22 Nov 2026 unless Dinis says so.",
+  "wake": "The night loop ran five rounds (04:10 to 08:25 UTC) on Dinis's wake and stopped at 09:26 UTC as planned. Nothing is scheduled.",
   "branches": {
     "current": "work/email.workflows.d-r2 (fast-forwarded to release/next2 bb19127 at 05:15 UTC; never force-pushed)",
     "old": "work/email.workflows.d (at 976348f, on 97638a8); left as it is for a person to delete",
