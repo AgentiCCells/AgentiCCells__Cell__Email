@@ -1,0 +1,14 @@
+{
+  "v": 1,
+  "encrypt": "-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEA0rCAI7Lvf7xrqlEq8drD\nFgqutj/3FcZ/kDh4he/ifIKAzfGnPbcBnQx8fnSXBSmQnocrSnB8RBemDhZNwJEB\n6TPgwojYWcjrRySzzjZXLBYHOA6gMTNCsZyW3q8HiLH2jaOVmuCETWi0xy9HQdZ/\n8s+IIJ0G2R9q3qqibmw7KjFjOlIM/AJMFv4nlOnH/wEHdDC/Gf24QXFcJo61GWiT\nyPjKFc+U7j0mL9UkF8zhow/Be+6WI9OJEcrwj5++SeMN7JZxv7tDv5rGC+UcPX0J\nuCpT/SFnfnmqwgICsh5Rxqa0D9DVJ6cBSCyV7NTjMUAgG46qAxO5mLZIzWvja/d1\nSkmPHqfYtKaM4zU1NeIEr/MAyhB8h1W15sLfRV7j1vHYum3zVxMJXIvA06hjniWb\n3/xS0PMCbkEiott/WOt8rRv82wLosxDchtGJocbwzSVSIFx7jGsdFliZLDPBfTee\nBZaUGfN5753s0p9ZJS+TzRsLxEzIB1FSBj9WfT+g2aQLQbC7IfiarryI9oX7gjmO\nzbpejLyEWXnNfwrCM/cerj2XqTrQbRnb0s/qhF1n8hKikMw8Iqv3wYOmZ8RaLBSX\nDWeFYcviKZEO/Bm+rdX8Ams0o1kRM1sHjkKXRMsrOMxU2magEdlJ6YFm0l9LMwZa\nEInDaOqLvAKs3AMVuiNAfUkCAwEAAQ==\n-----END PUBLIC KEY-----\n",
+  "sign": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEkYEdd53nWUfS1ESWePhL+Pj4PdQO\ny7cGPt3B1XkKsFKyElHoY6vBkUDybb3kP5sFcCfyqKpj33M3K6qPjTcbHw==\n-----END PUBLIC KEY-----\n",
+  "label": "email-workflows-d-agenticcells",
+  "fingerprint": "sha256:4da4bd396d0d9c19",
+  "signing_fingerprint": "sha256:e5a47707dbd787ff",
+  "agent": "email.workflows.d@AgentiCCells.dinis",
+  "session": "https://claude.ai/code/session_015gaHdbAGDK9xNPDa9znvB9",
+  "created": "2026-11-22",
+  "supersedes": null,
+  "approved_by": "Dinis, in conductor.d's session, 03:59 UTC on 22 November 2026: \"Yes, I agree\" (every new agent makes its own key) and \"you commit under the agentic CCs for now on that case\"; started by conductor.d on his word. Committed by email.dev.d; released to dev only on Dinis's word.",
+  "checked": "conductor.d checked that the ssh line matches bundle.sign; email.dev.d checked both fingerprints against the keys (sha256 of the DER, first 16 hex)"
+}
