@@ -11,6 +11,7 @@
 // By cell.email@AgentiCCells.dinis, 2026-11-16. Apache-2.0.
 import { authUrl, newState, parseFragment } from './oauth.js?v=__VERSION__';
 import { BODY_FILES, messageOf, problems, rawMessage, sentOn } from './send.js?v=__VERSION__';
+import { decideEntry, emptyTwin } from './cell/decide.mjs?v=__VERSION__';
 import { HEADERS, syncPlan } from './twin.js?v=__VERSION__';
 import { createTwinVault, displayKey, openTwinVault, readState as readVaultState, readThreads, writeMany, publish, readJson, ensureLoaded } from './vault.js?v=__VERSION__';
 import { identity, existingIdentity, publicQrText, openSealed, keep, recall, forget, kept, sealedStore } from './pki.js?v=__VERSION__';
@@ -246,6 +247,9 @@ async function showMail(box, f, line) {
     el('dt', { textContent: 'Status' }), el('dd', { textContent: m.status + (meta.sent_at ? `, ${meta.sent_at}` : '') + (meta.approved_by ? `, approved by ${meta.approved_by}` : '') }));
   const body = el('pre', { className: 'mail-text', textContent: m.text || '(no text)' });
   const why = problems(m, { sentToday: sentOn(Object.values(outboxMetas)) });
+  const c4 = await fullCheck(folder, m, meta);
+  if (c4.verdict === 'refuse') why.push(`the full check (C4) refuses it: ${c4.reasons.join('; ')}`);
+  const c4line = el('p', { className: 'muted', textContent: c4.ran ? `Full check (C4): ${c4.verdict === 'refuse' ? 'refused' : 'passed'}${c4.reasons.length ? ` (${c4.reasons.join('; ')})` : ''}.` : `Full check (C4): not run; ${c4.reasons[0]}.` });
   const status = el('p', { role: 'status' });
   const send = el('button', { type: 'button', textContent: 'Approve and send' });
   if (why.length) { send.disabled = true; status.textContent = `Not sendable: ${why.join('; ')}.`; }
@@ -271,7 +275,28 @@ async function showMail(box, f, line) {
     try { await writeMany(outbox, [{ folder, name: 'meta.json', data: JSON.stringify(done, null, 2) + '\n' }]); await publish(outbox); status.textContent = `Sent (Gmail id ${sent.id}) and recorded in the outbox.`; }
     catch (e) { status.textContent = `Sent (Gmail id ${sent.id}), but the outbox could not record it: ${e.message}. Do not send it again; it is in your Gmail Sent folder.`; }
   });
-  box.replaceChildren(head, body, el('p', { className: 'actions' }, send), status);
+  box.replaceChildren(head, body, c4line, el('p', { className: 'actions' }, send), status);
+}
+
+// decide() in the page (abp/cell-email C4), by cell.email.d@AgentiCCells.dinis, 22 November 2026.
+// An outbox entry may carry signed.json beside meta.json: { chains, policy, agents, signatures },
+// the drafting agent's signed proposal on the lanes and the policy files with their signatures.
+// The page then runs the gateway's full check (src/app/cell/decide.mjs) and will not send an email
+// that is not exactly the one signed, under policy files signed by a pinned approver, that passes
+// the email policy. An entry without signed.json keeps the person's-press path (ABP 1.1.4).
+// The agents' lane keys and the pinned approvers must come from outside the outbox vault and the
+// repository; the page has no way to pin them yet, so both are empty and every signed entry is
+// refused (fail closed). The twin is not loaded here either, so the checker treats every
+// recipient as a first contact and finds no parent for a reply.
+const LANE_KEYS = Object.freeze({});
+const PINNED_APPROVERS = Object.freeze({});
+async function fullCheck(folder, m, meta) {
+  let evidence = null;
+  try { evidence = await readJson(outbox, folder, 'signed.json'); }
+  catch (e) { return { ran: true, verdict: 'refuse', reasons: [`signed.json could not be read: ${e.message}`] }; }
+  const sent = Object.values(outboxMetas).filter((x) => String(x?.status).toLowerCase() === 'sent' && x.sent_at)
+    .map((x) => ({ at: x.sent_at, author: 'person:owner', to: messageOf(x).to }));
+  return decideEntry(m, evidence, { registry: LANE_KEYS, approvers: PINNED_APPROVERS, twin: emptyTwin(me), now: new Date().toISOString(), sent });
 }
 $('copy-twin-key').addEventListener('click', async () => {
   const btn = $('copy-twin-key'), label = btn.textContent;
