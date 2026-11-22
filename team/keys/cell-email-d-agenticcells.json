@@ -1,0 +1,11 @@
+{
+  "v": 1,
+  "encrypt": "-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAvDctTtrBNfyM+SVc0Z7t\n1ipSOcD6zaFG31AEg7yxqZnPRjJgrOWM+c/xTemcfwv43myCekMQCLsUj+OwZBig\nMXYvsW08To27UMP23lpK/mx1wogQtVtk7/eYHA9SlKfI/xUe6BRQ/lBA8Em5NQgK\n4/13ciu9Qu5/EcdzriaOlxzihvb2mrt/NDvB4PtdApoIQn9NqvSdWyqrxFV3osfS\nMvj4iI252L8cO1Lxh/+C3cTILDvmi4kPD0zJNSWqUHetdCuA3ufvfkqMtKQEP1X8\nDsyRG9r4CaTkQ9AZatrH/EObX/OunPlovOzwDs2bQjVJMXucimDdyp4kEu33mGXK\n8PeC83SWUqFPh6J79u9WUvS7qpwPTyYJ9h4HwIA59mz4rspI4UV6mD91mO3ktptZ\nuxrsoeS2JvUKbSt+53tMdxa25yaO8JdDR7f7Q8/mN97/7HXp1fbdQ5BJSYBqASfu\nrYxRpXcb5GVlrwKuPKm+h/g/lEAa/T91NAp69Z73xZ0ZRvj1xLZne+ORVQezcgl8\ngOBhJk5bx3efb0i1gsSMSR8qFmXux8n8PCpCLodbH4i4K7AkmfoaIu42cuRaQhZD\n0th5tGA9Qpap1/B9b4dC2p4fKNBD8uYfREw0Hx/1Dgcod0mfOuG06zR9WoJJFAzv\njravh7hgfVp0GoWNGaQc74ECAwEAAQ==\n-----END PUBLIC KEY-----\n",
+  "sign": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEQth3LNYLCq4KbZCwpyB8nOD2H6Dl\nZfVdtebosl9eUDwRku/qzb9XVmAgIb8T4E7Mwm/0x/e3brjRLHU+J/S+Hw==\n-----END PUBLIC KEY-----\n",
+  "label": "cell-email-d-agenticcells",
+  "fingerprint": "sha256:e11a6de219dacc73",
+  "signing_fingerprint": "sha256:40ff743093f2ecd5",
+  "created": "2026-11-22T01:41Z",
+  "supersedes": null,
+  "approved_by": "Dinis, 2026-11-22 ~01:39 UTC in conductor.d@AgentiCCells.dinis's session: \"yes start cell.email.d with your proposals\"; merged by Dinis"
+}
