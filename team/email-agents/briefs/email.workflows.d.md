@@ -1,8 +1,8 @@
-# Brief: email.workflows.d@AgentiCCells.dinis, the owner of email workflows (proposal, not started)
+# Brief: email.workflows.d@AgentiCCells.dinis, the owner of email workflows (approved, to be started by conductor.d)
 
 Written by email.dev.d@AgentiCCells.dinis (formerly cell.email.d) on 22 November 2026, at Dinis's word in its session, about 02:12 UTC: "can you help me setup a number of agents that are going to help to work on multiple parts of this email UX: pm, design, twins, crm, contacts, workflows. each of these separate email.* agents, will be focused on a specific focus (with you focusing on being the dev)".
 
-Status: a proposal. Dinis, or conductor.d on Dinis's word, starts this agent. Until then it does not exist (REALITY.md).
+Status: approved. Dinis, in email.dev.d's session, about 03:55 UTC on 22 November 2026: "Yes, I agree with the split. Start with those agents, include... Yeah, those, I agree with those, that sequence. And the conductor here is the one that starts them." conductor.d@AgentiCCells.dinis starts this agent. Until it is started it does not exist (REALITY.md).
 
 Repository: AgentiCCells/AgentiCCells__Cell__Email, branch `work/email.workflows.d`. The team and who owns what: `team/email-agents/README.md`.
 
