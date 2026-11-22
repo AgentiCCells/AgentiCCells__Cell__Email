@@ -1,0 +1,67 @@
+{
+  "agent": "cell.email.d@AgentiCCells.dinis",
+  "session": "named in the Claude-Session trailer of each of this cell's commits (the leak scan refuses session ids in committed text)",
+  "conductor": "conductor.d@AgentiCCells.dinis",
+  "twin_of": "cell.email.b@AgentiCCells.dinis",
+  "updated": "2026-11-22T01:50Z",
+  "state": "onboarded; waiting for conductor.d's reply before building anything",
+  "branch": "work/cell.email.d",
+  "brief": "approved by Dinis in conductor.d's session, 22 Nov 2026 01:39 UTC: \"yes start cell.email.d with your proposals\"",
+  "read": [
+    "CLAUDE.md",
+    "REALITY.md (dev at d9d83a1)",
+    "board/handovers/2026-11-16-first-run.md",
+    "board/handovers/2026-11-21-cell-email-b-to-cell-email-d.md (cell.email.b's hand-over to this cell; it says cell.email.b stops there)",
+    "board/2026-11-20-onboarding-cell-email-b.md",
+    "board/2026-11-21-approve-and-send.md",
+    "docs/plan/features.md (the fifteen features and six build steps)",
+    "the article's Markdown twin, https://newsroom.sgit.ai/articles/the-email-agentic-cell.md"
+  ],
+  "not_read": [
+    "requests/2026-11-16__email-cell/brief.md in AgentiCCells__Site__Factory: attaching that repository to this session was refused by the session's permission check; not worked around"
+  ],
+  "facts_checked": {
+    "dev": "d9d83a1 (git, 22 Nov 2026 01:45 UTC)",
+    "live": "v0.1.48 at dde8d77 per cell.email.b's hand-over (21 Nov 23:00 UTC); not re-checked by this cell",
+    "hold": "no board/HOLD.md on dev (git, 22 Nov 2026)",
+    "tests": "95 passing per cell.email.b's hand-over; not re-run by this cell yet"
+  },
+  "key": {
+    "made": "2026-11-22 about 01:45 UTC with sgit-ai 0.27.0, label cell-email-d-agenticcells",
+    "fingerprint": "sha256:e11a6de219dacc73",
+    "signing_fingerprint": "sha256:40ff743093f2ecd5",
+    "ssh_key": "the OpenSSH form of the signing key (ECDSA P-256, used to sign this branch's commits)",
+    "private_halves": "only in this session's container under ~/.sg-send/, passphrase-encrypted; they end with the container",
+    "public_half": "sent to conductor.d by message; not committed to team/keys (only Dinis merges a key)"
+  },
+  "claims": [],
+  "proposed_claims": [
+    {
+      "item": "decide() in the page: run the full C4 gateway check (signed lanes, signed policy, cell/policy/checker.mjs) in the browser before Approve and send, as a proposal first",
+      "why": "build steps 2 and 3; listed in cell.email.b's hand-over as suggested next work; not started by any .b agent per that hand-over",
+      "status": "proposal, not claimed until conductor.d replies"
+    },
+    {
+      "item": "the gateway's shared top bar (design round 1, item 5)",
+      "why": "left over from the design round per cell.email.b's hand-over",
+      "status": "proposal, not claimed"
+    },
+    {
+      "item": "mail client: drafts saved to Gmail, attachments when composing, load more in long conversations",
+      "why": "cell.email.b's suggested next work; the drafts item needs no new scope (gmail.modify covers drafts), to be checked against ABP 1.1.4 before building",
+      "status": "proposal, not claimed"
+    }
+  ],
+  "needs_from_dinis": [
+    "Approval to merge this cell's public key into team/keys (fingerprint sha256:e11a6de219dacc73), and to mark cell.email.b's key as superseded, as its hand-over asks",
+    "Which proposed item to take first",
+    "Whether the hourly wake trig_01DLGQUfJbiz2gRbTupmx8fj (still firing into cell.email.b's session) should be turned off; this cell has no wake and asks for none",
+    "Read access to AgentiCCells__Site__Factory for this session, if Dinis wants this cell to read the email-cell brief there directly"
+  ],
+  "standing_items_from_handover": [
+    "the outbox key from conductor@PrompTugal.dinis (Dinis's first send waits on it)",
+    "Safe Browsing review in Google Search Console (Dinis)",
+    "the pki.sgit.ai passkey round trip (Dinis's passkey)",
+    "deleting work/page-design and work/cell-email-b-onboarding (a person)"
+  ]
+}
