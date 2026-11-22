@@ -6,8 +6,8 @@
   "started": "by conductor.d at Dinis's word in its session, 03:59 UTC on 22 Nov 2026: \"For the 6, start with PM, design, and workflows.\"",
   "brief": "team/email-agents/briefs/email.workflows.d.md (approved by Dinis in email.dev.d's session, about 03:55 UTC on 22 Nov 2026, as reported by email.dev.d)",
   "branch": "work/email.workflows.d",
-  "updated": "2026-11-22T04:40Z",
-  "state": "both claims built on work/email.workflows.d (proposal and simulation); handed to conductor.d; waiting",
+  "updated": "2026-11-22T04:35Z",
+  "state": "looping through the night at Dinis's word (about 04:08 UTC): workflows as state machines, round 1 pushed",
   "read": [
     "CLAUDE.md",
     "REALITY.md (at 97638a8)",
@@ -60,11 +60,21 @@
         "tests": "9 pass in sim/workflows/workflows.test.mjs; 112 pass in tests/ (121 together), node --test, 22 Nov 2026",
         "gates": "abp-check, build, validate, check-app, leak scan: OK"
       }
+    },
+    {
+      "item": "Backlog rank 2 (email.pm.d's), and Dinis's direction: the workflow map as state machines. sim/workflows/machines.mjs (nine machines: email, connect, key-by-qr, pin-approver, twin-sync, outreach, reply, follow-up, approve-and-send), render.mjs (docs/plan/workflow-machines.md and SVG diagrams), machines.test.mjs",
+      "claimed": "2026-11-22T04:10Z",
+      "approved_by": "Dinis, in this session, about 04:08 UTC",
+      "status": "round 1 pushed; more rounds through the night",
+      "result": {
+        "tests": "15 pass in sim/workflows/ (9 + 6); 112 in tests/",
+        "gates": "see the commit"
+      }
     }
   ],
   "proposed_claims": [],
   "needs_from_dinis": [
-    "Where pinned approvers come from: (a) the cell's own site from team/keys or (b) pki.sgit.ai's register with only the identity pinned (email.dev.d's question to Dinis). Both plug in through sim/workflows/pins.mjs.",
+    "Confirm this agent's reading of his 04:08 UTC words (the notes file), above all: pinning an approver is a workflow, with the key moved by QR code and checked against the key the approver published.",
     "The proposals in docs/plan/workflows.md, 'Open, for Dinis': an outreach role and a signed real email policy that names the outreach agent; the outreach defaults as policy; follow-ups that run themselves (not yet); templates per campaign; who sets the follow-up wait.",
     "Merging this agent's public key into team/keys (only Dinis merges a key; email.dev.d prepares the entry, per conductor.d 04:04 UTC)."
   ],
@@ -77,6 +87,20 @@
     {
       "to": "email.pm.d (owner of the plan index, or whoever owns docs/plan/index.md)",
       "what": "link docs/plan/workflows.md from the plan index"
+    },
+    {
+      "to": "email.pm.d",
+      "what": "Dinis's chat panel at the side of the website, to talk to every email.* agent (his words, 04:08 UTC); sent by message"
+    },
+    {
+      "to": "email.design.d",
+      "what": "a design round on the workflow diagrams (render.mjs makes plain SVG today), and a page on the site to show them"
     }
-  ]
+  ],
+  "dinis_direction": {
+    "at": "2026-11-22 about 04:08 UTC, in this agent's session",
+    "words": "team/email.workflows.d/notes/2026-11-22-dinis-workflows-as-state-machines.md",
+    "summary": "think in state machines; every action is a workflow; workflows of workflows; map from the simplest up, each as a product, and how it scales; visualise the paths; design and collaboration rounds; run as a loop through the night on a schedule"
+  },
+  "wake": "Dinis gave it about 04:08 UTC (\"you should be firing up either on schedule or triggered by a schedule ... as a loop throughout the night\"). A message to this session about every hour; none scheduled after 09:00 UTC on 22 Nov 2026 unless Dinis says so."
 }
