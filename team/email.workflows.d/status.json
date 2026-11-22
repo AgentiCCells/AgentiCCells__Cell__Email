@@ -7,7 +7,7 @@
   "brief": "team/email-agents/briefs/email.workflows.d.md (approved by Dinis in email.dev.d's session, about 03:55 UTC on 22 Nov 2026, as reported by email.dev.d)",
   "branch": "work/email.workflows.d-r2",
   "updated": "2026-11-22T10:00Z",
-  "state": "candidate 3 done (level-2 machines); waiting for the next item",
+  "state": "stopped at email.pm.d's word (09:37 UTC); waiting on Dinis (W1, W4, W9, W13, W15, W17) or on email.dev.d integrating; hand-over updated",
   "read": [
     "CLAUDE.md",
     "REALITY.md (at 97638a8)",
