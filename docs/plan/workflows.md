@@ -105,6 +105,35 @@ The entry for this first send must be **unsigned** (no `signed.json`), so it goe
 
 Not yet run in a browser: steps 2 and 3 (pasting the key and opening the vault). They need a stand-in for the vault service, which is the next step. The real buttons were not pressed; the run called the same functions that the buttons call.
 
+## The real outreach policy (proposal for Dinis to sign)
+
+Backlog: "the real email policy ... as a proposal for Dinis to sign". Made by `outreachPolicy()` in `sim/workflows/policy-outreach.mjs`; the machine is `campaign-policy`.
+
+**One finding shapes it.** The checker allows only recipients whose domain or address the policy lists. So each outreach campaign gets its own policy that carries the campaign's address list. Dinis signs the list together with the rules, and an agent can never write to anyone he has not signed for. He approves the list once, then each email once.
+
+| Value | Proposed | Source |
+|---|---|---|
+| `recipients.max` | 3 | Dinis, 16 Nov: "one recipient (up to three from one organisation" |
+| `recipients.one_domain` | true | the same: "from one organisation" |
+| `recipients.allow_cc`, `allow_bcc` | false | the same: "no cc or bcc" |
+| `recipients.allow_addresses` | the campaign's list | proposal (see above) |
+| `languages` | en, pt | Dinis: "English and Portuguese" |
+| `rates.per_day` | 20 | Dinis: "20 a day" (also the page's own limit) |
+| `rates.per_recipient_per_day` | 1 | Dinis: "one per recipient a day" |
+| `rates.per_agent_per_day` | 20 | proposal: one agent drafts the campaign |
+| `attachments.allow_mime` | image/png, image/jpeg | Dinis: "only small inline images"; the checker cannot check "small" yet (a size limit is proposed to email.dev.d) |
+| `automations` | none | Dinis: "every email approved by Dinis in the page" |
+| `proposers` | the campaign's agent, person:owner | proposal |
+
+Dinis's defaults are from 16 November 2026, about 22:15 UTC: "yes use those defaults and we will see how they work in practice".
+
+**Checked with made-up addresses** (`sim/workflows/round4.test.mjs`, 5 tests):
+- A listed address, in English or Portuguese, is held for Dinis's press and never allowed on its own.
+- Each default refuses what it should: cc, bcc, two organisations, four recipients, an unlisted address, Spanish, a PDF, a second email to the same person on the same day, the 21st of the day, and a proposer that is not the campaign's.
+- End to end: a signed entry from the outreach agent passes to Dinis's press when agents.json has an outreach role (proposed, `outreachAgents()`). With today's agents.json, the same entry is refused.
+
+For Dinis: the outreach role in agents.json, and this policy for the first campaign, signed by him. Templates in his voice (backlog 13) are not written here: the brief says the real outreach drafts are conductor@PrompTugal.dinis's, and this agent designs the workflow, not the emails.
+
 ## Where lane keys and approvers come from
 
 Lane keys: from team/keys, as Dinis said. Proposal: each agent's entry gains `lane_key`, an Ed25519 public key (SPKI PEM). The sgit `sign` key is ECDSA P-256, which the lanes do not use. The page would build the entries in, the way `trusted.js` is built.
@@ -118,8 +147,8 @@ Lane keys, Dinis: "created by vaults ... it just depends on the workflow and who
 
 ## Open, for Dinis (proposals)
 
-1. **The outreach agent in the policy.** conductor@PrompTugal.dinis is not in `policy/agents.json` or in the policy's `proposers`, so a signed proposal from it would be refused. Proposal: a role `outreach` that may write `propose.send` and `withdraw` on the actions lane, and a real email policy, signed by Dinis, that names it.
-2. **The outreach defaults as policy.** Most map onto the email policy: `recipients.max` 3, `allow_bcc` false, `rates.per_day` 20, `rates.per_recipient_per_day` 1, `languages` en and pt, `attachments.allow_mime` small inline images. Two do not: "no cc" and "from one organisation". Proposal to email.dev.d: `recipients.allow_cc` and `recipients.one_domain` in the checker. The page's own checks today allow Cc.
+1. **The outreach agent in the policy.** conductor@PrompTugal.dinis is not in `policy/agents.json` or in the policy's `proposers`, so a signed proposal from it would be refused. Proposal: a role `outreach` that may write `propose.send` and `withdraw` on the actions lane (`outreachAgents()`, tested), and the campaign policy above, signed by Dinis.
+2. **The outreach defaults as policy.** Written: see "The real outreach policy" above. email.dev.d added `recipients.allow_cc` and `recipients.one_domain` to the checker (release/next, 77a0ee6), so "no cc" and "one organisation" are now expressible. Still open: "small" for inline images (a size limit), and the page's own checks still allow Cc.
 3. **The twin in the check.** With the empty twin, replies and follow-ups are refused. They need the synced twin loaded into the check (email.dev.d's note, item 3; email.twins.d's area).
 4. **Follow-ups that run themselves.** Today a follow-up is drafted by an agent and sent by the person's press. Sending one without a press needs a signed automation and a gateway that runs without the person (ABP N1 reopens). Proposal: not before the first hundred sends by press work as expected.
 5. **Templates in the signer's voice.** Proposal: the person writes or approves a template per campaign, and the agent fills only the named slots; free text stays with a person.
@@ -134,6 +163,7 @@ Lane keys, Dinis: "created by vaults ... it just depends on the workflow and who
 | `sim/workflows/fixtures.mjs` | made-up emails for outreach, reply and follow-up |
 | `sim/workflows/workflows.test.mjs` | 9 tests; proposed for `tests/` |
 | `sim/workflows/first-send-browser.mjs` | the first send's checks run in Chromium against made-up entries and a stand-in for Gmail |
+| `sim/workflows/policy-outreach.mjs` | the proposed outreach policy, its trace, and the outreach role for agents.json |
 | `sim/workflows/machines.mjs` | the workflows as state machines, with a structure check, `run()` and `paths()` |
 | `sim/workflows/render.mjs` | writes [the workflow machines](workflow-machines.md) page and a page of SVG diagrams |
 | `sim/workflows/machines.test.mjs` | 6 tests; proposed for `tests/` |

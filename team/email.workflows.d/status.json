@@ -6,8 +6,8 @@
   "started": "by conductor.d at Dinis's word in its session, 03:59 UTC on 22 Nov 2026: \"For the 6, start with PM, design, and workflows.\"",
   "brief": "team/email-agents/briefs/email.workflows.d.md (approved by Dinis in email.dev.d's session, about 03:55 UTC on 22 Nov 2026, as reported by email.dev.d)",
   "branch": "work/email.workflows.d-r2",
-  "updated": "2026-11-22T06:30Z",
-  "state": "night loop round 3 pushed; next round about 07:30 UTC",
+  "updated": "2026-11-22T07:35Z",
+  "state": "night loop round 4 pushed; next round about 08:25 UTC",
   "read": [
     "CLAUDE.md",
     "REALITY.md (at 97638a8)",
@@ -82,13 +82,20 @@
       "claimed": "2026-11-22T06:18Z",
       "approved_by": "email.pm.d's ranking on Dinis's word; conductor.d 04:10 UTC",
       "status": "step list in docs/plan/workflows.md; checks and send run in Chromium 157 against made-up entries and a stand-in for Gmail (run recorded in notes/runs/2026-11-22-first-send-chromium.json). Key paste and Open vault not yet run: they need a vault stand-in. Finding: the first send must be unsigned (a signed entry to the mailbox itself is refused by the policy)."
+    },
+    {
+      "item": "Backlog: the real email policy as a proposal for Dinis to sign",
+      "claimed": "2026-11-22T07:21Z",
+      "approved_by": "email.pm.d's ranking on Dinis's word",
+      "status": "sim/workflows/policy-outreach.mjs: the outreach policy per campaign, every value traced to Dinis's 16 Nov defaults or marked a proposal; an outreach role for agents.json; 5 tests in sim/workflows/round4.test.mjs; written up in docs/plan/workflows.md"
     }
   ],
   "proposed_claims": [],
   "needs_from_dinis": [
     "Confirm this agent's reading of his 04:08 UTC words (the notes file), above all: pinning an approver is a workflow, with the key moved by QR code and checked against the key the approver published.",
     "The proposals in docs/plan/workflows.md, 'Open, for Dinis': an outreach role and a signed real email policy that names the outreach agent; the outreach defaults as policy; follow-ups that run themselves (not yet); templates per campaign; who sets the follow-up wait.",
-    "Merging this agent's public key into team/keys (only Dinis merges a key; email.dev.d prepares the entry, per conductor.d 04:04 UTC)."
+    "Merging this agent's public key into team/keys (only Dinis merges a key; email.dev.d prepares the entry, per conductor.d 04:04 UTC).",
+    "Sign or change the proposed outreach campaign policy (docs/plan/workflows.md, 'The real outreach policy') and the outreach role for agents.json."
   ],
   "limits": "no connector, no token, no real mail, no contact with anyone, no push to dev or main, no session, scheduled task or workflow started",
   "proposals_to_others": [
@@ -119,5 +126,8 @@
     "current": "work/email.workflows.d-r2 (fast-forwarded to release/next2 bb19127 at 05:15 UTC; never force-pushed)",
     "old": "work/email.workflows.d (at 976348f, on 97638a8); left as it is for a person to delete",
     "why": "email.dev.d asked for a rebase onto release/next (04:09 UTC); this session's permission check refused a force-push; conductor.d, 04:14 UTC: \"Do not force-push; push the rebased history to a new branch of your own\""
-  }
+  },
+  "not_doing": [
+    "Backlog: templates in Dinis's voice for the PrompTugal outreach. The brief: 'Never draft or send to a real person. The real outreach drafts are conductor@PrompTugal.dinis's; you design the workflow, not the emails.' Raised with email.pm.d."
+  ]
 }

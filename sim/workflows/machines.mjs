@@ -289,6 +289,26 @@ machine({
   ],
 });
 
+machine({
+  id: 'campaign-policy', level: 1, title: 'Sign an outreach campaign\'s policy',
+  goal: 'a policy Dinis signed that lists the campaign\'s addresses and his outreach defaults, so its agent\'s signed drafts can pass C4',
+  status: 'simulation', code: 'sim/workflows/policy-outreach.mjs (outreachPolicy, outreachAgents)',
+  trigger: 'a campaign has a list of people to write to (for PrompTugal: conductor@PrompTugal.dinis\'s)',
+  needs: 'the address list; an outreach role in agents.json; Dinis\'s signing key, pinned in the page', approves: 'Dinis, by signing the policy and the agents file', signed: 'email-policy.json and agents.json, each by a pinned approver',
+  product: { for: 'anyone who writes to a known list of new people', scale: 'one signature covers a whole list, so the person approves the list once and each email once; the list is the limit an agent cannot pass' },
+  states: {
+    listed: { about: 'the campaign has its address list' },
+    proposed: { about: 'outreachPolicy() made the policy, every value traced to Dinis\'s words or marked as a proposal' },
+    signed: { about: 'Dinis signed the policy and the agents file', end: 'goal' },
+    changed: { about: 'Dinis asked for changes; back to the list', end: 'stop' },
+  },
+  moves: [
+    { from: 'listed', to: 'proposed', on: 'make the policy', by: 'agent', check: 'outreachPolicy' },
+    { from: 'proposed', to: 'signed', on: 'Dinis signs', by: 'person', check: 'signPolicy, verifyPolicy' },
+    { from: 'proposed', to: 'changed', on: 'Dinis asks for changes', by: 'person' },
+  ],
+});
+
 // Who listens on each lane. PROPOSAL, from Dinis's words about 04:08 UTC: lane keys are "created by
 // vaults ... it just depends on the workflow and who's listening. Usually we have an observability
 // agent or specific agent or a feedback agent to capture it." The agent names below are roles, not
@@ -329,6 +349,7 @@ const EXTRA = {
   'follow-up': [2, ['vault', 'lanes', 'policy', 'agents'], 'a made-up follow-up to an unanswered thread passes to the press'],
   'twin-sync': [2, ['oauth', 'vault'], 'a sync writes every new header into the twin vault (done on Dinis\'s mailbox, 21 Nov)'],
   'send-from-client': [3, ['site', 'oauth', 'mail-client'], 'Dinis wrote, sent, received and replied from the client on 22 Nov (his screenshots, REALITY.md); tests/mail.test.mjs covers reply and forward headers'],
+  'campaign-policy': [5, ['policy', 'lanes', 'pki', 'agents'], 'a made-up campaign policy holds a listed English or Portuguese email for Dinis, refuses each thing his defaults forbid, and passes a signed entry from the outreach agent to his press (sim/workflows/round4.test.mjs)'],
   'gateway-stop': [2, ['lanes'], 'after a signed gateway.stop, decideEntry() refuses every signed entry (sim/workflows/round2.test.mjs)'],
 };
 for (const m of M) {

@@ -2,7 +2,7 @@
 
 **Status: a proposal, generated** from `sim/workflows/machines.mjs` by `node sim/workflows/render.mjs`; do not edit by hand. Written by email.workflows.d@AgentiCCells.dinis at Dinis's word, 22 November 2026, about 04:08 UTC: "I want you to think in terms of state machines, and I want you to think about every action that happens here is actually a workflow". Each machine says whether it is built (in the page today), simulation (code and tests with made-up data) or plan. [The workflows page](workflows.md). [Back to the plan](index.md).
 
-Machines: 13. Structure check: every state can be reached, every non-end state has a way out, every goal can be reached, no workflow uses itself.
+Machines: 14. Structure check: every state can be reached, every non-end state has a way out, every goal can be reached, no workflow uses itself.
 
 ## The map, ranked by the sending bottleneck
 
@@ -14,6 +14,7 @@ Ranked by how much each workflow removes the bottleneck Dinis named on 22 Novemb
 | 5 | **key-by-qr**: Move a key by QR code | built | someone needs to give the page a key (a vault key, an access token, an approver key) | the page key pair (non-extractable, in IndexedDB); the sender in trusted.js or signed in with pki.sgit.ai | the person shows their code and pastes the reply | the sealed m1 code is signed by its sender | a code sealed by a trusted sender is kept; one from anyone else is refused (built; checked in Chromium with a test sender) |
 | 5 | **approve-and-send**: Review, approve and send one email | built | the person opens an outbox entry | gmail.send; the outbox vault key | the person's press (ABP 1.1.4) | the agent's proposal when signed.json is there (C4); the press is recorded, not yet signed | run in Chromium against a made-up outbox: a good entry reaches recorded, a changed or Bcc entry stops at not_sendable, and no Gmail call is made in the test |
 | 5 | **first-send**: Dinis's first real send, to himself | plan | conductor@PrompTugal.dinis gives Dinis a sealed QR code with the outbox vault key, made for his page's public key | the outbox vault key (W1); gmail.send; the page key | Dinis's press | the sealed key code (by its sender); the entry itself must be unsigned: a signed entry to the mailbox itself is refused by the policy | Dinis's email to himself arrives, and meta.json in the outbox vault says sent, with Gmail's id |
+| 5 | **campaign-policy**: Sign an outreach campaign's policy | simulation | a campaign has a list of people to write to (for PrompTugal: conductor@PrompTugal.dinis's) | the address list; an outreach role in agents.json; Dinis's signing key, pinned in the page | Dinis, by signing the policy and the agents file | email-policy.json and agents.json, each by a pinned approver | a made-up campaign policy holds a listed English or Portuguese email for Dinis, refuses each thing his defaults forbid, and passes a signed entry from the outreach agent to his press (sim/workflows/round4.test.mjs) |
 | 4 | **trust-ladder**: The trust ladder: from every press to sessions sending | plan | Dinis decides to climb a rung, by a change to the ABP | each rung: the one below working, and an ABP change Dinis approves | Dinis, one rung at a time | more at each rung: proposals, then approvals, then the policy and automations | each rung is a page of its own with what it needs and the ABP change, and no rung is used before Dinis approves it |
 | 4 | **connect**: Connect a Gmail account | built | the person presses Connect | gmail.metadata; then gmail.send, gmail.readonly or gmail.modify, one press each | the person, on Google's consent screen | nothing yet (the token is sealed to the page key) | Dinis connects and the page reads counts and labels (done 16 Nov); Allow sending grants gmail.send |
 | 4 | **outreach**: Write to someone new | simulation | a list of people to reach (for PrompTugal: conductor@PrompTugal.dinis's) | the outbox vault key; the agent's lane key | the person (a signed automation only for fixed templates to verified correspondents) | the agent's propose.send on its actions lane | a made-up outreach entry passes checkEntry() and the page; a changed one is refused (tests/workflows.test.mjs) |
@@ -34,6 +35,7 @@ Which of the primitives we have each workflow uses. A workflow can run only when
 | key-by-qr | x |  | x |  |  |  | x |  |  |
 | approve-and-send | x | x |  | x |  | x |  |  |  |
 | first-send | x | x | x | x |  |  |  |  |  |
+| campaign-policy |  |  |  |  | x | x | x | x |  |
 | trust-ladder |  |  |  |  | x | x | x | x |  |
 | connect | x | x | x |  |  |  |  |  |  |
 | outreach |  |  |  | x | x | x |  | x |  |
@@ -84,6 +86,7 @@ Dinis, about 04:08 UTC: "it just depends on the workflow and who's listening. Us
 | 2 | **gateway-stop** | nothing can be sent until a pinned approver starts the gateway again | none | one entry stops every send for that mailbox; it costs nothing to add more agents who may stop |
 | 0 | **trust-ladder** | agent sessions send some kinds of email under a policy Dinis signed, and he still sees every send | pin-approver | this is the scaling question itself: each rung moves work from the person to signed policy, so one person can stand behind more email |
 | 1 | **send-from-client** | an email the person wrote themselves leaves from their Gmail | none | it runs in each person's browser on their own token; no server; Dinis used it for real on 22 Nov ("IT WORKS!!!") |
+| 1 | **campaign-policy** | a policy Dinis signed that lists the campaign's addresses and his outreach defaults, so its agent's signed drafts can pass C4 | none | one signature covers a whole list, so the person approves the list once and each email once; the list is the limit an agent cannot pass |
 
 ## email: Email with agents, approved by a person
 
@@ -558,3 +561,35 @@ stop  composing > discarded
 | composing | close | discarded | person |  |  |
 | sending | 200 with an id | sent | google |  |  |
 | sending | error | failed | google |  |  |
+
+## campaign-policy: Sign an outreach campaign's policy
+
+- **Goal:** a policy Dinis signed that lists the campaign's addresses and his outreach defaults, so its agent's signed drafts can pass C4
+- **Status:** simulation (`sim/workflows/policy-outreach.mjs (outreachPolicy, outreachAgents)`)
+- **Trigger:** a campaign has a list of people to write to (for PrompTugal: conductor@PrompTugal.dinis's)
+- **Needs:** the address list; an outreach role in agents.json; Dinis's signing key, pinned in the page
+- **Approves:** Dinis, by signing the policy and the agents file
+- **Signed:** email-policy.json and agents.json, each by a pinned approver
+- **Acceptance:** a made-up campaign policy holds a listed English or Portuguese email for Dinis, refuses each thing his defaults forbid, and passes a signed entry from the outreach agent to his press (sim/workflows/round4.test.mjs)
+- **Bottleneck rank:** 5; **uses:** policy, lanes, pki, agents
+- **As a product:** for anyone who writes to a known list of new people. Scale: one signature covers a whole list, so the person approves the list once and each email once; the list is the limit an agent cannot pass
+
+| State | What it means | End |
+|---|---|---|
+| listed | the campaign has its address list |  |
+| proposed | outreachPolicy() made the policy, every value traced to Dinis's words or marked as a proposal |  |
+| signed | Dinis signed the policy and the agents file | goal |
+| changed | Dinis asked for changes; back to the list | stop |
+
+Paths from the start to an end:
+
+```
+goal  listed > proposed > signed
+stop  listed > proposed > changed
+```
+
+| From | Event | To | By | Checked by | Workflow |
+|---|---|---|---|---|---|
+| listed | make the policy | proposed | agent | `outreachPolicy` |  |
+| proposed | Dinis signs | signed | person | `signPolicy, verifyPolicy` |  |
+| proposed | Dinis asks for changes | changed | person |  |  |

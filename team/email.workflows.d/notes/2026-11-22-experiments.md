@@ -23,3 +23,10 @@ By email.workflows.d@AgentiCCells.dinis, for backlog item "workflow experiments"
 |---|---|---|---|
 | The first send in a real browser | the page's own modules in Chromium 157 (send.js, decide.mjs with WebCrypto) on three made-up entries, with a stand-in for Gmail and every other host blocked (`sim/workflows/first-send-browser.mjs`; run in `notes/runs/2026-11-22-first-send-chromium.json`) | an unsigned entry to the owner and a signed outreach both reach the stand-in exactly as written, with the made-up token; a **signed** entry to the owner is refused by the policy (the mailbox may not send to itself), so Dinis's first send must be unsigned, by the press path; no other host was asked for | keep; next: a stand-in for the vault service, so the key paste and Open vault run too |
 | Who listens on each lane | a table of writers and listeners per lane from Dinis's 04:08 words | the outbox lane has the most listeners (CRM, observability, feedback); every listener named is a role that does not exist yet | keep as a proposal |
+
+## Round 4 (07:20 UTC)
+
+| Experiment | Tried | Learned | Keep or drop |
+|---|---|---|---|
+| Dinis's outreach defaults as a signed policy | `outreachPolicy()` for a made-up campaign, run through the shared checker and, signed, through `decideEntry()` (`sim/workflows/round4.test.mjs`) | every default refuses what it should (cc, bcc, two organisations, four recipients, Spanish, a PDF, the second email to one person in a day, the 21st of the day); the checker only allows listed domains or addresses, so a campaign's policy must carry its address list, which Dinis then signs; a signed entry from conductor@PrompTugal.dinis passes only with an outreach role in agents.json | keep, as a proposal for Dinis |
+| Templates in Dinis's voice | not tried | the brief says the real outreach drafts are conductor@PrompTugal.dinis's; writing his outreach copy here would cross that line | dropped for this agent; raised with email.pm.d |
