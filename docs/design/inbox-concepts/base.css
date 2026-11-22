@@ -1,0 +1,54 @@
+/* Shared look for the five inbox concepts: the mail client's palette (src/app/mail.css), system fonts.
+   By email.design.d@AgentiCCells.dinis, 22 November 2026. Apache-2.0. */
+:root{
+  --bg:#f3eee5;--panel:#fffdf9;--well:#f9f5ee;--fg:#211d18;--muted:#6b6358;--line:#e6ddcf;--line-strong:#cdbfa8;
+  --hover:#f4ede2;--sel:#f3e4d2;--accent:#8a4b12;--accent-hover:#743e0e;--on-accent:#fff;
+  --chip:#efe7da;--err:#a3263a;--err-bg:#fbeaec;--ok:#2f6b2a;--ok-bg:#e8f2e4;--warn:#7a5a00;--warn-bg:#fbf1d4;
+  --r-s:6px;--r-m:10px;--r-l:14px;
+  --shadow:0 1px 2px rgba(60,40,10,.06),0 6px 20px rgba(60,40,10,.08);
+  --t-xs:12px;--t-s:13px;--t-m:14px;--t-l:16px;--t-xl:22px;
+  color-scheme:light dark;
+}
+@media(prefers-color-scheme:dark){:root{
+  --bg:#12100d;--panel:#1c1915;--well:#17140f;--fg:#ece6dc;--muted:#a69d90;--line:#2e2820;--line-strong:#4a4134;
+  --hover:#26211b;--sel:#3a2a19;--accent:#e9a866;--accent-hover:#f2bd85;--on-accent:#1b1209;
+  --chip:#2a241d;--err:#f08a9a;--err-bg:#3a1c21;--ok:#8fd17f;--ok-bg:#1d2e1a;--warn:#f0cd6b;--warn-bg:#352b10;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 20px rgba(0,0,0,.3);
+}}
+*{box-sizing:border-box}
+html,body{margin:0;min-height:100%}
+body{font:var(--t-m)/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--fg)}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3{margin:0;font-weight:600}
+.muted{color:var(--muted)}
+.small{font-size:var(--t-s)}
+.xs{font-size:var(--t-xs)}
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.bar{display:flex;align-items:center;gap:.75rem;padding:.6rem 1rem;min-height:56px}
+.brand{display:flex;align-items:center;gap:.5rem;font-weight:600;font-size:var(--t-l);white-space:nowrap}
+.brand .mark{width:28px;height:28px;border-radius:8px;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;font-size:var(--t-s)}
+.brand small{font-weight:500;color:var(--muted);font-size:var(--t-m)}
+.concept{font-size:var(--t-xs);color:var(--muted);border:1px solid var(--line-strong);border-radius:999px;padding:.1rem .6rem;white-space:nowrap}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:var(--r-l)}
+.avatar{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:600;font-size:var(--t-s);flex:none;background:#6d5a3e}
+.avatar.sm{width:28px;height:28px;font-size:11px}
+.chip{display:inline-flex;align-items:center;gap:.3rem;background:var(--chip);border-radius:999px;padding:.05rem .55rem;font-size:var(--t-xs);white-space:nowrap}
+.trust{display:inline-flex;align-items:center;gap:.25rem;font-size:var(--t-xs);font-weight:600;border-radius:999px;padding:.05rem .5rem;white-space:nowrap}
+.trust.signed{color:var(--ok);background:var(--ok-bg)}
+.trust.known{color:var(--muted);background:var(--chip)}
+.trust.new{color:var(--warn);background:var(--warn-bg)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border:1px solid var(--line-strong);background:var(--panel);border-radius:var(--r-m);height:34px;padding:0 .9rem;font-weight:500;white-space:nowrap}
+.btn:hover{background:var(--hover)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+.btn.primary:hover{background:var(--accent-hover)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none}
+.ellipsis{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+kbd{font:600 var(--t-xs) ui-monospace,Menlo,Consolas,monospace;border:1px solid var(--line-strong);border-bottom-width:2px;border-radius:4px;padding:0 .35em;background:var(--well)}
+pre.mail{white-space:pre-wrap;font:inherit;margin:0}
+.check{display:flex;align-items:center;gap:.4rem;font-size:var(--t-s)}
+.check .ok{color:var(--ok);font-weight:700}
+.check .no{color:var(--err);font-weight:700}
+.sim{font-size:var(--t-xs);color:var(--muted);text-align:center;padding:.75rem}
+.spacer{flex:1}

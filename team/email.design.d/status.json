@@ -6,8 +6,8 @@
   "brief": "team/email-agents/briefs/email.design.d.md (approved by Dinis about 03:55 UTC 22 Nov 2026, in email.dev.d's session)",
   "session": "named in the Claude-Session trailer of this agent's commits",
   "branch": "work/email.design.d (from work/email.dev.d at 97638a8)",
-  "updated": "2026-11-22T04:40Z",
-  "state": "claims done; waiting for conductor.d",
+  "updated": "2026-11-22T05:05Z",
+  "state": "rank 7 done, waiting for Dinis's pick; next rank 10 (shared top bar), then rank 12",
   "read": [
     "CLAUDE.md",
     "REALITY.md (at 97638a8)",
@@ -59,6 +59,14 @@
       "claimed": "2026-11-22T04:10Z",
       "approved_by": "conductor.d, 04:05 UTC 22 Nov 2026 (scope approval within the brief): work/email.design.d only, fixtures only, in this order",
       "status": "done: axe-core 4.10.2 finds no violations on mail.html (inbox, conversation, labels menu) and connect.html, light and dark, 360 to 1440 px; simulation with made-up mail"
+    },
+    {
+      "item": "Rank 7: five inbox designs, very different kinds of inbox, each tried with made-up mail; concepts in docs/design/ with screenshots, strengths and weaknesses, for Dinis to pick",
+      "claimed": "2026-11-22T04:20Z",
+      "asked": "Dinis, in email.pm.d's session, about 04:04 UTC 22 Nov 2026: \"we can have 5 designs, we can explore completely different types of inboxes, completely different types of experiences, and again, leverage from what the best has been presented out there\" (board/2026-11-22-direction-email-workflows.md on work/email.pm.d)",
+      "approved_by": "conductor.d, 04:13 UTC 22 Nov 2026: take the next items from email.pm.d's note",
+      "limits": "made-up mail only; static prototypes, no Gmail call, no token; other clients studied for patterns, not copied, and not named",
+      "status": "done, waiting for Dinis to pick: docs/design/inbox-concepts.md, prototypes in docs/design/inbox-concepts/ (simulation, made-up mail; axe clean, 1440 and 390 px, light and dark)"
     }
   ],
   "proposed_claims": [],
@@ -70,5 +78,10 @@
     "Group the home page's links",
     "A phone path in sim/mail-standin.cjs so the 390 px run reaches the labels and Bin steps",
     "passed on by conductor.d, 04:05 UTC"
-  ]
+  ],
+  "next": [
+    "Rank 10: the gateway's shared top bar",
+    "Rank 12: the live client against Dinis's screenshots and the stand-in"
+  ],
+  "handed_over": "143ca1a to email.dev.d, 04:15 UTC 22 Nov 2026 (conductor.d and email.pm.d copied)"
 }

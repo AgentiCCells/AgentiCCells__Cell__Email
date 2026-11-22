@@ -1,0 +1,39 @@
+/* Concept 1: Sign-off. By email.design.d@AgentiCCells.dinis, 22 November 2026. Apache-2.0. */
+body{display:flex;flex-direction:column;height:100vh;overflow:hidden}
+
+.meter{margin:0;color:var(--muted)}
+.meter b{color:var(--fg)}
+.layout{flex:1;min-height:0;display:grid;grid-template-columns:340px minmax(0,1fr);gap:.75rem;padding:0 .75rem .75rem}
+.queue{overflow:auto;padding:.5rem 0}
+.qhead{font-size:var(--t-xs);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);padding:.75rem 1rem .4rem;display:flex;gap:.4rem;align-items:center}
+.count{background:var(--accent);color:var(--on-accent);border-radius:999px;padding:0 .45rem;font-size:11px;letter-spacing:0}
+.qlist{list-style:none;margin:0;padding:0 .5rem}
+.qitem{display:grid;grid-template-columns:36px minmax(0,1fr) auto;gap:.15rem .65rem;align-items:center;width:100%;text-align:left;border:0;background:none;border-radius:var(--r-m);padding:.6rem .6rem}
+.qitem:hover{background:var(--hover)}
+.qitem[aria-current="true"]{background:var(--sel)}
+.qitem .avatar{grid-row:span 2}
+.qitem .who{font-weight:600}
+.qitem .sub{grid-column:2/4;color:var(--muted);font-size:var(--t-s)}
+.qitem .flag{font-size:var(--t-xs);font-weight:600;color:var(--err)}
+.desk{overflow:auto;display:flex;flex-direction:column}
+.desk-head{padding:1rem 1.25rem .75rem;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;align-items:center;gap:.5rem 1rem}
+.desk-head h2{font-size:19px;flex:1 1 100%}
+.pair{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:1rem;padding:1rem 1.25rem}
+.pane h2{font-size:var(--t-xs);text-transform:uppercase;letter-spacing:.05em;color:var(--muted);margin-bottom:.5rem;display:flex;gap:.5rem;align-items:center}
+.theirs{background:var(--well);border:1px solid var(--line);border-radius:var(--r-m);padding:1rem}
+.draft textarea{width:100%;min-height:15rem;border:1px solid var(--line-strong);border-radius:var(--r-m);background:var(--panel);color:var(--fg);font:inherit;line-height:1.55;padding:1rem;resize:vertical}
+.checks{margin:.75rem 0 0;padding:.75rem 1rem;border-radius:var(--r-m);background:var(--well);border:1px solid var(--line);display:grid;gap:.3rem}
+.blocked{margin-top:.5rem;color:var(--err);font-weight:600;font-size:var(--t-s)}
+.actions{position:sticky;bottom:0;margin-top:auto;display:flex;flex-wrap:wrap;gap:.5rem;align-items:center;padding:.75rem 1.25rem;border-top:1px solid var(--line);background:var(--panel);border-radius:0 0 var(--r-l) var(--r-l)}
+.actions .hint{margin-left:auto}
+@media(max-width:900px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  body.open .queue{display:none}
+  body:not(.open) .desk{display:none}
+  .pair{grid-template-columns:minmax(0,1fr)}
+  .meter,.concept{display:none}
+  .actions .hint{display:none}
+  .actions .btn{flex:1 1 auto}
+}
+.back{display:none}
+@media(max-width:900px){.back{display:inline-flex}}
