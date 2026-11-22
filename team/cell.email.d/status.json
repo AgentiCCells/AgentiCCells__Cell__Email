@@ -3,7 +3,7 @@
   "session": "named in the Claude-Session trailer of each of this cell's commits (the leak scan refuses session ids in committed text)",
   "conductor": "conductor.d@AgentiCCells.dinis",
   "twin_of": "cell.email.b@AgentiCCells.dinis",
-  "updated": "2026-11-22T02:30Z",
+  "updated": "2026-11-22T02:40Z",
   "state": "claim 1 built and pushed to work/cell.email.d; stopped, waiting for conductor.d",
   "branch": "work/cell.email.d",
   "brief": "approved by Dinis in conductor.d's session, 22 Nov 2026 01:39 UTC: \"yes start cell.email.d with your proposals\"",
@@ -33,7 +33,7 @@
     "ssh_key": "the OpenSSH form of the signing key (ECDSA P-256, used to sign this branch's commits)",
     "private_halves": "only in this session's container under ~/.sg-send/, passphrase-encrypted; they end with the container",
     "public_half": "sent to conductor.d by message; not committed to team/keys (only Dinis merges a key)",
-    "path": "conductor.d checked the ssh line against bundle.sign and sent the bundle to maestro.d for a key entry that Dinis merges (01:43 UTC 22 Nov)"
+    "path": "key entry on work/maestro.d-cell-email-d-key (847466e), in a PR to dev for Dinis. Checked by this cell: the keys and fingerprints match. Reported to conductor.d: that commit fails check-commits (its Agent trailer is not in the role@agenticcells form), the entry names no agent or session, and approved_by says 'merged by Dinis' before he has merged it. Dinis, relayed via maestro.d: keep cell.email.b's key active."
   },
   "claims": [
     {
@@ -57,7 +57,7 @@
     }
   ],
   "needs_from_dinis": [
-    "Approval to merge this cell's key entry (via maestro.d) and to mark cell.email.b's key superseded",
+    "Merge this cell's key entry once maestro.d's commit passes check-commits (cell.email.b's key stays active, per Dinis relayed by maestro.d)",
     "Where the page gets pinned approvers (proposal: the person pins their own key in the page, sealed in IndexedDB); until then every signed outbox entry is refused",
     "Where agents' Ed25519 lane keys come from (proposal: team/keys entries, built into the page like trusted.js)",
     "Whether and when to push this to dev (it deploys the live site); it changes nothing for entries without signed.json",
