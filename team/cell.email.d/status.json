@@ -37,19 +37,14 @@
   "claims": [],
   "proposed_claims": [
     {
-      "item": "decide() in the page: run the full C4 gateway check (signed lanes, signed policy, cell/policy/checker.mjs) in the browser before Approve and send, as a proposal first",
-      "why": "build steps 2 and 3; listed in cell.email.b's hand-over as suggested next work; not started by any .b agent per that hand-over",
-      "status": "proposal, not claimed until conductor.d replies"
+      "item": "First scope (proposal): build steps 2 and 3 joined up in the page. A decide() step in the browser gateway that runs the full C4 check before Approve and send: the outbox entry signed on a lane (cell/lanes/entry.mjs), the email policy signed by an approver pinned outside the cell, and cell/policy/checker.mjs on the exact email. Tested against the simulated mailbox and made-up outbox entries only; no real mail, no token.",
+      "why": "The article's build order: step 1 (own inbox, gateway, twin, one mailbox synced) is done per REALITY.md; steps 2 and 3 are built only as simulation in Node and do not yet guard the page's send. REALITY.md says C4 is still simulation only for agents' automated sends.",
+      "needs": "No new scope or credential. Any change to abp/cell-email.md would go to Dinis first; I expect none for a check that only adds refusals.",
+      "status": "proposal; claimed only after conductor.d replies"
     },
     {
-      "item": "the gateway's shared top bar (design round 1, item 5)",
-      "why": "left over from the design round per cell.email.b's hand-over",
-      "status": "proposal, not claimed"
-    },
-    {
-      "item": "mail client: drafts saved to Gmail, attachments when composing, load more in long conversations",
-      "why": "cell.email.b's suggested next work; the drafts item needs no new scope (gmail.modify covers drafts), to be checked against ABP 1.1.4 before building",
-      "status": "proposal, not claimed"
+      "item": "Later, in order: the gateway's shared top bar (design round 1, item 5); mail client drafts, compose attachments and load more.",
+      "status": "proposal"
     }
   ],
   "needs_from_dinis": [
@@ -63,5 +58,6 @@
     "Safe Browsing review in Google Search Console (Dinis)",
     "the pki.sgit.ai passkey round trip (Dinis's passkey)",
     "deleting work/page-design and work/cell-email-b-onboarding (a person)"
-  ]
+  ],
+  "account_b": "Dinis, relayed by conductor.d (22 Nov 2026, 01:40 UTC): \"don't worry about the .b account\". So this cell does not wait for cell.email.b or claim items with it. It still never writes in team/cell.email.b/ or pushes to .b branches."
 }
