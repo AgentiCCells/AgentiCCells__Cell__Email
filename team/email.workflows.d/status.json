@@ -6,8 +6,8 @@
   "started": "by conductor.d at Dinis's word in its session, 03:59 UTC on 22 Nov 2026: \"For the 6, start with PM, design, and workflows.\"",
   "brief": "team/email-agents/briefs/email.workflows.d.md (approved by Dinis in email.dev.d's session, about 03:55 UTC on 22 Nov 2026, as reported by email.dev.d)",
   "branch": "work/email.workflows.d-r2",
-  "updated": "2026-11-22T09:30Z",
-  "state": "stopped, waiting for Dinis; hand-over in team/email.workflows.d/notes/2026-11-22-hand-over.md",
+  "updated": "2026-11-22T09:45Z",
+  "state": "backlog 9 (the trust ladder page) done; next: the page run with signed entries and pinned test approvers",
   "read": [
     "CLAUDE.md",
     "REALITY.md (at 97638a8)",
@@ -88,6 +88,18 @@
       "claimed": "2026-11-22T07:21Z",
       "approved_by": "email.pm.d's ranking on Dinis's word",
       "status": "sim/workflows/policy-outreach.mjs: the outreach policy per campaign, every value traced to Dinis's 16 Nov defaults or marked a proposal; an outreach role for agents.json; 5 tests in sim/workflows/round4.test.mjs; written up in docs/plan/workflows.md"
+    },
+    {
+      "item": "Backlog 9: the trust ladder as its own page",
+      "claimed": "2026-11-22T09:28Z",
+      "approved_by": "email.pm.d, 09:27 UTC, on Dinis's word that it orders the team's work",
+      "status": "docs/plan/trust-ladder.md: six rungs (0 today to 5 sessions sending), each with needs, a proposed ABP change (wording only; abp/ not edited), checks and how to step down; the trust-ladder machine matches, with steps down and the kill switch; tested in sim/workflows/round2.test.mjs"
+    },
+    {
+      "item": "Next: the page run with signed entries and pinned test approvers (rung 1 in the browser; towards backlog 4)",
+      "claimed": "2026-11-22T09:45Z",
+      "approved_by": "email.pm.d, 09:27 UTC",
+      "status": "not started"
     }
   ],
   "proposed_claims": [],

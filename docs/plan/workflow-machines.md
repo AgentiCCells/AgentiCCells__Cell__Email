@@ -15,7 +15,7 @@ Ranked by how much each workflow removes the bottleneck Dinis named on 22 Novemb
 | 5 | **approve-and-send**: Review, approve and send one email | built | the person opens an outbox entry | gmail.send; the outbox vault key | the person's press (ABP 1.1.4) | the agent's proposal when signed.json is there (C4); the press is recorded, not yet signed | run in Chromium against a made-up outbox: a good entry reaches recorded, a changed or Bcc entry stops at not_sendable, and no Gmail call is made in the test |
 | 5 | **first-send**: Dinis's first real send, to himself | plan | conductor@PrompTugal.dinis gives Dinis a sealed QR code with the outbox vault key, made for his page's public key | the outbox vault key (W1); gmail.send; the page key | Dinis's press | the sealed key code (by its sender); the entry itself must be unsigned: a signed entry to the mailbox itself is refused by the policy | Dinis's email to himself arrives, and meta.json in the outbox vault says sent, with Gmail's id |
 | 5 | **campaign-policy**: Sign an outreach campaign's policy | simulation | a campaign has a list of people to write to (for PrompTugal: conductor@PrompTugal.dinis's) | the address list; an outreach role in agents.json; Dinis's signing key, pinned in the page | Dinis, by signing the policy and the agents file | email-policy.json and agents.json, each by a pinned approver | a made-up campaign policy holds a listed English or Portuguese email for Dinis, refuses each thing his defaults forbid, and passes a signed entry from the outreach agent to his press (sim/workflows/round4.test.mjs) |
-| 4 | **trust-ladder**: The trust ladder: from every press to sessions sending | plan | Dinis decides to climb a rung, by a change to the ABP | each rung: the one below working, and an ABP change Dinis approves | Dinis, one rung at a time | more at each rung: proposals, then approvals, then the policy and automations | each rung is a page of its own with what it needs and the ABP change, and no rung is used before Dinis approves it |
+| 4 | **trust-ladder**: The trust ladder: from every press to sessions sending | plan | Dinis decides to climb a rung, by a change to the ABP | each rung: the one below working, and an ABP change Dinis approves | Dinis, one rung at a time | more at each rung: proposals, then approvals, then batches, then send records | docs/plan/trust-ladder.md gives each rung what it needs, the ABP change, its checks and how to step down; no rung above 0 is used before Dinis approves it; the machine allows no skipped rung and a step down from each |
 | 4 | **connect**: Connect a Gmail account | built | the person presses Connect | gmail.metadata; then gmail.send, gmail.readonly or gmail.modify, one press each | the person, on Google's consent screen | nothing yet (the token is sealed to the page key) | Dinis connects and the page reads counts and labels (done 16 Nov); Allow sending grants gmail.send |
 | 4 | **outreach**: Write to someone new | simulation | a list of people to reach (for PrompTugal: conductor@PrompTugal.dinis's) | the outbox vault key; the agent's lane key | the person (a signed automation only for fixed templates to verified correspondents) | the agent's propose.send on its actions lane | a made-up outreach entry passes checkEntry() and the page; a changed one is refused (tests/workflows.test.mjs) |
 | 3 | **pin-approver**: Pin an approver | plan | the person sets up signed sending | key-by-qr; the approver's published key (team/keys, or a register) | the person, by pasting the code | the approver's key bundle | a fixture policy signed by a pinned approver passes decideEntry(); unpinned, it is refused |
@@ -84,7 +84,7 @@ Dinis, about 04:08 UTC: "it just depends on the workflow and who's listening. Us
 | 1 | **approve-and-send** | one email sent from the person's Gmail and recorded in the outbox | none | one press per email; 20 a day (send.js) |
 | 1 | **first-send** | one outbox entry sent from Dinis's own Gmail to himself and recorded in the outbox vault | key-by-qr, connect, approve-and-send | one person, one email; it proves the path, it does not scale anything |
 | 2 | **gateway-stop** | nothing can be sent until a pinned approver starts the gateway again | none | one entry stops every send for that mailbox; it costs nothing to add more agents who may stop |
-| 0 | **trust-ladder** | agent sessions send some kinds of email under a policy Dinis signed, and he still sees every send | pin-approver | this is the scaling question itself: each rung moves work from the person to signed policy, so one person can stand behind more email |
+| 0 | **trust-ladder** | agent sessions send some kinds of email under a policy Dinis signed, and he still sees every send | pin-approver, gateway-stop | this is the scaling question itself: each rung moves work from the person to signed policy, so one person can stand behind more email |
 | 1 | **send-from-client** | an email the person wrote themselves leaves from their Gmail | none | it runs in each person's browser on their own token; no server; Dinis used it for real on 22 Nov ("IT WORKS!!!") |
 | 1 | **campaign-policy** | a policy Dinis signed that lists the campaign's addresses and his outreach defaults, so its agent's signed drafts can pass C4 | none | one signature covers a whole list, so the person approves the list once and each email once; the list is the limit an agent cannot pass |
 
@@ -490,29 +490,34 @@ stop  running > stopping > not_signed
 ## trust-ladder: The trust ladder: from every press to sessions sending
 
 - **Goal:** agent sessions send some kinds of email under a policy Dinis signed, and he still sees every send
-- **Status:** plan
+- **Status:** plan (`docs/plan/trust-ladder.md (each rung: needs, ABP change, checks, how to step down)`)
 - **Trigger:** Dinis decides to climb a rung, by a change to the ABP
 - **Needs:** each rung: the one below working, and an ABP change Dinis approves
 - **Approves:** Dinis, one rung at a time
-- **Signed:** more at each rung: proposals, then approvals, then the policy and automations
-- **Acceptance:** each rung is a page of its own with what it needs and the ABP change, and no rung is used before Dinis approves it
+- **Signed:** more at each rung: proposals, then approvals, then batches, then send records
+- **Acceptance:** docs/plan/trust-ladder.md gives each rung what it needs, the ABP change, its checks and how to step down; no rung above 0 is used before Dinis approves it; the machine allows no skipped rung and a step down from each
 - **Bottleneck rank:** 4; **uses:** lanes, policy, pki, agents
 - **As a product:** for anyone whose bottleneck is pressing send. Scale: this is the scaling question itself: each rung moves work from the person to signed policy, so one person can stand behind more email
 
 | State | What it means | End |
 |---|---|---|
-| press_every_email | today (ABP 1.1.4): the person presses for every email; agents sign nothing |  |
-| signed_proposals | agents sign what they draft; the page runs C4 and refuses changes (built in simulation; needs W4 and W5) |  |
-| signed_approvals | the press itself is a signed approve entry on the lanes; the page holds a lane key |  |
-| automations | fixed templates to verified correspondents go without a press, under a signed automation; needs an unattended gateway (ABP N1) |  |
-| sessions_send | agent sessions send the kinds of email the signed policy allows; Dinis reads the outbox | goal |
+| press_every_email | rung 0, today (ABP 1.1.4): the person presses for every email; agents sign nothing |  |
+| signed_proposals | rung 1: agents sign what they draft; the page runs C4 and refuses changes (simulation; needs W4, W5, W15) |  |
+| signed_approvals | rung 2: the press is a signed approve entry on the lanes; the page holds the person's lane key |  |
+| batch_press | rung 3: one press for a reviewed batch a signed automation covers; the token stays in the browser |  |
+| automations | rung 4: fixed kinds go without a press, under a signed automation; needs a gateway outside the browser (ABP N1) |  |
+| sessions_send | rung 5: agent sessions send the kinds of email the signed policy allows; Dinis reviews by exception | goal |
 | held | Dinis keeps the current rung | stop |
+| stopped | a signed gateway.stop: every signed send refused until Dinis starts again | stop |
 
 Paths from the start to an end:
 
 ```
-goal  press_every_email > signed_proposals > signed_approvals > automations > sessions_send
-stop  press_every_email > signed_proposals > signed_approvals > automations > held
+goal  press_every_email > signed_proposals > signed_approvals > batch_press > automations > sessions_send
+stop  press_every_email > signed_proposals > signed_approvals > batch_press > automations > held
+stop  press_every_email > signed_proposals > signed_approvals > batch_press > automations > stopped
+stop  press_every_email > signed_proposals > signed_approvals > batch_press > held
+stop  press_every_email > signed_proposals > signed_approvals > batch_press > stopped
 stop  press_every_email > signed_proposals > signed_approvals > held
 stop  press_every_email > signed_proposals > held
 ```
@@ -521,11 +526,19 @@ stop  press_every_email > signed_proposals > held
 |---|---|---|---|---|---|
 | press_every_email | pin approvers and lane keys | signed_proposals | person |  | pin-approver |
 | signed_proposals | ABP change: approvals are signed | signed_approvals | person |  |  |
-| signed_approvals | ABP change: signed automations may send | automations | person |  |  |
+| signed_approvals | ABP change: one press for a batch | batch_press | person |  |  |
+| batch_press | ABP change: signed automations may send | automations | person |  |  |
 | automations | ABP change: sessions send under policy | sessions_send | person |  |  |
+| signed_proposals | step down: unpin approvers or lane keys | press_every_email | person |  |  |
+| signed_approvals | step down: stop signing approvals | signed_proposals | person |  |  |
+| batch_press | step down: a policy without automations | signed_approvals | person |  |  |
+| automations | step down: no press-free automations; revoke the token | batch_press | person |  |  |
 | signed_proposals | Dinis keeps this rung | held | person |  |  |
 | signed_approvals | Dinis keeps this rung | held | person |  |  |
+| batch_press | Dinis keeps this rung | held | person |  |  |
 | automations | Dinis keeps this rung | held | person |  |  |
+| automations | gateway.stop | stopped | agent |  | gateway-stop |
+| batch_press | gateway.stop | stopped | agent |  | gateway-stop |
 
 ## send-from-client: Write and send in the mail client
 

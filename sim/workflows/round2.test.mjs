@@ -71,13 +71,17 @@ test('round 2: approve-and-send opens to ready or not_sendable as the page decid
   assert.ok(problems(messageOf(withBcc.meta, withBcc.body)).some((s) => /Bcc/.test(s)));
 });
 
-// Experiment 3: the trust ladder can be walked rung by rung, and held at any rung.
-test('round 2: the trust ladder goes one rung at a time and can stop on any', () => {
+// Experiment 3: the trust ladder (docs/plan/trust-ladder.md) can be walked rung by rung, held at any
+// rung, stepped down from any rung above 0, and never skipped.
+test('round 2: the trust ladder goes one rung at a time, can stop or step down on any', () => {
   const m = byId('trust-ladder');
-  const all = ['pin approvers and lane keys', 'ABP change: approvals are signed', 'ABP change: signed automations may send', 'ABP change: sessions send under policy'];
-  assert.equal(run(m, all).state, 'sessions_send');
-  assert.match(run(m, [all[0], all[2]]).error, /no move/, 'no rung is skipped');
-  assert.equal(run(m, [all[0], 'Dinis keeps this rung']).state, 'held');
+  const up = ['pin approvers and lane keys', 'ABP change: approvals are signed', 'ABP change: one press for a batch', 'ABP change: signed automations may send', 'ABP change: sessions send under policy'];
+  assert.equal(run(m, up).state, 'sessions_send');
+  assert.match(run(m, [up[0], up[2]]).error, /no move/, 'no rung is skipped');
+  assert.equal(run(m, [up[0], 'Dinis keeps this rung']).state, 'held');
+  assert.equal(run(m, [up[0], 'step down: unpin approvers or lane keys']).state, 'press_every_email');
+  assert.equal(run(m, [up[0], up[1], up[2], 'step down: a policy without automations', 'step down: stop signing approvals']).state, 'signed_proposals');
+  assert.equal(run(m, [up[0], up[1], up[2], up[3], 'gateway.stop']).state, 'stopped');
 });
 
 // Experiment 4: the first real send, as far as made-up data can take it: its path is the one the

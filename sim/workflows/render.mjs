@@ -18,8 +18,9 @@ function layout(m) {
   const cols = [];
   for (const s of names) (cols[depth[s] ?? 0] ||= []).push(s);
   const W = 140, H = 40, GX = 110, GY = 34, pos = {};
-  cols.forEach((col, x) => col.forEach((s, y) => { pos[s] = { x: 20 + x * (W + GX), y: 20 + y * (H + GY), w: W, h: H }; }));
-  const width = 40 + cols.length * (W + GX) - GX, height = 40 + Math.max(...cols.map((c) => c.length)) * (H + GY) - GY;
+  const TOP = m.moves.some((mv) => (depth[mv.to] ?? 0) <= (depth[mv.from] ?? 0) && mv.from !== mv.to) ? 70 : 20;
+  cols.forEach((col, x) => col.forEach((s, y) => { pos[s] = { x: 20 + x * (W + GX), y: TOP + y * (H + GY), w: W, h: H }; }));
+  const width = 40 + cols.length * (W + GX) - GX, height = TOP + 20 + Math.max(...cols.map((c) => c.length)) * (H + GY) - GY;
   return { pos, width, height };
 }
 
@@ -31,7 +32,7 @@ export function svg(m) {
     const back = b.x <= a.x;
     const x1 = back ? a.x + a.w / 2 : a.x + a.w, y1 = back ? a.y : a.y + a.h / 2;
     const x2 = back ? b.x + b.w / 2 : b.x, y2 = back ? b.y : b.y + b.h / 2;
-    const cx = back ? (x1 + x2) / 2 : (x1 + x2) / 2, cy = back ? Math.min(y1, y2) - 30 : (y1 + y2) / 2;
+    const cx = (x1 + x2) / 2, cy = back ? Math.min(y1, y2) - 26 - (i % 3) * 16 : (y1 + y2) / 2;
     const d = back ? `M${x1},${y1} Q${cx},${cy} ${x2},${y2}` : `M${x1},${y1} C${cx},${y1} ${cx},${y2} ${x2},${y2}`;
     parts.push(`<path d="${d}" class="mv mv-${mv.by}" marker-end="url(#arrow)"><title>${esc(`${mv.on} (by ${mv.by}${mv.check ? `; checked by ${mv.check}` : ''}${mv.uses ? `; the workflow ${mv.uses}` : ''})`)}</title></path>`);
     const lx = back ? cx : (x1 + x2) / 2, ly = (back ? cy + 4 : (y1 + y2) / 2 - 5) + (i % 2 ? 10 : 0);

@@ -14,7 +14,7 @@ What this page covers, from the brief: the outbox and its entries, approvals, te
 
 ## Every action is a workflow
 
-The workflows are now written as state machines, each with a goal (its end state), the moves between states, who makes each move, and which code decides it. A workflow can use whole workflows as single steps. The map, the paths through each machine and what each one needs to scale are on [the workflow machines](workflow-machines.md) page, generated from `sim/workflows/machines.mjs`.
+The workflows are now written as state machines, each with a goal (its end state), the moves between states, who makes each move, and which code decides it. A workflow can use whole workflows as single steps. The map, the paths through each machine and what each one needs to scale are on [the workflow machines](workflow-machines.md) page, generated from `sim/workflows/machines.mjs`. How the cell gets from Dinis pressing every send to sessions sending under his signed policy, one rung at a time, is on [the trust ladder](trust-ladder.md).
 
 ## One path for every workflow
 
