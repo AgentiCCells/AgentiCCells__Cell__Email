@@ -18,7 +18,7 @@ test('the demo mailbox is the same for the same seed, and different for another'
 test('every address in the demo mailbox is at a reserved example domain, and it says it is synthetic', () => {
   const box = demoMailbox({ now: NOW });
   assert.equal(box.generated.synthetic, true);
-  const all = [box.me.address, ...box.contacts.map((c) => c.address), ...box.threads.flatMap((t) => [t.from, t.to]), ...box.drafts.flatMap((d) => d.to)];
+  const all = [box.me.address, ...box.contacts.map((c) => c.address), ...box.messages.flatMap((m) => [m.from.address, ...m.to.map((x) => x.address)]), ...box.people.flatMap((p) => p.emails), ...box.drafts.flatMap((d) => d.to)];
   for (const a of all) assert.match(a, reserved);
   assert.equal(new Set(box.contacts.map((c) => c.address)).size, box.contacts.length);
 });
@@ -103,13 +103,28 @@ test('with a real token the day count survives a reload, and is the larger of th
   await assert.rejects(broken.count(null), /locked/);
 });
 
-test('the public demo vault holds the synthetic mailbox only: the same bytes every time, reserved domains, marked synthetic', async () => {
+test('the public demo twin: the same bytes every time, reserved domains, marked synthetic, mail/ loads as twin v1', async () => {
   const { demoVaultFiles } = await import('../sim/build-demo-vault.mjs');
+  const { loadTwin } = await import('../cell/twin/schema.mjs');
+  const { mkdtempSync, mkdirSync, writeFileSync, rmSync } = await import('node:fs');
+  const { join, dirname } = await import('node:path');
+  const { tmpdir } = await import('node:os');
   const a = demoVaultFiles(), b = demoVaultFiles();
   assert.deepEqual(a, b);
   for (const [p, text] of Object.entries(a)) {
-    if (p.endsWith('.json')) assert.equal(JSON.parse(text).synthetic, true, p);
+    if (/^(orgs|people|drafts)\//.test(p) || p === 'manifest.json') assert.equal(JSON.parse(text).synthetic, true, p);
     for (const m of text.matchAll(/[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+/g)) assert.match(m[0], reserved, p);
     assert.doesNotMatch(text, /sgit_private_vault_|BEGIN [A-Z ]*PRIVATE KEY|ya29\./, p);
   }
+  assert.ok(!Object.keys(a).some((p) => p.startsWith('crm/')), 'crm/ belongs to the CRM generator');
+  const people = Object.keys(a).filter((p) => p.startsWith('people/')).map((p) => JSON.parse(a[p]));
+  const orgIds = new Set(Object.keys(a).filter((p) => p.startsWith('orgs/')).map((p) => JSON.parse(a[p]).id));
+  for (const p of people) assert.ok(orgIds.has(p.org), p.id);
+  const dir = mkdtempSync(join(tmpdir(), 'demo-twin-'));
+  try {
+    for (const [p, text] of Object.entries(a)) { mkdirSync(dirname(join(dir, p)), { recursive: true }); writeFileSync(join(dir, p), text); }
+    const twin = loadTwin(join(dir, 'mail'));
+    assert.deepEqual(twin.errors, []);
+    assert.equal(twin.messages.size, JSON.parse(a['manifest.json']).counts.messages);
+  } finally { rmSync(dir, { recursive: true, force: true }); }
 });

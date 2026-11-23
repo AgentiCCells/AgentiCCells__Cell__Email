@@ -49,34 +49,75 @@ const TOPICS = ['Notes from our call', 'Slides for Monday', 'Introductions', 'Th
 const SNIPPETS = ['Thanks, that works for me.', 'Here are the notes, let me know what I missed.', 'Could we move it to the afternoon?', 'Attached is the latest version.', 'Happy to help, who else should join?', 'Great to meet you yesterday.'];
 
 const pick = (r, list) => list[Math.floor(r() * list.length)];
-const slug = (s) => s.normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+const slug = (s) => s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
+const pad = (n, w) => String(n).padStart(w, '0');
+const BODIES = [
+  'Hi {to},\n\n{snippet} I have put the main points below so we do not lose them.\n\n- what we agreed\n- what is still open\n\nBest,\n{from}',
+  'Hi {to},\n\n{snippet}\n\nThanks,\n{from}',
+  'Hello {to},\n\n{snippet} Shall we pick it up next week?\n\nBest wishes,\n{from}',
+];
 
-// The whole synthetic mailbox: { me, contacts, threads, drafts, labels, generated }.
+// The whole synthetic mailbox: { me, orgs, people, contacts, threads, messages, drafts, labels, generated }.
+// orgs and people are the shared shape the CRM demo builds on (demo.org/1, demo.person/1); messages are
+// the Email Cell's twin format (twin.message/1); contacts is the send screen's view of people.
 // now is fixed by the caller so tests are stable; the page passes Date.now().
 export function demoMailbox({ seed = DEMO_SEED, now = Date.now(), contacts: n = 16 } = {}) {
   const r = rng(seed);
+  const DAY = 864e5;
+  const orgs = ORGS.map(([name, domain, kind], i) => ({ id: `o${pad(i + 1, 2)}`, name, domain, kind }));
   const used = new Set();
-  const contacts = [];
-  while (contacts.length < n) {
+  const people = [];
+  while (people.length < n) {
     const first = pick(r, FIRST), last = pick(r, LAST);
     if (used.has(first + last)) continue;
     used.add(first + last);
-    const [org, domain, kind] = ORGS[contacts.length % ORGS.length];
-    contacts.push({ id: `c${contacts.length + 1}`, name: `${first} ${last}`, first, address: `${slug(first)}.${slug(last)}@${domain}`, org, role: pick(r, ROLES), kind, last_contact: 0, threads: 0 });
+    const o = orgs[people.length % orgs.length];
+    people.push({ id: `p${pad(people.length + 1, 2)}`, name: `${first} ${last}`, first, emails: [`${slug(first)}.${slug(last)}@${o.domain}`], org: o.id, role: pick(r, ROLES), kind: o.kind });
   }
-  const threads = [];
-  const DAY = 864e5;
+  const me = { name: DEMO_ME.name, address: DEMO_ME.address };
+  const threads = [], messages = [];
   for (let i = 0; i < n * 2; i++) {
-    const c = contacts[Math.floor(r() * contacts.length)];
-    const at = Math.round(now - r() * 60 * DAY);
-    const mine = r() < 0.4;
-    threads.push({ id: `t${i + 1}`, subject: pick(r, TOPICS), contact: c.id, from: mine ? DEMO_ME.address : c.address, to: mine ? c.address : DEMO_ME.address, at, snippet: pick(r, SNIPPETS), labels: mine ? ['SENT'] : (r() < 0.3 ? ['INBOX', 'UNREAD'] : ['INBOX']) });
-    c.threads++;
-    if (at > c.last_contact) c.last_contact = at;
+    const p = people[Math.floor(r() * people.length)];
+    const them = { name: p.name, address: p.emails[0] };
+    const tid = `t-${pad(i + 1, 3)}`, subject = pick(r, TOPICS);
+    const count = 1 + Math.floor(r() * 3);
+    let at = Math.round(now - (5 + r() * 55) * DAY);
+    let outbound = r() < 0.4;
+    const ids = [];
+    for (let k = 0; k < count; k++) {
+      const id = `m-${pad(messages.length + 1, 4)}`;
+      const from = outbound ? me : them, to = outbound ? them : me;
+      const snippet = pick(r, SNIPPETS);
+      const prev = messages[messages.length - 1];
+      messages.push({
+        schema: 'twin.message/1', id, thread: tid, direction: outbound ? 'outbound' : 'inbound',
+        source: { system: 'simulation', id: `demo-${id}`, thread_id: `demo-${tid}`, history_id: String(5000 + messages.length) },
+        from, to: [to], cc: [], bcc: [], reply_to: [],
+        subject: k ? `Re: ${subject}` : subject, date: new Date(at).toISOString().replace(/\.\d+Z$/, 'Z'),
+        headers: { message_id: `<${id}@${from.address.split('@')[1]}>`, in_reply_to: k ? prev.headers.message_id : null, references: k ? [...prev.headers.references, prev.headers.message_id] : [] },
+        labels: outbound ? ['SENT'] : (k === count - 1 && r() < 0.4 ? ['INBOX', 'UNREAD'] : ['INBOX']),
+        language: 'en',
+        body: { text: pick(r, BODIES).replace('{to}', to.name.split(' ')[0]).replace('{from}', from.name).replace('{snippet}', snippet), html: null },
+        attachments: [],
+        ...(outbound ? {} : { auth: { spf: 'pass', dkim: 'pass', dmarc: 'pass' } }),
+        simulated: true,
+      });
+      ids.push(id);
+      at += Math.round((0.1 + r() * 2) * DAY);
+      outbound = !outbound;
+    }
+    const list = messages.slice(-count);
+    threads.push({ schema: 'twin.thread/1', id: tid, subject, messages: ids, participants: [me.address, them.address].sort(), labels: [...new Set(list.flatMap((m) => m.labels))].sort(), last_date: list[list.length - 1].date, person: p.id });
   }
-  threads.sort((a, b) => b.at - a.at);
+  threads.sort((a, b) => Date.parse(b.last_date) - Date.parse(a.last_date));
+  const orgName = Object.fromEntries(orgs.map((o) => [o.id, o.name]));
+  const contacts = people.map((p) => {
+    const mine = threads.filter((t) => t.person === p.id);
+    return { id: p.id, name: p.name, first: p.first, address: p.emails[0], org: orgName[p.org], role: p.role, kind: p.kind, threads: mine.length, last_contact: mine.length ? Date.parse(mine[0].last_date) : 0 };
+  });
   const drafts = contacts.map((c) => draftFor(c, DEMO_ME));
-  return { me: DEMO_ME, contacts, threads, drafts, labels: ['INBOX', 'SENT', 'UNREAD', 'DRAFT'], generated: { seed, at: new Date(now).toISOString(), synthetic: true } };
+  const labels = [{ id: 'INBOX', name: 'Inbox', type: 'system' }, { id: 'SENT', name: 'Sent', type: 'system' }, { id: 'UNREAD', name: 'Unread', type: 'system' }];
+  return { me: DEMO_ME, orgs, people, contacts, threads, messages, drafts, labels, generated: { seed, at: new Date(now).toISOString(), synthetic: true } };
 }
 
 // The first draft for a contact, from its kind.
