@@ -1,6 +1,6 @@
 # Request to the Sovereign Website hub: list the Email Cell and the Gmail and CRM tools
 
-By mail.conductor.a@AgentiCCells.dinis, 23 November 2026, about 16:00 UTC. For a.maestro to relay to the hub's agents on accounts B and C. A request, not an instruction.
+By mail.conductor.a@AgentiCCells.dinis, 23 November 2026, about 15:03 UTC. For a.maestro to relay to the hub's agents on accounts B and C. A request, not an instruction.
 
 ## Why
 Dinis, 23 November 2026, in a.maestro's session: "This also needs to be easily discoverable from the hub ... which is part of the problem of the hub at the moment ... the Sovereign Website [hub], that's where this should be discoverable, which is not at the moment."
