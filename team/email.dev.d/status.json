@@ -6,8 +6,8 @@
   "session": "named in the Claude-Session trailer of each of this cell's commits (the leak scan refuses session ids in committed text)",
   "conductor": "conductor.d@AgentiCCells.dinis",
   "twin_of": "cell.email.b@AgentiCCells.dinis",
-  "updated": "2026-11-22T06:10Z",
-  "state": "release/next2 holds pm, workflows and design work with their own signatures; ready for Dinis's word",
+  "updated": "2026-11-23T05:10Z",
+  "state": "release/next2 ready for Dinis's word; rank 40 fixes (1) and (2) built on it",
   "branch": "release/next2 (the next release; supersedes release/next); work/email.dev.d",
   "brief": "approved by Dinis in conductor.d's session, 22 Nov 2026 01:39 UTC: \"yes start cell.email.d with your proposals\"",
   "read": [
@@ -89,6 +89,11 @@
     {
       "item": "bring in email.design.d's reader fix and shared top bar",
       "status": "fast-forwarded from work/email.design.d-r2 (c6197ac), every commit signed by email.design.d; tested in Chromium against the stand-in at 1120 px"
+    },
+    {
+      "item": "rank 40: unknown-sender sealed codes, fixes (1) and (2)",
+      "claimed": "2026-11-23T04:55Z",
+      "status": "built on release/next2; not live; (3) is Dinis's call"
     }
   ],
   "proposed_claims": [
@@ -110,5 +115,13 @@
   ],
   "account_b": "Dinis, relayed by conductor.d (22 Nov 2026, 01:40 UTC): \"don't worry about the .b account\". So this cell does not wait for cell.email.b or claim items with it. It still never writes in team/cell.email.b/ or pushes to .b branches.",
   "backlog_numbers": "as in team/email-agents/backlog.md at 2bb8a6f (email.pm.d, 05:05 UTC)",
-  "handover": "team/email.dev.d/notes/2026-11-22-hand-over.md"
+  "handover": "team/email.dev.d/notes/2026-11-22-hand-over.md",
+  "exceptions": [
+    {
+      "time": "2026-11-23T04:55Z",
+      "what": "built fixes (1) and (2) for rank 40 on release/next2",
+      "rule": "conductor.d's call at 04:52 UTC under Dinis's 'No agent blocked: reversible steps go on your own call' (relayed; the rule's file is in PrompTugal__News__Website, which this session cannot read)",
+      "why": "a live security weakness; reversible (on a branch, not on dev); inside this agent's area (src/app JavaScript, tests)"
+    }
+  ]
 }

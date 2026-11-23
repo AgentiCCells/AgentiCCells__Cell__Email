@@ -12,6 +12,7 @@
 import { authUrl, newState, parseFragment } from './oauth.js?v=__VERSION__';
 import { BODY_FILES, messageOf, problems, rawMessage, sentOn } from './send.js?v=__VERSION__';
 import { decideEntry, emptyTwin } from './cell/decide.mjs?v=__VERSION__';
+import { planKeep } from './sealed.js?v=__VERSION__';
 import { HEADERS, syncPlan } from './twin.js?v=__VERSION__';
 import { createTwinVault, displayKey, openTwinVault, readState as readVaultState, readThreads, writeMany, publish, readJson, ensureLoaded } from './vault.js?v=__VERSION__';
 import { identity, existingIdentity, publicQrText, openSealed, keep, recall, forget, kept, sealedStore } from './pki.js?v=__VERSION__';
@@ -120,15 +121,14 @@ async function openSealedText(text) {
   try {
     const id = await identity();
     const r = await openSealed(id, text, trusted, { carried: true });
-    const got = [];
-    for (const v of r.vaultKeys) {
-      await keep(id, 'vault:' + v.id, v.key);
-      if (v.id !== OUTBOX_VAULT) await keep(id, 'vault:twin', v.key);
-      got.push(v.id === OUTBOX_VAULT ? 'the outbox key' : `the key of vault ${v.id}`);
-    }
-    if (r.grant) { await keep(id, 'sgsend:token', r.grant.token); accessToken = r.grant.token; got.push('the SG/Send access token'); }
-    const from = r.from.startsWith('a code you brought') ? '' : ` From ${r.from}.`;
-    say('sealed-status', got.length ? `Kept in this browser: ${got.join(', ')}.${from}` : `Opened, but it carries no vault key or access token.${from}`);
+    // Backlog rank 40: say who it is from, and never replace a stored key or token without asking.
+    const stored = { twin: await recall(id, 'vault:twin').catch(() => null), outbox: await recall(id, 'vault:' + OUTBOX_VAULT).catch(() => null), token: await recall(id, 'sgsend:token').catch(() => null) };
+    const plan = planKeep(r, stored, OUTBOX_VAULT);
+    if (plan.question && !confirm(plan.question)) { say('sealed-status', `Nothing kept: you chose not to replace what this page already holds. ${plan.sender}`); $('drop').value = ''; return; }
+    for (const w of plan.writes) await keep(id, w.name, w.value);
+    if (plan.grantToken) accessToken = plan.grantToken;
+    const got = plan.got;
+    say('sealed-status', got.length ? `Kept in this browser: ${got.join(', ')}. ${plan.sender}` : `Opened, but it carries no vault key or access token. ${plan.sender}`);
     $('drop').value = '';
     await buttons();
     if (got.length) await openVaults();

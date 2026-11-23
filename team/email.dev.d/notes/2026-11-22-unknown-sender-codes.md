@@ -33,3 +33,16 @@ REALITY.md says "Sealed m1 codes are opened only when signed by a trusted sender
 4. **Optional, needs Dinis.** Bring back one confirmation for codes from unknown senders. That reverses part of his 16 November word ("open straight away"), so it is his call.
 
 Points 1 to 3 keep "open straight away" for codes from a trusted sender, and for a first key when nothing would be replaced.
+
+## Built, 23 November 2026, about 05:10 UTC (on release/next2, not live)
+
+conductor.d's call (04:52 UTC, 23 November): build (1) and (2), not (3).
+
+- `src/app/sealed.js`, `planKeep()`: decides what to keep. Only the first vault key in a code may become the twin key.
+- `connect.js`: shows the sender line every time, and calls `confirm()` before any replacement.
+- `tests/sealed.test.mjs`: 7 tests. 138 tests pass in all.
+- The same Chromium repro, made-up keys only:
+  - stored twin, person says no: nothing kept, twin unchanged;
+  - says yes: replaced after the question;
+  - no twin yet: kept at once with no question, and the sender line shows.
+- Option (3), one confirmation for every unknown-sender code, stays with Dinis.
