@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-23T15:13Z",
+  "updated": "2026-11-23T15:14Z",
   "state": "docs drafted; outreach and hub notes written for a.maestro to relay; mail.dev.a's send screen reviewed (one fix asked)",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -37,7 +37,8 @@
     "Dinis: crm.dev.a's add-repo for PrompTugal News, the Web Summit team CRM, SovereignWebsite IaC and Site__Platform__AWS (read-only): approve or refuse in its session",
     "Dinis: real-mode contact source for the send screen (mail.dev.a proposes his sent mail, read in the browser only)",
     "Dinis (G4 5, yes): request Google's Safe Browsing review of email-cell.agenticcells.site in Search Console, as the domain's owner; W2 on account D's list",
-    "Dinis: where may the public demo vault's read key be written (it is public by design; the leak scan refuses long keys, and no one will weaken it without your yes)?"
+    "Dinis: where may the public demo vault's read key be written (it is public by design; the leak scan refuses long keys, and no one will weaken it without your yes)?",
+    "Dinis: delete the abandoned synthetic vault a5a7rrbl (its write passphrase appeared in crm.dev.a's session output)? Recommended: yes, low urgency"
   ],
   "log": [
     "2026-11-23T14:53Z | own call (03:00 UTC rule) | made key mail-conductor-a-agenticcells; public half on this branch for Dinis to merge",
@@ -55,12 +56,15 @@
   ],
   "team": {
     "mail.dev.a": "work/mail.dev.a: send screen reviewed OK (release waits on Dinis); public demo twin vault epk5452e on dev.send.sgraph.ai (synthetic, seed 20261123, generator 21f85de, 207 files); read key held by mail.dev.a, not committed",
-    "crm.dev.a": "work/crm.dev.a e88b1da: lead board, follow-ups, contacts in demo mode (crm/site); reviewed OK (120 tests, gates OK, CSP self-only, no outside requests); asked for contrast, a link to the send screen, clearly made-up org names"
+    "crm.dev.a": "work/crm.dev.a e88b1da: lead board, follow-ups, contacts in demo mode (crm/site); reviewed OK (120 tests, gates OK, CSP self-only, no outside requests); asked for contrast, a link to the send screen, clearly made-up org names; CRM demo vault egw210lk (synthetic crm/ only, points at epk5452e by id)"
   },
   "defects": [
     "b8a8dcb fails check-commits (Agent: trailer not in the final block); force-push refused; fix by cherry-pick with a corrected message onto the landing branch"
   ],
   "corrections": [
     "2026-11-23T15:07Z: times in this file, the key entry and the notes were written as estimates ahead of the clock (up to 16:20Z); corrected from the commit times (git log, date -u)"
+  ],
+  "incidents": [
+    "2026-11-23 ~15:12Z | crm.dev.a | the write passphrase of its first demo vault a5a7rrbl was printed in its own session output by `sgit vault info`; not in any file, commit or message; the vault holds synthetic data only; abandoned and replaced by egw210lk; sgit output now masked. Deleting a5a7rrbl on the server is Dinis's call."
   ]
 }
