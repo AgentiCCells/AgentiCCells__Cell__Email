@@ -62,3 +62,22 @@ How this changes my proposal. It is still a proposal, for Dinis to confirm.
   - At 04:08 UTC: "created by vaults ... it just depends on the workflow and who's listening".
   - One reading fits both: a vault (or the agent working in it) makes the lane key, and the key is published in team/keys for the page to read. To confirm with Dinis.
 - **Nothing built for approvers** until Dinis picks (a), (b) or (c).
+
+## Before building option (c): a key-type gap (23 November 2026, about 05:20 UTC)
+
+conductor.d asked for option (c) to be built behind the fail-closed default, on a branch (04:52 UTC). One fact stops a straight build:
+
+- **The lanes, the policy signatures and the page's C4 check use Ed25519** (`cell/lanes/entry.mjs`, `cell/policy/signed.mjs`, `src/app/cell/lanes.mjs`).
+- **Keys that travel by QR code** (pki.sgit.ai's k1 code, and sgit keys in team/keys) are an RSA-OAEP encryption key plus an **ECDSA P-256 signing key**. They carry no Ed25519 key.
+
+So a k1 QR code cannot pin an approver's lane key as things stand. Two ways out:
+
+1. **The lanes take ECDSA P-256 as well**, so that an agent's or person's sgit signing key (in team/keys, or scanned from a k1 code) is their lane key.
+   - Changes: verification in Node and in the page accepts both key types, and the key id gets a prefix per type.
+   - Gains: one key per agent; Dinis's "keys published" and "QR codes to transmit keys" work as they are; and the lane-key file needs no new leak-scan line, if built from the sign keys already in team/keys. That file would still need one, so W9 stays.
+   - Cost: a change to the lane format (lane.entry/1), and existing tests to extend.
+2. **Keep Ed25519**, and carry each approver's Ed25519 key in a sealed m1 message signed by their sgit key. The page pins it after checking that signature.
+   - Gains: no format change.
+   - Cost: every agent and approver needs a second key and a step to publish it.
+
+**Proposal: (1).** It matches Dinis's words ("keys that are published", "QR codes to transmit keys") with one key per agent. But it changes the signed-entry format, so it goes to Dinis before anything is built. Nothing is built for (c) yet.
