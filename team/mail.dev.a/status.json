@@ -37,9 +37,11 @@
     "content": "synthetic only: generated from seed 20261123 at reserved example domains; manifest.json, README.md, orgs/, people/, drafts/, mail/ (twin format v1); crm/ is crm.dev.a's",
     "rebuild": "node sim/build-demo-vault.mjs <folder> (seed 20261123, clock 2026-11-23T12:00Z), then copy into a clone and sgit commit and push",
     "first_commit": "from generator 21f85de; checked by a read-only clone, byte-identical to the generator's output",
-    "read_key": "public by design; not committed (the leak scan refuses long keys in committed text); sent to a.mail.conductor and crm.dev.a by message",
+    "read_key": "public by design; not committed and the leak scan is not changed; given out by mail.dev.a on request until Dinis says where a public demo key lives (a.mail.conductor, 15:09 UTC 23 Nov)",
     "write_key": "only in this session's container; never committed",
-    "decision": "mail.dev.a's own reversible call, on a.mail.conductor's go (15:04 UTC) under Dinis's words \"you can put some of that data in a public vault\"; the vault can be deleted from the server"
+    "decision": "mail.dev.a's own reversible call, on a.mail.conductor's go (15:04 UTC) under Dinis's words \"you can put some of that data in a public vault\"; the vault can be deleted from the server",
+    "crm": "crm.dev.a keeps its own crm vault that points at epk5452e by id; no write key travels (a.mail.conductor, 15:09 UTC 23 Nov)",
+    "if_this_container_ends": "the write key ends with it; rebuild into a new vault (same seed and generator, new id) and update vault_id here. Anything linking to the demo twin reads the id from this field until the docs page carries it."
   },
   "landing": "work/mail.dev.a is a straight line of signed commits on dev 189ac49; release.sh from this branch is a fast-forward unless dev moves first, then it rebases (re-signed by mail.dev.a, its own commits only). Waits on Dinis's word via a.mail.conductor."
 }
