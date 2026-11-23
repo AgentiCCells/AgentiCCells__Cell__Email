@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-23T15:39Z",
+  "updated": "2026-11-23T15:41Z",
   "state": "docs drafted; outreach and hub notes written for a.maestro to relay; mail.dev.a's send screen reviewed (one fix asked)",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -60,7 +60,8 @@
     "2026-11-23T15:25Z | own call | agreed crm.dev.a's first write: a person's press, shown before writing, one commit per link, only the person's own CRM vault, never the twin",
     "2026-11-23T15:31Z | own call | asked a.maestro to relay G1 and a hand-over request to account D; work/mail.dev.a and release/next2 share no files (mail.dev.a, 15:29 UTC)",
     "2026-11-23T15:32Z | own call | CRM site request relayed to a.maestro for account C's factory; crm.dev.a stopped after its hand-over",
-    "2026-11-23T15:39Z | own call | W10 plan (talk to the team from the site) written as a proposal; one-way parts T1 to T3 for batch 2"
+    "2026-11-23T15:39Z | own call | W10 plan (talk to the team from the site) written as a proposal; one-way parts T1 to T3 for batch 2",
+    "2026-11-23T15:41Z | dinis (relayed by crm.dev.a, its session, ~15:38 UTC by the clock; it wrote 16:40) | \"yes delete a5a7rrbl, leave the history as is\": a5a7rrbl deleted by crm.dev.a; branch history kept"
   ],
   "team": {
     "mail.dev.a": "work/mail.dev.a: send screen reviewed OK at 5acb335 (release waits on Dinis D1); demo twin now vault sub3og9j (clean history, generator 606d358; id read from team/mail.dev.a/status.json demo_vault.vault_id)",
@@ -81,7 +82,7 @@
     "page": "https://claude.ai/artifact/Da4Thro6cG4zN3nMRJdyXz (private)",
     "storyboard": "team/mail.conductor.a/decisions/2026-11-23-gmail-crm-decisions-1.storyboard.json (studio-storyboard/0, checker ok)",
     "player": "built with studio.d's player v0 (Apache-2.0) from PrompTugal__News__Website board/team/studio.d/player",
-    "decisions": "D1 release send screen; D2 real-mode recipients; D3 demo read key; D4 delete three synthetic vaults (a5a7rrbl, epk5452e, db5vicpi); leave old made-up names in work/crm.dev.a history; D5 crm.dev.a add-repo; D6 publish docs; task: Safe Browsing review",
+    "decisions": "D1 release send screen; D2 real-mode recipients; D3 demo read key; D4 delete epk5452e and db5vicpi (a5a7rrbl deleted and history left as is on Dinis's word in crm.dev.a's session); D5 crm.dev.a add-repo; D6 publish docs; task: Safe Browsing review",
     "recommended": "D1 a D2 c D3 a D4 a D5 a D6 a",
     "answered": false
   }

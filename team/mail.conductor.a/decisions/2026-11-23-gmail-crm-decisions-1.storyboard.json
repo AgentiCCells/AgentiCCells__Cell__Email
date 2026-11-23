@@ -273,45 +273,31 @@
    "why": "Your ask: demos everyone can see, on synthetic data."
   },
   {
-   "question": "D4. Delete the abandoned synthetic vaults a5a7rrbl, epk5452e and db5vicpi; leave the old made-up names in work/crm.dev.a's git history?",
+   "question": "D4. Delete the abandoned synthetic vaults epk5452e and db5vicpi? (a5a7rrbl is deleted and the branch history kept, on your word in crm.dev.a's session.)",
    "options": [
     {
      "id": "a",
-     "label": "Delete the three vaults; leave the branch history",
+     "label": "Yes, delete both",
      "good": [
-      "No stray vaults or printed passphrase",
-      "No force-push of a pushed branch"
+      "No stray vaults left"
      ],
-     "bad": [
-      "Made-up names that may match real firms stay in old commits (never labelled as real)"
-     ],
+     "bad": [],
      "blocks": []
     },
     {
      "id": "b",
-     "label": "Delete the three vaults and rewrite the branch history",
-     "good": [
-      "Old names gone from the branch"
-     ],
-     "bad": [
-      "Force-push; GitHub still keeps the objects by id"
-     ],
-     "blocks": []
-    },
-    {
-     "id": "c",
-     "label": "Keep everything",
+     "label": "Keep them",
      "good": [
       "Nothing deleted"
      ],
      "bad": [
-      "A vault whose passphrase was printed stays"
+      "Old made-up names stay readable in epk5452e"
      ],
      "blocks": []
     }
    ],
    "recommendation": "a",
-   "why": "Synthetic data only; a history rewrite costs more than it removes."
+   "why": "Synthetic data only; same reasoning as your a5a7rrbl answer."
   },
   {
    "question": "D5. a.crm.dev's read-only add-repo for four repositories (in its session)?",
