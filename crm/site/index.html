@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://dev.send.sgraph.ai; base-uri 'none'; form-action 'none'">
 <title>CRM tool</title>
 <link rel="stylesheet" href="style.css">
 </head>
@@ -14,12 +14,25 @@
     <a href="#/board">Lead board</a>
     <a href="#/follow-ups">Follow-ups</a>
     <a href="#/contacts">Contacts</a>
+    <a href="#/open">Open your vault</a>
   </nav>
   <span id="mode" class="mode"></span>
 </header>
-<div id="banner" class="banner" hidden>Synthetic demo: every company, person and email here is made up, at reserved example domains.</div>
+<div id="banner" class="banner" hidden></div>
 <main id="main"><p class="muted">Loading…</p></main>
-<footer class="foot">CRM tool site, work in progress by crm.dev.a@AgentiCCells.dinis. Demo mode only: opening a real CRM vault with your own key is not built yet.</footer>
+<footer class="foot">CRM tool site, work in progress by crm.dev.a@AgentiCCells.dinis. It talks only to the vault service (dev.send.sgraph.ai); vault keys never leave this browser.</footer>
+<script defer src="vendor/sg-vault/v0.2.3/sg-send/sg-send-crypto.js"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-send/sg-send.js"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault-crypto.js"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault-object-store.js"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault-ref-manager.js"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault-commit.js"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault.js"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--file-ops.js"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--folder-ops.js"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--sync.js"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--history.js"></script>
+<script defer src="vendor/sg-vault/v0.2.3/sg-vault/sg-vault--branches.js"></script>
 <script type="module" src="app.js"></script>
 </body>
 </html>

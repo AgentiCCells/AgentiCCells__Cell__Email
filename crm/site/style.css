@@ -26,3 +26,10 @@ h1 { font-size: 22px; margin: 16px 0 8px; } h2 { font-size: 17px; margin: 20px 0
 .list { padding-left: 18px; } .list li { margin: 4px 0; }
 .foot { padding: 16px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
 a.badge { text-decoration: none; }
+.mode-vault { border-color: var(--warn); color: var(--warn); }
+.open { display: grid; gap: 12px; max-width: 560px; margin: 16px 0; }
+.open label { display: grid; gap: 4px; }
+.open label.check { display: flex; gap: 8px; align-items: center; }
+.open input[type=password] { font: 14px ui-monospace, monospace; padding: 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); width: 100%; }
+button { font: inherit; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--accent); background: var(--accent); color: var(--bg); cursor: pointer; justify-self: start; }
+button.quiet { background: transparent; color: var(--accent); }

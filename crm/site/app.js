@@ -1,17 +1,37 @@
 // The CRM tool site's page: lead board, company, follow-ups and contacts, over a vault read in the
-// browser. Demo mode loads the synthetic twin bundle (demo/twin.json); nothing leaves the page.
+// browser. Demo mode (the default, always one press away) loads the synthetic twin bundle
+// (demo/twin.json). "Open your vault" reads a CRM vault, and the mail twin it points at, with the
+// person's own keys, in this browser only (vault.js); remembered keys are sealed to this browser's
+// own key with the Email Cell's pki.js keep/recall, unedited.
 // By crm.dev.a@AgentiCCells.dinis, 2026-11-23. Apache-2.0.
-import { readVault, leadBoard, followUps, company, contacts, FOLLOW_UP_DAYS } from './crm.mjs';
+import { readVault, checkCrm, leadBoard, followUps, company, contacts, FOLLOW_UP_DAYS } from './crm.mjs';
+import { keyKind, openVault, readAll, merge } from './vault.js';
+import { identity, existingIdentity, keep, recall, forget, kept } from './pki.js';
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const day = (iso) => (iso ? iso.slice(0, 10) : '–');
-let V = null, NOW = 0;
+let V = null, NOW = 0, MODE = 'demo', OPENED = null, SYNTHETIC = true;
+const idOf = (key) => (String(key).trim().match(/:([a-z0-9]{4,32})$/) || [])[1] || '?';
 // The Email Cell's send screen, where a draft is reviewed and sent. In demo mode it opens the same
 // synthetic contact (person id) in its own demo. Parameters agreed with mail.dev.a@AgentiCCells.dinis:
 // ?demo&contact=<person-id>. The send screen is not live yet, so the link may be dead until it lands.
 const SEND_URL = 'https://email-cell.agenticcells.site/app/send.html';
-const sendLink = (person) => `${SEND_URL}?demo&contact=${encodeURIComponent(person)}`;
+// Synthetic data (the demo, or a vault marked synthetic) only ever links to the send screen's demo.
+const sendLink = (person) => `${SEND_URL}?${SYNTHETIC ? 'demo&' : ''}contact=${encodeURIComponent(person)}`;
+
+function setMode(mode, label, synthetic) {
+  MODE = mode;
+  SYNTHETIC = mode === 'demo' || !!synthetic;
+  $('#mode').textContent = label;
+  $('#mode').className = 'mode' + (mode === 'vault' ? ' mode-vault' : '');
+  $('#banner').hidden = false;
+  $('#banner').textContent = mode === 'demo'
+    ? 'Synthetic demo: every company, person and email here is made up, at reserved example domains.'
+    : synthetic
+      ? `Your vault ${OPENED}, read in this browser only. Its manifest says it is synthetic.`
+      : `Your vault ${OPENED}, read in this browser only. Nothing is sent anywhere else.`;
+}
 
 async function loadDemo() {
   const b = await (await fetch('demo/twin.json')).json();
@@ -19,8 +39,75 @@ async function loadDemo() {
   V = readVault(b.files);
   // The demo's clock is the twin's, so "5 days" means the same on every visit.
   NOW = Date.parse(V.manifest.generated_at);
-  $('#mode').textContent = 'Demo mode';
-  $('#banner').hidden = false;
+  OPENED = null;
+  setMode('demo', 'Demo mode');
+}
+
+// Open the person's vaults with their keys. The keys live only in this call's memory, and are kept
+// only if `remember` is set, sealed to this browser's own key.
+async function loadVault(crmKey, twinKey, remember, status) {
+  status('Opening the CRM vault…');
+  const crmFiles = await readAll(await openVault(crmKey), { onProgress: (n) => status(`Reading the CRM vault: ${n} files…`) });
+  let twinFiles = null;
+  if (twinKey) {
+    status('Opening the mail twin…');
+    twinFiles = await readAll(await openVault(twinKey), { onProgress: (n) => status(`Reading the mail twin: ${n} files…`) });
+  }
+  const m = merge(crmFiles, twinFiles);
+  const want = m.crmManifest?.twin?.vault;
+  if (want && !twinKey) throw new Error(`this CRM vault points at mail twin ${want}: add that vault's key too`);
+  if (want && twinKey && idOf(twinKey) !== want) throw new Error(`this CRM vault points at mail twin ${want}, but the second key opens ${idOf(twinKey)}`);
+  const v = readVault(m.files);
+  const errors = checkCrm(v);
+  if (errors.length) throw new Error('the CRM records do not check out: ' + errors.slice(0, 5).join('; '));
+  if (remember) {
+    status('Keeping the keys, sealed to this browser…');
+    const id = await identity('crm tool page, ' + location.host);
+    await keep(id, 'vault:crm', crmKey);
+    if (twinKey) await keep(id, 'vault:twin', twinKey); else await forget('vault:twin');
+  }
+  const synthetic = !!(v.manifest?.synthetic || m.crmManifest?.synthetic);
+  V = v;
+  NOW = synthetic && v.manifest?.generated_at ? Date.parse(v.manifest.generated_at) : Date.now();
+  OPENED = idOf(crmKey) + (twinKey ? ' + ' + idOf(twinKey) : '');
+  setMode('vault', 'Your vault' + (synthetic ? ' (synthetic)' : ''), synthetic);
+}
+
+async function openPage() {
+  const remembered = await kept('vault:crm').catch(() => false);
+  return `<h1>Open your vault</h1>
+  <p>Read your own CRM vault in this browser. The keys are used here only: they are never sent to this site or kept in the clear. ${MODE === 'vault' ? `<strong>Open now: ${esc(OPENED)}.</strong>` : 'You are in the demo.'}</p>
+  ${MODE === 'vault' ? '<p><button type="button" id="to-demo">Back to the demo</button> <span class="muted">closes your vault in this tab</span></p>' : ''}
+  ${remembered ? '<p><button type="button" id="recall">Open the vault this browser remembers</button> <button type="button" id="forget" class="quiet">Forget it</button></p>' : ''}
+  <form id="open" class="open" autocomplete="off">
+    <label>CRM vault key <input id="k-crm" type="password" spellcheck="false" placeholder="sgit_private_vault_… or sgit_private_read_…:id" required></label>
+    <label>Mail twin key <span class="muted">(if the CRM vault points at one)</span> <input id="k-twin" type="password" spellcheck="false" placeholder="sgit_private_read_…:id"></label>
+    <label class="check"><input id="remember" type="checkbox"> Remember on this device, sealed to this browser's own key</label>
+    <button type="submit">Open</button>
+  </form>
+  <p id="status" class="muted" role="status"></p>`;
+}
+
+function wireOpen() {
+  const status = (t, bad) => { const el = $('#status'); if (el) { el.textContent = t; el.className = bad ? 'warn' : 'muted'; } };
+  const go = (crm, twin, remember) => loadVault(crm, twin, remember, status).then(() => { location.hash = '#/board'; route(); }).catch((e) => status('Could not open: ' + e.message, true));
+  $('#open')?.addEventListener('submit', (ev) => {
+    ev.preventDefault();
+    const crm = $('#k-crm').value.trim(), twin = $('#k-twin').value.trim();
+    if (!keyKind(crm)) return status('That does not look like a vault key or a read key.', true);
+    if (twin && !keyKind(twin)) return status('The mail twin key does not look like a vault key or a read key.', true);
+    $('#k-crm').value = ''; $('#k-twin').value = '';
+    go(crm, twin || null, $('#remember').checked);
+  });
+  $('#recall')?.addEventListener('click', async () => {
+    try {
+      const id = await existingIdentity();
+      if (!id) throw new Error("this browser's key is gone");
+      go(await recall(id, 'vault:crm'), await recall(id, 'vault:twin'), false);
+    } catch (e) { status('Could not open: ' + e.message, true); }
+  });
+  $('#forget')?.addEventListener('click', async () => { await forget('vault:crm'); await forget('vault:twin'); route(); });
+  $('#to-demo')?.addEventListener('click', () => loadDemo().then(() => { location.hash = '#/board'; route(); }));
 }
 
 const stageName = (id) => V.stages.find((s) => s.id === id)?.name || id;
@@ -84,10 +171,11 @@ function contactsPage() {
   <tbody>${contacts(V).map((p) => `<tr><td>${esc(p.name)}</td><td><a href="#/company/${esc(p.org)}">${esc(p.org_name)}</a></td><td>${esc(p.role || '')}</td><td>${esc(p.email)}</td><td class="num">${p.threads}</td><td>${day(p.last_contact)}</td></tr>`).join('')}</tbody></table></div>`;
 }
 
-function route() {
+async function route() {
   const [path] = (location.hash.slice(1) || '/board').split('?');
   const [, page, id] = path.split('/');
-  $('#main').innerHTML = page === 'company' ? companyPage(id) : page === 'follow-ups' ? followUpsPage() : page === 'contacts' ? contactsPage() : board();
+  $('#main').innerHTML = page === 'open' ? await openPage() : page === 'company' ? companyPage(id) : page === 'follow-ups' ? followUpsPage() : page === 'contacts' ? contactsPage() : board();
+  if (page === 'open') wireOpen();
   for (const a of document.querySelectorAll('nav a')) a.classList.toggle('on', a.getAttribute('href') === `#/${page || 'board'}`);
 }
 

@@ -4,11 +4,12 @@ This folder is the work of crm.dev.a@AgentiCCells.dinis (a.crm.dev). The CRM too
 
 - `model/crm.mjs`: the CRM's records (`crm.stages/1`, `crm.lead/1`, `crm.link/1`), their checks, and what the pages show: lead board, company, follow-ups (no reply in 5 days), contacts. Same code in Node and the browser.
 - `model/generate.mjs`, `sim/build-crm.mjs`: the synthetic `crm/` records for the shared demo twin, from its seed. Writes only `crm/`, and refuses a folder whose manifest is not marked synthetic.
-- `site/`: the pages, demo mode only for now. `site/demo/twin.json` is the shared synthetic twin plus `crm/`, as one bundle. `site/crm.mjs` is a copy of `model/crm.mjs` (a test checks they match).
-- `tests/crm.test.mjs`: `node --test crm/tests/crm.test.mjs`.
+- `site/`: the pages. Demo mode is the default: `site/demo/twin.json` is the shared synthetic twin plus `crm/`, as one bundle. "Open your vault" reads a CRM vault and the mail twin it points at with the person's own keys, in the browser only (`site/vault.js`); keys are remembered only if asked, sealed to the browser's own key with the Email Cell's `src/app/pki.js` keep/recall. The CSP allows connections to the site and dev.send.sgraph.ai only.
+- `scripts/build-site.mjs`: builds the site into `crm/_build/site` (ignored by git) from `site/`, `model/crm.mjs`, and the Email Cell's `src/app/pki.js` and pinned `src/app/vendor/sg-vault` and `src/app/vendor/pki`, unedited.
+- `tests/crm.test.mjs`: `node --test crm/tests/crm.test.mjs`. `tests/browser-vault.cjs`: the vault mode in Chromium against the vault service, with synthetic vaults only; keys come from files outside the repository at run time.
 - `notes/`: plan, log and hand-overs.
 
-Rebuild the demo bundle: in a checkout of `work/mail.dev.a`, `node sim/build-demo-vault.mjs <folder>`; then here, `node crm/sim/build-crm.mjs <folder> crm/site/demo/twin.json`. The current bundle was built from the live twin sub3og9j (generator 2cc074a), seed 20261123. Look at it: `cd crm/site && python3 -m http.server`.
+Rebuild the demo bundle: in a checkout of `work/mail.dev.a`, `node sim/build-demo-vault.mjs <folder>`; then here, `node crm/sim/build-crm.mjs <folder> crm/site/demo/twin.json`. The current bundle was built from the live twin sub3og9j (generator 2cc074a), seed 20261123. Look at it: `node crm/scripts/build-site.mjs && cd crm/_build/site && python3 -m http.server`.
 - `iac/`: the draft request for the site, for a.maestro to relay to account C's factory and AWS keepers.
 
 Only synthetic data on reserved example domains goes in this folder. Real contacts never do.

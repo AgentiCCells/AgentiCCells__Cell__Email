@@ -98,10 +98,20 @@ test('company page and contacts', () => {
   assert.equal(draftState(v, 'o03').count, 0);
 });
 
-test('the site serves the same model as crm/lib', async () => {
-  const { readFileSync } = await import('node:fs');
+test('the site build holds the model, the pinned vault library and pki.js, unedited', async () => {
+  const { readFileSync, existsSync, mkdtempSync } = await import('node:fs');
+  const { join } = await import('node:path');
+  const { tmpdir } = await import('node:os');
+  const { buildSite } = await import('../scripts/build-site.mjs');
+  const out = buildSite(mkdtempSync(join(tmpdir(), 'crm-site-')));
   const u = (p) => new URL(p, import.meta.url);
-  assert.equal(readFileSync(u('../site/crm.mjs'), 'utf8'), readFileSync(u('../model/crm.mjs'), 'utf8'), 'copy crm/model/crm.mjs to crm/site/crm.mjs');
+  assert.equal(readFileSync(join(out, 'crm.mjs'), 'utf8'), readFileSync(u('../model/crm.mjs'), 'utf8'));
+  for (const f of JSON.parse(readFileSync(u('../../src/app/vendor/sg-vault/VENDOR.json'), 'utf8')).files) assert.ok(existsSync(join(out, 'vendor/sg-vault', f.path)), f.path);
+  const html = readFileSync(join(out, 'index.html'), 'utf8');
+  const csp = html.match(/Content-Security-Policy" content="([^"]+)"/)[1];
+  assert.match(csp, /connect-src 'self' https:\/\/dev\.send\.sgraph\.ai;/);
+  assert.doesNotMatch(csp, /unsafe|\*/);
+  for (const m of html.matchAll(/src="([^"]+)"/g)) assert.ok(existsSync(join(out, m[1])), 'missing ' + m[1]);
 });
 
 test('the demo bundle is synthetic, on reserved domains only, and passes the checks', async () => {
@@ -113,4 +123,16 @@ test('the demo bundle is synthetic, on reserved domains only, and passes the che
   assert.deepEqual(checkCrm(v), []);
   const domains = new Set(JSON.stringify(b.files).match(/@[a-z0-9.-]+\.[a-z]+/gi).map((d) => d.slice(1).toLowerCase()));
   for (const d of domains) assert.match(d, /(^|\.)example\.(com|org|net)$/, `non-reserved domain ${d}`);
+});
+
+test('vault merge: the twin first, the CRM vault adds crm/ on top and keeps its manifest apart', async () => {
+  const { merge } = await import('../site/vault.js');
+  const twin = { 'manifest.json': '{"schema":"demo.twin/1"}', 'orgs/o01.json': '{}', 'README.md': 'twin' };
+  const crm = { 'manifest.json': '{"schema":"crm.demo/1","twin":{"vault":"abcd1234"}}', 'README.md': 'crm', 'crm/leads/o01.json': '{}' };
+  const m = merge(crm, twin);
+  assert.equal(m.files['manifest.json'], twin['manifest.json']);
+  assert.equal(m.files['README.md'], 'twin');
+  assert.ok(m.files['crm/leads/o01.json'] && m.files['orgs/o01.json']);
+  assert.equal(m.crmManifest.twin.vault, 'abcd1234');
+  assert.equal(merge(crm).files, crm);
 });
