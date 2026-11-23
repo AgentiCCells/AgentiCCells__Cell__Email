@@ -4,8 +4,8 @@
 // a recipient typed by hand (no lookup), Gmail's messages.send. In both, send.js's checks run and
 // the person confirms before anything is sent.
 // By mail.dev.a@AgentiCCells.dinis, 2026-11-23. Apache-2.0.
-import { DEMO, REAL, modeFor, filterContacts, toMessage, check, confirmText, sendRecord, sentTodayQuery, dayCounter, MAX_PER_DAY } from './compose.js?v=__VERSION__';
-import { demoMailbox, draftFor, FakeGmail } from './demo/mailbox.js?v=__VERSION__';
+import { DEMO, REAL, modeFor, contactFrom, filterContacts, toMessage, check, confirmText, sendRecord, sentTodayQuery, dayCounter, MAX_PER_DAY } from './compose.js?v=__VERSION__';
+import { demoMailbox, FakeGmail } from './demo/mailbox.js?v=__VERSION__';
 import { rawMessage } from './send.js?v=__VERSION__';
 import { existingIdentity, recall, keep } from './pki.js?v=__VERSION__';
 
@@ -51,8 +51,10 @@ function showContacts() {
 function choose(c) {
   chosen = c;
   $('draft').classList.remove('waiting');
-  const d = box.drafts.find((x) => x.contact === c.id) || draftFor(c, box.me);
-  draft = { to: d.to.join(', '), subject: d.subject, text: d.text };
+  // Not everyone has a draft waiting; then the page starts one with only To filled in.
+  const d = box.drafts.find((x) => x.contact === c.id);
+  draft = d ? { to: d.to.join(', '), subject: d.subject, text: d.text } : { to: c.address, subject: '', text: '' };
+  $('status').textContent = d ? '' : `No draft waiting for ${c.first}: write one.`;
   fill();
   showContacts();
   $('text').focus();
@@ -133,6 +135,9 @@ async function start() {
   $('from').textContent = `From ${from}${mode === DEMO ? ' (made up)' : ''}.`;
   setMode(m.why);
   // G3's order: the page opens on the contact list; the draft shows once a contact is picked.
+  // ?contact=<id> opens straight on that contact's draft (for links from the CRM demo).
+  const linked = mode === DEMO ? contactFrom(location.search, box.contacts) : null;
+  if (linked) choose(linked);
   $('draft').classList.toggle('waiting', mode === DEMO && !chosen);
   review();
 }

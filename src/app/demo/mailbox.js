@@ -25,20 +25,23 @@ export function rng(seed) {
 const FIRST = ['Ana', 'Bruno', 'Carla', 'Diogo', 'Eva', 'Filipe', 'Grace', 'Hugo', 'Inês', 'João', 'Kofi', 'Lena', 'Marta', 'Nuno', 'Olu', 'Priya', 'Rui', 'Sofia', 'Tomás', 'Uma'];
 const LAST = ['Almeida', 'Brandt', 'Costa', 'Duarte', 'Evans', 'Ferreira', 'Gomes', 'Haddad', 'Ito', 'Jansen', 'Kowalski', 'Lopes', 'Mensah', 'Novak', 'Okoro', 'Pereira', 'Quinn', 'Ramos', 'Silva', 'Teixeira'];
 // Made-up organisations, each at a subdomain of a reserved example domain.
+// Made-up organisations, named so no one could take them for a real company or event (a.mail.conductor,
+// 23 Nov 2026: a demo that labels a real name "prospect" would name a real prospect), each at a
+// subdomain of a reserved example domain.
 const ORGS = [
-  ['Harbour Analytics', 'harbour.example.com', 'investor'],
-  ['Lisbon Summit', 'summit.example.org', 'event'],
-  ['Northlight Security', 'northlight.example.net', 'prospect'],
-  ['Open Risk Forum', 'riskforum.example.org', 'community'],
-  ['Atlas Insurance', 'atlas.example.com', 'customer'],
-  ['Tagus Ventures', 'tagus.example.net', 'investor'],
-  ['Civic Data Lab', 'civicdata.example.org', 'partner'],
-  ['Meridian Bank', 'meridian.example.com', 'prospect'],
+  ['Example Analytics (demo)', 'analytics.example.com', 'investor'],
+  ['Example Summit (demo)', 'summit.example.org', 'event'],
+  ['Example Security (demo)', 'security.example.net', 'prospect'],
+  ['Example Risk Forum (demo)', 'forum.example.org', 'community'],
+  ['Example Insurance (demo)', 'insurance.example.com', 'customer'],
+  ['Example Ventures (demo)', 'ventures.example.net', 'investor'],
+  ['Example Data Lab (demo)', 'datalab.example.org', 'partner'],
+  ['Example Bank (demo)', 'bank.example.com', 'prospect'],
 ];
 const ROLES = ['CISO', 'Head of Risk', 'Founder', 'Programme lead', 'CTO', 'Partner', 'Analyst', 'Director'];
 // What each kind of contact gets as a first draft: a follow-up after meeting, in plain words.
 const DRAFTS = {
-  investor: ['Following up from Lisbon', 'Hi {first},\n\nThank you for the conversation in Lisbon. As promised, here is a short note on where we are: the email cell now sends from the browser with the person\'s own sign-in, and every send is pressed by a person.\n\nWould a 30-minute call next week suit you?\n\nBest wishes,\n{me}'],
+  investor: ['Following up from the summit', 'Hi {first},\n\nThank you for the conversation at the summit. As promised, here is a short note on where we are: the email cell now sends from the browser with the person\'s own sign-in, and every send is pressed by a person.\n\nWould a 30-minute call next week suit you?\n\nBest wishes,\n{me}'],
   event: ['Thank you for the summit', 'Hi {first},\n\nThank you for having us at the summit. It was a pleasure to meet the team.\n\nIf it helps, I am happy to write a short piece for your newsletter about what we showed.\n\nBest wishes,\n{me}'],
   prospect: ['The demo we talked about', 'Hi {first},\n\nGood to meet you last week. You asked how the review step works before an email leaves: the draft is shown exactly as it will be sent, and nothing goes until a person presses Send.\n\nShall I set up a demo for your team?\n\nBest wishes,\n{me}'],
   community: ['Next forum meeting', 'Hi {first},\n\nI would like to propose a short talk for the next forum meeting on keeping agents to a signed policy.\n\nWould that fit the agenda?\n\nBest wishes,\n{me}'],
@@ -77,7 +80,9 @@ export function demoMailbox({ seed = DEMO_SEED, now = Date.now(), contacts: n = 
   const me = { name: DEMO_ME.name, address: DEMO_ME.address };
   const threads = [], messages = [];
   for (let i = 0; i < n * 2; i++) {
-    const p = people[Math.floor(r() * people.length)];
+    // t-001..t-004 (waiting on a reply) go to p01, p03, p05, p07 and t-005..t-008 (answered) to p02,
+    // p04, p06, p08, so the cases sit at different organisations; the rest are random.
+    const p = i < 8 ? people[(i < 4 ? i * 2 : (i - 4) * 2 + 1)] : people[Math.floor(r() * people.length)];
     const them = { name: p.name, address: p.emails[0] };
     const tid = `t-${pad(i + 1, 3)}`, subject = pick(r, TOPICS);
     let count = 1 + Math.floor(r() * 3);
@@ -121,7 +126,9 @@ export function demoMailbox({ seed = DEMO_SEED, now = Date.now(), contacts: n = 
     const mine = threads.filter((t) => t.person === p.id);
     return { id: p.id, name: p.name, first: p.first, address: p.emails[0], org: orgName[p.org], org_id: p.org, role: p.role, kind: p.kind, threads: mine.length, last_contact: mine.length ? Date.parse(mine[0].last_date) : 0 };
   });
-  const drafts = contacts.map((c) => draftFor(c, DEMO_ME));
+  // Contrast (a.mail.conductor, 23 Nov 2026): not everyone has a draft waiting. People p01 to p04
+  // always do (the CRM demo's cases); the rest about half the time, from the seed.
+  const drafts = contacts.filter((c, i) => i < 4 || r() < 0.4).map((c) => draftFor(c, DEMO_ME));
   const labels = [{ id: 'INBOX', name: 'Inbox', type: 'system' }, { id: 'SENT', name: 'Sent', type: 'system' }, { id: 'UNREAD', name: 'Unread', type: 'system' }];
   return { me: DEMO_ME, orgs, people, contacts, threads, messages, drafts, labels, generated: { seed, at: new Date(now).toISOString(), synthetic: true } };
 }

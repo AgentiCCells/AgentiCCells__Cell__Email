@@ -19,6 +19,13 @@ export function modeFor({ search = '', token = null, now = Date.now() } = {}) {
   return { mode: REAL, why: '' };
 }
 
+// The contact named by ?contact=<id> (for links from the CRM demo), or null. Demo mode only: with a
+// real mailbox there is no contact list yet.
+export function contactFrom(search, contacts) {
+  const id = new URLSearchParams(search).get('contact');
+  return (id && contacts.find((c) => c.id === id)) || null;
+}
+
 // Contacts matching what was typed (name, address or organisation), most recent first.
 export function filterContacts(contacts, q = '') {
   const words = String(q).toLowerCase().split(/\s+/).filter(Boolean);

@@ -3,7 +3,7 @@
 // By mail.dev.a@AgentiCCells.dinis, 2026-11-23. Apache-2.0.
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { DEMO, REAL, modeFor, filterContacts, toMessage, check, confirmText, sendRecord, sentTodayQuery } from '../src/app/compose.js';
+import { DEMO, REAL, modeFor, contactFrom, filterContacts, toMessage, check, confirmText, sendRecord, sentTodayQuery } from '../src/app/compose.js';
 import { demoMailbox, draftFor, FakeGmail, DEMO_ME } from '../src/app/demo/mailbox.js';
 import { rawMessage, MAX_PER_DAY } from '../src/app/send.js';
 
@@ -140,4 +140,24 @@ test('the demo twin has the CRM demo\'s cases: 4 threads waiting on a reply 5 to
   assert.ok(answered.length >= 4, `answered ${answered.length}`);
   for (const m of box.messages) assert.ok(Date.parse(m.date) <= NOW, m.id);
   for (const d of box.drafts) assert.match(d.org, /^o\d\d$/);
+});
+
+test('contrast: not everyone has a draft, and the waiting threads sit at different organisations', () => {
+  const box = demoMailbox({ now: NOW });
+  assert.ok(box.drafts.length >= 4 && box.drafts.length < box.people.length, `drafts ${box.drafts.length}`);
+  const org = (pid) => box.people.find((p) => p.id === pid).org;
+  const waitingOrgs = new Set(box.threads.filter((t) => ['t-001', 't-002', 't-003', 't-004'].includes(t.id)).map((t) => org(t.person)));
+  assert.equal(waitingOrgs.size, 4);
+  assert.ok(waitingOrgs.size < box.orgs.length);
+});
+
+test('organisation names say they are made up', () => {
+  for (const o of demoMailbox({ now: NOW }).orgs) assert.match(o.name, /^Example .+ \(demo\)$/);
+});
+
+test('?contact=<id> picks that contact; an unknown id picks nobody', () => {
+  const box = demoMailbox({ now: NOW });
+  assert.equal(contactFrom('?demo&contact=p03', box.contacts).id, 'p03');
+  assert.equal(contactFrom('?demo&contact=nobody', box.contacts), null);
+  assert.equal(contactFrom('?demo', box.contacts), null);
 });
