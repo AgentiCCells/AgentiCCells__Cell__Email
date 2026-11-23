@@ -78,30 +78,65 @@ export function whyNotWritable(vault, manifest, { isTwin = false } = {}) {
   return null;
 }
 
-// One file, one commit, published with compare-and-swap (merging if someone published first), as the
-// Email Cell's vault.js does. `text` null removes the file. The access token is used for this call only.
-// The library names the commit itself ("Add <file>", "Edit <file>", "Remove <file>").
-export async function writeOne(vault, token, path, text) {
+export function randomPassphrase(n = 24) {
+  const abc = 'abcdefghijklmnopqrstuvwxyz0123456789', out = [];
+  while (out.length < n) for (const b of crypto.getRandomValues(new Uint8Array(n))) if (b < 252 && out.length < n) out.push(abc[b % 36]);
+  return out.join('');
+}
+
+// Make a new CRM vault on the vault service, with the person's access token, and write its first
+// files in one commit. Returns { vault, key }: the key is shown to the person once, to keep.
+export async function createCrmVault(token, files, { name = 'CRM' } = {}) {
+  const { SGSend, SGVault } = lib();
+  const vault = await SGVault.create(new SGSend({ endpoint: ENDPOINT, token }), randomPassphrase(), { name, description: 'A CRM vault, made by the CRM tool site' });
+  await writeFiles(vault, token, files);
+  return { vault, key: 'sgit_private_' + 'vault_' + vault.getVaultKey() };
+}
+
+async function ensureFolder(vault, folder) {
+  let at = '';
+  for (const part of folder.split('/').filter(Boolean)) {
+    const parent = at || '/';
+    at += '/' + part;
+    if (vault.needsLoading(parent)) await vault.loadSubTreeOnDemand(parent);
+    if (!vault.listFolder(at)) await vault.createFolder(at);
+    else if (vault.needsLoading(at)) await vault.loadSubTreeOnDemand(at);
+  }
+}
+
+async function publish(vault) {
+  if (vault._refManager.lastRawRef(vault._refFileId) === undefined) await vault.getBehindCount();
+  try { await vault.pushIfMatch(); return; } catch (e) { if (e.code !== 'ECAS') throw e; }
+  const theirs = await vault._refManager.readRef(vault._refFileId);
+  const r = await vault.merge(theirs, { publish: false });
+  if (r.conflicts.length) throw new Error('conflicts: ' + r.conflicts.join(', '));
+  await vault.pushIfMatch();
+}
+
+// Write files, [{ path, text }] (text null removes the file), then publish with compare-and-swap,
+// merging if someone published first, as the Email Cell's vault.js does. New files go in one commit;
+// changed and removed files are one commit each (the library names them: "Add", "Edit", "Remove").
+// The access token is used for this call only.
+export async function writeFiles(vault, token, files) {
   vault._sgSend.token = token || '';
   try {
-    const parts = path.split('/'), name = parts.pop(), folder = '/' + parts.join('/');
-    let at = '';
-    for (const part of parts) {
-      const parent = at || '/';
-      at += '/' + part;
-      if (vault.needsLoading(parent)) await vault.loadSubTreeOnDemand(parent);
-      if (!vault.listFolder(at)) { if (text == null) throw new Error('nothing to remove'); await vault.createFolder(at); }
-      else if (vault.needsLoading(at)) await vault.loadSubTreeOnDemand(at);
+    const split = (p) => { const parts = p.split('/'); const name = parts.pop(); return { folder: '/' + parts.join('/'), name }; };
+    const exists = ({ folder, name }) => (vault.listFolder(folder) || []).some((e) => e.name === name && e.type === 'file');
+    const fresh = [], other = [];
+    for (const f of files) {
+      const at = split(f.path);
+      if (f.text == null) { if (vault.needsLoading(at.folder)) await vault.loadSubTreeOnDemand(at.folder); if (!exists(at)) throw new Error(`nothing to remove at ${f.path}`); other.push({ ...f, ...at }); continue; }
+      await ensureFolder(vault, at.folder);
+      (exists(at) ? other : fresh).push({ ...f, ...at });
     }
-    const exists = (vault.listFolder(folder) || []).some((e) => e.name === name && e.type === 'file');
-    if (text == null) { if (!exists) throw new Error('nothing to remove'); await vault.removeFile(folder, name); }
-    else if (exists) await vault.updateFile(folder, name, new TextEncoder().encode(text));
-    else await vault.addFile(folder, name, new TextEncoder().encode(text));
-    if (vault._refManager.lastRawRef(vault._refFileId) === undefined) await vault.getBehindCount();
-    try { await vault.pushIfMatch(); return; } catch (e) { if (e.code !== 'ECAS') throw e; }
-    const theirs = await vault._refManager.readRef(vault._refFileId);
-    const r = await vault.merge(theirs, { publish: false });
-    if (r.conflicts.length) throw new Error('conflicts: ' + r.conflicts.join(', '));
-    await vault.pushIfMatch();
+    if (fresh.length) await vault.addFiles(fresh.map((f) => ({ folderPath: f.folder, fileName: f.name, fileData: new TextEncoder().encode(f.text) })));
+    for (const f of other) {
+      if (f.text == null) await vault.removeFile(f.folder, f.name);
+      else await vault.updateFile(f.folder, f.name, new TextEncoder().encode(f.text));
+    }
+    await publish(vault);
   } finally { vault._sgSend.token = ''; }
 }
+
+// One file: kept for callers that write a single link.
+export const writeOne = (vault, token, path, text) => writeFiles(vault, token, [{ path, text }]);

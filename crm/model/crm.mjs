@@ -211,3 +211,54 @@ export function linkFile(v, { thread, org, person = null, by, at }) {
   if (!ISO.test(at || '')) throw new Error('a link needs its time, as an ISO time');
   return { path: `crm/links/${thread}.json`, record, text: JSON.stringify(record, null, 2) + '\n' };
 }
+
+// Companies and people a person adds by hand, in their own CRM vault. The fields are the shared demo
+// twin's (demo.org/1, demo.person/1, agreed with mail.dev.a), under the CRM's own schema names, so a
+// reader of one reads the other. Ids are random, so two devices adding at once do not collide.
+export const KINDS = ['prospect', 'customer', 'investor', 'partner', 'event', 'community', 'other'];
+const EMAIL = /^[^\s@<>"]+@[a-z0-9-]+(\.[a-z0-9-]+)+$/i;
+const DOMAIN = /^[a-z0-9-]+(\.[a-z0-9-]+)+$/;
+export const newId = (prefix, rand = () => crypto.getRandomValues(new Uint8Array(4))) =>
+  prefix + '-' + Array.from(rand(), (b) => b.toString(16).padStart(2, '0')).join('');
+
+// A new company and its lead row: two files, written together. Throws with a plain reason.
+export function companyFiles(v, { id, name, domain = '', kind = 'prospect', owner, at, stage = 'new', next_step = '' }) {
+  name = String(name || '').trim(); domain = String(domain || '').trim().toLowerCase();
+  if (!name) throw new Error('a company needs a name');
+  if (domain && !DOMAIN.test(domain)) throw new Error(`"${domain}" is not a domain (like example.com)`);
+  if (domain && v.orgs.some((o) => (o.domain || '').toLowerCase() === domain)) throw new Error(`a company with domain ${domain} is already here`);
+  if (v.orgs.some((o) => o.name.toLowerCase() === name.toLowerCase())) throw new Error(`"${name}" is already here`);
+  if (!KINDS.includes(kind)) throw new Error(`unknown kind ${kind}`);
+  if (!owner) throw new Error('a lead needs an owner');
+  if (!ISO.test(at || '')) throw new Error('needs the time, as an ISO time');
+  const org = { schema: 'crm.org/1', id, name, ...(domain ? { domain } : {}), kind, added_by: owner, added_at: at };
+  const lead = { schema: 'crm.lead/1', org: id, stage, owner, ...(next_step ? { next_step } : {}), updated_at: at };
+  return [
+    { path: `orgs/${id}.json`, record: org, text: JSON.stringify(org, null, 2) + '\n' },
+    { path: `crm/leads/${id}.json`, record: lead, text: JSON.stringify(lead, null, 2) + '\n' },
+  ];
+}
+
+// A new person at a company: one file.
+export function personFile(v, { id, name, email, org, role = '', by, at }) {
+  name = String(name || '').trim(); email = String(email || '').trim().toLowerCase();
+  if (!name) throw new Error('a person needs a name');
+  if (!EMAIL.test(email)) throw new Error(`"${email}" is not an email address`);
+  if (!v.orgs.some((o) => o.id === org)) throw new Error(`no such company ${org}`);
+  if (v.people.some((p) => (p.emails || []).map((e) => e.toLowerCase()).includes(email))) throw new Error(`${email} is already here`);
+  if (!ISO.test(at || '')) throw new Error('needs the time, as an ISO time');
+  const first = name.split(/\s+/)[0];
+  const person = { schema: 'crm.person/1', id, name, first, emails: [email], org, ...(role ? { role: String(role).trim() } : {}), added_by: by, added_at: at };
+  return [{ path: `people/${id}.json`, record: person, text: JSON.stringify(person, null, 2) + '\n' }];
+}
+
+// A new CRM vault's first files: its manifest (which marks it as a CRM vault the page may write to)
+// and the stages.
+export function newVaultFiles({ owner, at }) {
+  if (!owner) throw new Error('a CRM vault needs an owner name');
+  const manifest = { schema: 'crm.vault/1', synthetic: false, owner, created_at: at, created_by: 'CRM tool site (crm.tool.sovereignweb.site)', twin: null };
+  return [
+    { path: 'manifest.json', text: JSON.stringify(manifest, null, 2) + '\n' },
+    { path: 'crm/stages.json', text: JSON.stringify({ schema: 'crm.stages/1', stages: STAGES }, null, 2) + '\n' },
+  ];
+}

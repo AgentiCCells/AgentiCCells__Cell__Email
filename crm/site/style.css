@@ -39,3 +39,6 @@ button.quiet { background: transparent; color: var(--accent); }
 button.small { font-size: 12px; padding: 1px 8px; }
 button:disabled { opacity: .5; cursor: not-allowed; }
 select { font: inherit; font-size: 13px; }
+.add { margin: 8px 0 12px; } .add summary { cursor: pointer; color: var(--accent); }
+.add .open { margin: 8px 0; } .open input:not([type=checkbox]), .open select { font: inherit; padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); }
+input.key { font: 13px ui-monospace, monospace; width: min(100%, 640px); padding: 6px; }

@@ -23,6 +23,14 @@ cd crm/_build/site && python3 -m http.server
 
 then open http://localhost:8000.
 
+## Start your own CRM vault
+
+On **Open your vault**, under **Start a new CRM vault**: give your name and your SG/Send access token and press **Create my CRM vault**. The page makes an empty, encrypted vault on the vault service, marked as a CRM vault and as yours, and opens it. It then shows the vault's key once: copy it into a password manager before pressing **I have saved it**. Without the key, nobody can open the vault again, including you.
+
+## Add your companies and contacts
+
+On the lead board, **Add a company** (name, domain, kind, next step) prepares two files: the company and its lead row. On a company's page, **Add a person** (name, email, role) prepares one. The page shows them; only **Write it** writes them to your vault. Contacts live only in your own vault, never on this site or in a repository.
+
 ## Open your own vault
 
 1. Press **Open your vault**.

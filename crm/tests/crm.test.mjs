@@ -162,3 +162,30 @@ test('writes go only to a writable vault marked as a CRM vault, never the twin',
   assert.match(whyNotWritable(w, { schema: 'crm.vault/1' }, { isTwin: true }), /mail twin/);
   assert.match(whyNotWritable(null, null), /no CRM vault/);
 });
+
+test('adding companies and people: the exact files, and refusals', async () => {
+  const { companyFiles, personFile, newVaultFiles, newId } = await import('../model/crm.mjs');
+  const v = readVault(twin());
+  const at = '2026-11-23T23:40:00Z';
+  const [org, lead] = companyFiles(v, { id: 'o-0a0b0c0d', name: 'Example Newco (demo)', domain: 'Newco.Example.com', kind: 'prospect', owner: 'Owner A', at, next_step: 'Say hello' });
+  assert.equal(org.path, 'orgs/o-0a0b0c0d.json');
+  assert.deepEqual(org.record, { schema: 'crm.org/1', id: 'o-0a0b0c0d', name: 'Example Newco (demo)', domain: 'newco.example.com', kind: 'prospect', added_by: 'Owner A', added_at: at });
+  assert.deepEqual(lead.record, { schema: 'crm.lead/1', org: 'o-0a0b0c0d', stage: 'new', owner: 'Owner A', next_step: 'Say hello', updated_at: at });
+  assert.throws(() => companyFiles(v, { id: 'x', name: '', owner: 'a', at }), /needs a name/);
+  assert.throws(() => companyFiles(v, { id: 'x', name: 'Other', domain: 'analytics.example.com', owner: 'a', at }), /already here/);
+  assert.throws(() => companyFiles(v, { id: 'x', name: 'Example Analytics (demo)', owner: 'a', at }), /already here/);
+  assert.throws(() => companyFiles(v, { id: 'x', name: 'Other', domain: 'not a domain', owner: 'a', at }), /not a domain/);
+  const v2 = readVault({ ...twin(), [org.path]: org.text, [lead.path]: lead.text });
+  assert.deepEqual(checkCrm(v2), []);
+  const [p] = personFile(v2, { id: 'p-01020304', name: 'Ana Example', email: 'Ana@Newco.Example.com', role: 'CTO', org: 'o-0a0b0c0d', by: 'Owner A', at });
+  assert.deepEqual(p.record, { schema: 'crm.person/1', id: 'p-01020304', name: 'Ana Example', first: 'Ana', emails: ['ana@newco.example.com'], org: 'o-0a0b0c0d', role: 'CTO', added_by: 'Owner A', added_at: at });
+  assert.throws(() => personFile(v2, { id: 'x', name: 'A', email: 'nope', org: 'o-0a0b0c0d', at }), /not an email/);
+  assert.throws(() => personFile(v2, { id: 'x', name: 'A', email: 'ana.costa@analytics.example.com', org: 'o01', at }), /already here/);
+  assert.throws(() => personFile(v2, { id: 'x', name: 'A', email: 'a@b.example.com', org: 'o99', at }), /no such company/);
+  const board = leadBoard(readVault({ ...twin(), [org.path]: org.text, [lead.path]: lead.text, [p.path]: p.text }), NOW);
+  assert.equal(board.find((r) => r.org === 'o-0a0b0c0d').people, 1);
+  const nv = newVaultFiles({ owner: 'Owner A', at });
+  assert.deepEqual(nv.map((f) => f.path), ['manifest.json', 'crm/stages.json']);
+  assert.equal(JSON.parse(nv[0].text).schema, 'crm.vault/1');
+  assert.match(newId('o', () => new Uint8Array([1, 2, 3, 255])), /^o-010203ff$/);
+});

@@ -15,6 +15,7 @@ All times are UTC on 23 November 2026. Each time says where it comes from: **git
 | R6 | Delete vault a5a7rrbl | crm.dev.a → Dinis | git 15:12 (fc876c9) | Dinis's word between git 15:30 and 15:38; deleted before git 15:38 | 18 to 26 min | done |
 | R7 | Is anyone moving the Gmail tool to Site__Tool__Gmail? | Dinis → crm.dev.a → a.maestro, a.mail.conductor | clock 23:35 (git 89ba687) | – | open | **open** |
 | R8 | Which "feedback loop" pattern the CRM should use | crm.dev.a → a.maestro | clock 23:35 | – | open | **open** |
+| R10 | Delete test vault tezq66k0 (made-up data, made by the browser check) | crm.dev.a → Dinis | clock 23:39 | – | open | **open**, low priority |
 | R9 | Tell me when Site__Tool__CRM exists and is attached here | crm.dev.a → a.maestro | clock 23:35 | – | open | **open**, part of R2 |
 
 ## What this shows so far

@@ -4,8 +4,8 @@
 // person's own keys, in this browser only (vault.js); remembered keys are sealed to this browser's
 // own key with the Email Cell's pki.js keep/recall, unedited.
 // By crm.dev.a@AgentiCCells.dinis, 2026-11-23. Apache-2.0.
-import { readVault, checkCrm, leadBoard, followUps, company, contacts, unlinkedThreads, linkFile, FOLLOW_UP_DAYS } from './crm.mjs';
-import { keyKind, openVault, readAll, merge, whyNotWritable, writeOne } from './vault.js';
+import { readVault, checkCrm, leadBoard, followUps, company, contacts, unlinkedThreads, linkFile, companyFiles, personFile, newVaultFiles, newId, KINDS, FOLLOW_UP_DAYS } from './crm.mjs';
+import { keyKind, openVault, readAll, merge, whyNotWritable, writeFiles, createCrmVault } from './vault.js';
 import { identity, existingIdentity, keep, recall, forget, kept } from './pki.js';
 
 const $ = (s) => document.querySelector(s);
@@ -13,7 +13,10 @@ const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '
 const day = (iso) => (iso ? iso.slice(0, 10) : '–');
 let V = null, NOW = 0, MODE = 'demo', OPENED = null, SYNTHETIC = true;
 // The open CRM vault (never the twin), its manifest, and the access token for writing: memory only.
-let CRMV = null, CRM_MANIFEST = null, TOKEN = '', PENDING = null;
+let CRMV = null, CRM_MANIFEST = null, TOKEN = '', PENDING = null, FILES = {}, NEWKEY = null;
+const nowIso = () => new Date().toISOString().replace(/\.\d+Z$/, 'Z');
+const canEdit = () => MODE === 'demo' || !whyNotWritable(CRMV, CRM_MANIFEST);
+const me = () => (MODE === 'demo' ? 'Owner A' : CRM_MANIFEST?.owner || 'the vault owner');
 const idOf = (key) => (String(key).trim().match(/:([a-z0-9]{4,32})$/) || [])[1] || '?';
 // The Email Cell's send screen, where a draft is reviewed and sent. In demo mode it opens the same
 // synthetic contact (person id) in its own demo. Parameters agreed with mail.dev.a@AgentiCCells.dinis:
@@ -38,7 +41,8 @@ function setMode(mode, label, synthetic) {
 async function loadDemo() {
   const b = await (await fetch('demo/twin.json')).json();
   if (!b.synthetic) throw new Error('the demo bundle is not marked synthetic');
-  V = readVault(b.files);
+  FILES = { ...b.files };
+  V = readVault(FILES);
   // The demo's clock is the twin's, so "5 days" means the same on every visit.
   NOW = Date.parse(V.manifest.generated_at);
   OPENED = null; CRMV = null; CRM_MANIFEST = null; TOKEN = ''; PENDING = null;
@@ -72,6 +76,7 @@ async function loadVault(crmKey, twinKey, remember, status, token = '') {
   }
   CRMV = crmVault; CRM_MANIFEST = m.crmManifest; TOKEN = token || ''; PENDING = null;
   const synthetic = !!(v.manifest?.synthetic || m.crmManifest?.synthetic);
+  FILES = m.files;
   V = v;
   NOW = synthetic && v.manifest?.generated_at ? Date.parse(v.manifest.generated_at) : Date.now();
   OPENED = idOf(crmKey) + (twinKey ? ' + ' + idOf(twinKey) : '');
@@ -91,7 +96,24 @@ async function openPage() {
     <label class="check"><input id="remember" type="checkbox"> Remember on this device, sealed to this browser's own key</label>
     <button type="submit">Open</button>
   </form>
-  <p id="status" class="muted" role="status"></p>`;
+  <p id="status" class="muted" role="status"></p>
+  <h2>Start a new CRM vault</h2>
+  <p>Makes an empty, encrypted CRM vault on the vault service with your access token, marked as yours. Your companies and contacts then live there, not on this site. You get its key once: keep it safe.</p>
+  <form id="create" class="open" autocomplete="off">
+    <label>Your name <span class="muted">(owner of the vault and its leads)</span> <input id="c-owner" type="text" required></label>
+    <label>SG/Send access token <input id="c-token" type="password" spellcheck="false" required></label>
+    <label class="check"><input id="c-remember" type="checkbox"> Remember the vault on this device, sealed to this browser's own key</label>
+    <button type="submit">Create my CRM vault</button>
+  </form>
+  <p id="c-status" class="muted" role="status"></p>`;
+}
+
+function newKeyPanel() {
+  if (!NEWKEY) return '';
+  return `<section class="pending" id="newkey"><h2>Your new CRM vault: ${esc(idOf(NEWKEY))}</h2>
+  <p>This is its key. It is the only way back into the vault, and this page will not show it again. Copy it somewhere safe (a password manager) now.</p>
+  <p><input id="nk" type="text" readonly value="${esc(NEWKEY)}" class="key"> <button type="button" id="nk-copy" class="quiet">Copy</button></p>
+  <p><button type="button" id="nk-done">I have saved it</button></p></section>`;
 }
 
 function wireOpen() {
@@ -114,6 +136,20 @@ function wireOpen() {
     } catch (e) { status('Could not open: ' + e.message, true); }
   });
   $('#forget')?.addEventListener('click', async () => { await forget('vault:crm'); await forget('vault:twin'); await forget('token:sg-send'); route(); });
+  $('#create')?.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const st = (t, bad) => { $('#c-status').textContent = t; $('#c-status').className = bad ? 'warn' : 'muted'; };
+    const owner = $('#c-owner').value.trim(), token = $('#c-token').value.trim(), remember = $('#c-remember').checked;
+    if (!owner || !token) return st('Your name and your access token are both needed.', true);
+    $('#c-token').value = '';
+    try {
+      st('Making your vault…');
+      const { key } = await createCrmVault(token, newVaultFiles({ owner, at: nowIso() }));
+      st('Opening it…');
+      await loadVault(key, null, remember, st, token);
+      NEWKEY = key; location.hash = '#/board'; route();
+    } catch (e) { st('Not made: ' + e.message, true); }
+  });
   $('#to-demo')?.addEventListener('click', () => loadDemo().then(() => { location.hash = '#/board'; route(); }));
 }
 
@@ -131,7 +167,7 @@ function board() {
   const q = new URLSearchParams(location.hash.split('?')[1] || '');
   const owner = q.get('owner') || '';
   const shown = rows.filter((r) => !owner || r.owner === owner);
-  return `<h1>Lead board</h1>
+  return `<h1>Lead board</h1>${addCompanyForm()}
   <p class="filters">Owner: <a href="#/board" class="${owner ? '' : 'on'}">all</a> ${owners.map((o) => `<a href="#/board?owner=${esc(o)}" class="${o === owner ? 'on' : ''}">${esc(o)}</a>`).join(' ')}</p>
   <div class="scroll"><table class="grid">
   <thead><tr><th>Company</th><th>Stage</th><th>Owner</th><th>Draft</th><th>Last contact</th><th>Next step</th></tr></thead>
@@ -158,7 +194,7 @@ function companyPage(id) {
     <dt>Next step</dt><dd>${esc(c.next_step || '–')} ${c.next_step_due ? `<span class="${c.overdue ? 'warn' : 'muted'}">(${c.overdue ? 'overdue, ' : 'due '}${c.next_step_due})</span>` : ''}</dd>
     <dt>Draft</dt><dd>${draftBadge(c.draft, c.org)}</dd>
   </dl>
-  <h2>People</h2>
+  <h2>People</h2>${addPersonForm(c.org)}
   <ul class="list">${c.contacts.map((p) => `<li>${esc(p.name)} <span class="muted">${esc(p.role || '')} · ${esc((p.emails || [])[0] || '')}</span></li>`).join('') || '<li class="muted">None yet</li>'}</ul>
   <h2>Mail threads</h2>
   <ul class="list">${c.threads.map((t) => `<li id="t-${esc(t.id)}"><strong>${esc(t.subject)}</strong> <span class="muted">${day(t.last_date)} · ${t.direction === 'outbound' ? 'we wrote last' : 'they wrote last'} · ${esc(who(t.person))} · ${t.linked ? 'linked' : 'matched by address'}</span> ${linkButton(t.id, t.linked ? null : c.org, t.person)}</li>`).join('') || '<li class="muted">None</li>'}</ul>
@@ -197,26 +233,24 @@ function threadsPage() {
 
 function pendingPanel() {
   if (!PENDING) return '';
-  const where = MODE === 'demo' ? 'the demo, in this tab only: nothing is written anywhere' : `your CRM vault ${esc(OPENED.split(' + ')[0])}, as one commit`;
+  const where = MODE === 'demo' ? 'the demo, in this tab only: nothing is written anywhere' : `your CRM vault ${esc(OPENED.split(' + ')[0])}`;
   const blocked = MODE === 'vault' ? whyNotWritable(CRMV, CRM_MANIFEST) : null;
-  return `<section class="pending" id="pending"><h2>${PENDING.text == null ? 'Remove this link?' : 'Write this link?'}</h2>
-  <p>To ${where}:</p><p><code>${esc(PENDING.path)}</code></p>
-  ${PENDING.text == null ? '<p>The file will be removed. The vault keeps it in its history.</p>' : `<pre>${esc(PENDING.text)}</pre>`}
+  const files = PENDING.files.map((f) => `<p><code>${esc(f.path)}</code>${f.text == null ? ' <span class="warn">removed (the vault keeps it in its history)</span>' : ''}</p>${f.text == null ? '' : `<pre>${esc(f.text)}</pre>`}`).join('');
+  return `<section class="pending" id="pending"><h2>${esc(PENDING.title)}</h2>
+  <p>${PENDING.files.length === 1 ? 'This file' : `These ${PENDING.files.length} files`} will be written to ${where}:</p>${files}
   ${blocked ? `<p class="warn">Cannot write: ${esc(blocked)}.</p>` : ''}
   ${MODE === 'vault' && !blocked && !TOKEN ? '<label>SG/Send access token, for this write <input id="w-token" type="password" spellcheck="false"></label>' : ''}
-  <p><button type="button" id="w-go"${blocked ? ' disabled' : ''}>${PENDING.text == null ? 'Remove it' : 'Write it'}</button> <button type="button" id="w-cancel" class="quiet">Cancel</button></p>
+  <p><button type="button" id="w-go"${blocked ? ' disabled' : ''}>Write it</button> <button type="button" id="w-cancel" class="quiet">Cancel</button></p>
   <p id="w-status" class="muted" role="status"></p></section>`;
 }
 
-function askLink(thread, org, person) {
-  const by = MODE === 'demo' ? 'Demo user' : (CRM_MANIFEST?.owner || 'the vault owner');
-  try {
-    const f = linkFile(V, { thread, org, person: person || null, by, at: new Date().toISOString().replace(/\.\d+Z$/, 'Z') });
-    PENDING = { thread, path: f.path, text: f.text, record: f.record };
-  } catch (e) { PENDING = null; alert('That link would not check out: ' + e.message); }
+function ask(title, make) {
+  try { PENDING = { title, files: make() }; }
+  catch (e) { const el = $('#form-error'); if (el) el.textContent = e.message; else alert(e.message); return; }
   route();
 }
-function askUnlink(thread) { PENDING = { thread, path: `crm/links/${thread}.json`, text: null }; route(); }
+const askLink = (thread, org, person) => ask('Link this thread?', () => [linkFile(V, { thread, org, person: person || null, by: me(), at: nowIso() })]);
+const askUnlink = (thread) => ask('Remove this link?', () => [{ path: `crm/links/${thread}.json`, text: null }]);
 
 async function doPending() {
   const st = (t, bad) => { $('#w-status').textContent = t; $('#w-status').className = bad ? 'warn' : 'muted'; };
@@ -224,14 +258,39 @@ async function doPending() {
   if (MODE === 'vault') {
     const token = TOKEN || $('#w-token')?.value.trim();
     if (!token) return st('Writing needs your SG/Send access token.', true);
-    $('#w-go').disabled = true; st('Writing one commit to your vault…');
-    try { await writeOne(CRMV, token, p.path, p.text); } catch (e) { $('#w-go').disabled = false; return st('Not written: ' + e.message, true); }
+    $('#w-go').disabled = true; st('Writing to your vault…');
+    try { await writeFiles(CRMV, token, p.files.map(({ path, text }) => ({ path, text }))); } catch (e) { $('#w-go').disabled = false; return st('Not written: ' + e.message, true); }
   }
-  V = { ...V, links: p.text == null ? V.links.filter((k) => k.thread !== p.thread) : [...V.links.filter((k) => k.thread !== p.thread), p.record] };
+  for (const f of p.files) { if (f.text == null) delete FILES[f.path]; else FILES[f.path] = f.text; }
+  V = readVault(FILES);
   PENDING = null; route();
 }
 
+// Forms to add a company (with its lead row) and a person. They only prepare the files: the panel
+// above shows them, and only "Write it" writes.
+function addCompanyForm() {
+  if (!canEdit()) return '';
+  return `<details class="add"><summary>Add a company</summary><form id="add-org" class="open" autocomplete="off">
+    <label>Name <input id="o-name" required></label>
+    <label>Domain <span class="muted">(optional, like example.com)</span> <input id="o-domain"></label>
+    <label>Kind <select id="o-kind">${KINDS.map((k) => `<option>${k}</option>`).join('')}</select></label>
+    <label>Next step <span class="muted">(optional)</span> <input id="o-next"></label>
+    <button type="submit">Show what will be written</button> <span id="form-error" class="warn"></span></form></details>`;
+}
+function addPersonForm(org) {
+  if (!canEdit()) return '';
+  return `<details class="add"><summary>Add a person</summary><form id="add-person" data-org="${esc(org)}" class="open" autocomplete="off">
+    <label>Name <input id="p-name" required></label>
+    <label>Email <input id="p-email" type="email" required></label>
+    <label>Role <span class="muted">(optional)</span> <input id="p-role"></label>
+    <button type="submit">Show what will be written</button> <span id="form-error" class="warn"></span></form></details>`;
+}
+
 function wireActions() {
+  $('#add-org')?.addEventListener('submit', (ev) => { ev.preventDefault(); ask('Add this company?', () => companyFiles(V, { id: newId('o'), name: $('#o-name').value, domain: $('#o-domain').value, kind: $('#o-kind').value, next_step: $('#o-next').value.trim(), owner: me(), at: nowIso() })); });
+  $('#add-person')?.addEventListener('submit', (ev) => { ev.preventDefault(); ask('Add this person?', () => personFile(V, { id: newId('p'), name: $('#p-name').value, email: $('#p-email').value, role: $('#p-role').value, org: ev.target.dataset.org, by: me(), at: nowIso() })); });
+  $('#nk-copy')?.addEventListener('click', () => { $('#nk').select(); navigator.clipboard?.writeText($('#nk').value).catch(() => {}); });
+  $('#nk-done')?.addEventListener('click', () => { NEWKEY = null; route(); });
   for (const b of document.querySelectorAll('[data-link]')) b.addEventListener('click', () => {
     const org = b.dataset.pick ? document.querySelector(`select[data-for="${b.dataset.link}"]`).value : b.dataset.org;
     const person = V.people.find((x) => x.id === b.dataset.person)?.org === org ? b.dataset.person : null;
@@ -246,7 +305,7 @@ async function route() {
   const [path] = (location.hash.slice(1) || '/board').split('?');
   const [, page, id] = path.split('/');
   const body = page === 'open' ? await openPage() : page === 'company' ? companyPage(id) : page === 'threads' ? threadsPage() : page === 'follow-ups' ? followUpsPage() : page === 'contacts' ? contactsPage() : board();
-  $('#main').innerHTML = pendingPanel() + body;
+  $('#main').innerHTML = newKeyPanel() + pendingPanel() + body;
   if (page === 'open') wireOpen();
   wireActions();
   if (PENDING) $('#pending')?.scrollIntoView();
