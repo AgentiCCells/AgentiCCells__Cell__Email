@@ -1,0 +1,43 @@
+{
+  "agent": "mail.conductor.a@AgentiCCells.dinis",
+  "name": "a.mail.conductor (AgentiCCells)",
+  "role": "Conductor of account A's Gmail and CRM team: a.mail.dev, a.crm.dev, later a.desk.dev",
+  "session": "named in the Claude-Session trailer of this agent's commits",
+  "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
+  "branch": "work/mail.conductor.a",
+  "updated": "2026-11-23T15:25Z",
+  "state": "day 1: read in, key made, plan written; team briefed",
+  "key": {
+    "label": "mail-conductor-a-agenticcells",
+    "public": "team/keys/mail-conductor-a-agenticcells.json",
+    "fingerprint": "sha256:00f1dc169f01ed19",
+    "signing_fingerprint": "sha256:9059ed3d9a216e52",
+    "made": "2026-11-23 ~15:20 UTC with sgit-ai 0.27.0; private halves only in this session's container",
+    "merged": false
+  },
+  "read": [
+    "CLAUDE.md, README.md, REALITY.md (dev at 189ac49)",
+    "board/handovers/2026-11-21-cell-email-b-to-cell-email-d.md",
+    "work/email.pm.d: board/2026-11-22-waits-on-dinis.md (W1 to W19, last updated 23 Nov 05:06 UTC)",
+    "branch heads of work/email.dev.d, email.pm.d, email.design.d(-r2), email.workflows.d(-r2), cell.email.d, release/next2 (git, 23 Nov ~15:15 UTC)",
+    "PrompTugal__News__Website: board/team/maestro.a/decisions/2026-11-23-scale-phase-and-gmail-crm-focus.md, 2026-11-23-decision-batches-get-a-presentation-and-video.md, board/team/maestro.a/status.json, board/team/maestros/from-a.md",
+    "PrompTugal__News__Website: board/team/maestro.c/briefs/2026-11-23-gmail-and-crm.pdf (text)"
+  ],
+  "not_read": [
+    "board/team/maestro.a/decisions/2026-11-23-gmail-crm-go.md: not on PrompTugal__News__Website main at 0c35bb06 (15:15 UTC); the G1 to G5 options are known here only by Dinis's one-line answer",
+    "the briefing artifact BNqtGyScuXtq8veSV9ZyYj (private page)"
+  ],
+  "facts_checked": {
+    "live": "v0.1.51 at 189ac49 (https://email-cell.agenticcells.site/version.json, 23 Nov ~15:20 UTC)",
+    "hold": "no board/HOLD.md on dev",
+    "release_next2": "92bb7de, 28 commits ahead of dev, waits on Dinis's W13 in email.dev.d's session"
+  },
+  "asks": [
+    "Dinis: approve a.crm.dev's pending add-repo prompt (its session is blocked on it)",
+    "a.maestro: push the 2026-11-23-gmail-crm-go.md record so the team reads G1 to G5 in full"
+  ],
+  "log": [
+    "2026-11-23T15:20Z | own call (03:00 UTC rule) | made key mail-conductor-a-agenticcells; public half on this branch for Dinis to merge",
+    "2026-11-23T15:25Z | own call | team/mail.conductor.a/ and the day-1 plan on work/mail.conductor.a"
+  ]
+}
