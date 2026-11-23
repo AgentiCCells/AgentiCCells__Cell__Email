@@ -9,7 +9,7 @@
   "branch": "work/mail.dev.a",
   "claims": [
     "1. The simple send screen (G3): on work/mail.dev.a; reviewed by a.mail.conductor at 1bed623, its must-fix (the daily cap reset on reload with a send-only token) fixed with a sealed per-day count. Demo mode checked in Chromium (desktop, phone); real mode checked in Chromium against a stand-in for Gmail (sim/send-standin.cjs). Not on dev: waits on a.mail.conductor's confirm before release.sh.",
-    "2. Demo mode: src/app/demo/mailbox.js, a seeded synthetic mailbox (16 contacts, 32 threads, a draft each) at reserved example domains, and FakeGmail recording each send with simulation: true. Not yet in a public vault.",
+    "2. Demo mode with a synthetic mailbox: done on the branch. One shared demo twin for the mail and CRM demos (layout agreed with crm.dev.a, 15:07 UTC 23 Nov), published as the public vault epk5452e on dev.send.sgraph.ai.",
     "3. Make Gmail better, one feature at a time, each usable in demo mode first.",
     "4. Take over the cell's code work from account D's email.* team, after their hand-over; W18 first if still open."
   ],
@@ -27,6 +27,19 @@
     "2026-11-23T14:53Z key made; 68d1f14 key entry and status",
     "2026-11-23T15:00Z send screen and demo mailbox, 9 tests (121 pass), all gates OK; not on dev",
     "2026-11-23T15:00Z af96452 opens on the contact list (G3's order)",
-    "2026-11-23T15:10Z the day count sealed per UTC day (max of stored and Gmail's Sent); real-mode banner; stand-in run; 122 tests pass, gates OK"
-  ]
+    "2026-11-23T15:10Z the day count sealed per UTC day (max of stored and Gmail's Sent); real-mode banner; stand-in run; 122 tests pass, gates OK",
+    "2026-11-23T15:10Z demo twin shape agreed with crm.dev.a; its follow-up cases and org on drafts (21f85de)",
+    "2026-11-23T15:12Z public vault epk5452e created and filled with the synthetic demo twin (own reversible call); read-only clone identical"
+  ],
+  "demo_vault": {
+    "vault_id": "epk5452e",
+    "server": "https://dev.send.sgraph.ai",
+    "name": "demo-twin",
+    "content": "synthetic only: generated from seed 20261123 at reserved example domains; manifest.json, README.md, orgs/, people/, drafts/, mail/ (twin format v1); crm/ is crm.dev.a's",
+    "rebuild": "node sim/build-demo-vault.mjs <folder> (seed 20261123, clock 2026-11-23T12:00Z), then copy into a clone and sgit commit and push",
+    "first_commit": "from generator 21f85de; checked by a read-only clone, byte-identical to the generator's output",
+    "read_key": "public by design; not committed (the leak scan refuses long keys in committed text); sent to a.mail.conductor and crm.dev.a by message",
+    "write_key": "only in this session's container; never committed",
+    "decision": "mail.dev.a's own reversible call, on a.mail.conductor's go (15:04 UTC) under Dinis's words \"you can put some of that data in a public vault\"; the vault can be deleted from the server"
+  }
 }
