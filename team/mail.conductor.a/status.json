@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-23T15:32Z",
+  "updated": "2026-11-23T15:39Z",
   "state": "docs drafted; outreach and hub notes written for a.maestro to relay; mail.dev.a's send screen reviewed (one fix asked)",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -25,7 +25,8 @@
     "PrompTugal__News__Website dev (926af8079): board/team/maestro.a/decisions/2026-11-23-gmail-crm-go.md (G1 to G5 in full)"
   ],
   "not_read": [
-    "the briefing artifact BNqtGyScuXtq8veSV9ZyYj (private page)"
+    "the briefing artifact BNqtGyScuXtq8veSV9ZyYj (private page)",
+    "SovereignWebsite/Site__Artist__Grace-Farrell (the SWS messaging centre pattern): add_repo refused by this session's permission check; not cloned another way"
   ],
   "facts_checked": {
     "live": "v0.1.51 at 189ac49 (https://email-cell.agenticcells.site/version.json, 23 Nov ~14:53 UTC)",
@@ -58,7 +59,8 @@
     "2026-11-23T15:18Z | own call | batch 1 D4 updated (three vaults; branch history left by recommendation); page republished",
     "2026-11-23T15:25Z | own call | agreed crm.dev.a's first write: a person's press, shown before writing, one commit per link, only the person's own CRM vault, never the twin",
     "2026-11-23T15:31Z | own call | asked a.maestro to relay G1 and a hand-over request to account D; work/mail.dev.a and release/next2 share no files (mail.dev.a, 15:29 UTC)",
-    "2026-11-23T15:32Z | own call | CRM site request relayed to a.maestro for account C's factory; crm.dev.a stopped after its hand-over"
+    "2026-11-23T15:32Z | own call | CRM site request relayed to a.maestro for account C's factory; crm.dev.a stopped after its hand-over",
+    "2026-11-23T15:39Z | own call | W10 plan (talk to the team from the site) written as a proposal; one-way parts T1 to T3 for batch 2"
   ],
   "team": {
     "mail.dev.a": "work/mail.dev.a: send screen reviewed OK at 5acb335 (release waits on Dinis D1); demo twin now vault sub3og9j (clean history, generator 606d358; id read from team/mail.dev.a/status.json demo_vault.vault_id)",
