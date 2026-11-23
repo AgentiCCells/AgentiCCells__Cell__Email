@@ -5,8 +5,8 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-23T15:40Z",
-  "state": "day 1: read in, key made, plan written; team briefed",
+  "updated": "2026-11-23T16:05Z",
+  "state": "docs drafted; outreach and hub notes written for a.maestro to relay; mail.dev.a's send screen reviewed (one fix asked)",
   "key": {
     "label": "mail-conductor-a-agenticcells",
     "public": "team/keys/mail-conductor-a-agenticcells.json",
@@ -41,10 +41,12 @@
     "2026-11-23T15:20Z | own call (03:00 UTC rule) | made key mail-conductor-a-agenticcells; public half on this branch for Dinis to merge",
     "2026-11-23T15:25Z | own call | team/mail.conductor.a/ and the day-1 plan on work/mail.conductor.a",
     "2026-11-23T15:35Z | own call | agreed mail.dev.a's plan; real-mode recipients hand-typed until Dinis answers",
-    "2026-11-23T15:40Z | own call | relayed G3's shape to mail.dev.a"
+    "2026-11-23T15:40Z | own call | relayed G3's shape to mail.dev.a",
+    "2026-11-23T15:50Z | own call | reviewed work/mail.dev.a 1bed623: 121 tests pass, no overlap with release/next2; asked for a persisted daily count",
+    "2026-11-23T16:05Z | own call | drafts docs/pages/run-your-own.md, use-the-tools.md, join.md (published at the site root once on dev); notes for outreach and the hub"
   ],
   "team": {
-    "mail.dev.a": "work/mail.dev.a; key sha256:3cca2c55cc5b5826 (signing sha256:0d8da68766d1fc95); send screen per G3; first version ~17:30 UTC",
+    "mail.dev.a": "work/mail.dev.a af96452; send screen per G3; reviewed 1bed623: fix asked for the 20-a-day count with a send-only token (resets on reload)",
     "crm.dev.a": "blocked on an add-repo approval (Dinis)"
   },
   "defects": [
