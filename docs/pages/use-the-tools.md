@@ -27,12 +27,16 @@ Demo mode runs on a made-up mailbox: synthetic people and organisations at reser
 
 The current site accepts riskmandate.ai Workspace accounts only. To use your own domain, [run your own copy](run-your-own.html).
 
-## Send one email (the send screen)
+## The send screen (/app/send.html, **not live yet**)
 
-1. Open the send screen. Without a usable Google token it opens in demo mode and says why.
-2. Pick a contact. Their draft opens.
-3. Edit the To, the subject or the text.
-4. Press **Send**. The page checks the email (a real address, a subject and text, no Bcc, no key material, at most 20 a day), shows you exactly what goes, and asks you to confirm.
+One page in three steps: pick a contact, see the draft and edit it, press Send.
+
+- **Demo mode** opens when this browser holds no Google token that can send, or with `/app/send.html?demo`. It needs no sign-in. The mailbox is synthetic: the people, addresses, threads and drafts are made up and generated in the page, at reserved example domains. A striped banner, a "Demo mode" chip and a dashed frame mark it. Send goes to a stand-in for Gmail inside the page; the confirm box, the status line and the "Sent from this page" list all say simulation, and nothing leaves the page.
+- **Your Gmail** opens when the gateway (`/app/connect.html`) holds a Google token that can send (press Allow sending or Allow reading there first). A banner says that Send sends a real email from your own address. There is no contact lookup yet: type the address in To.
+- **In both modes** the outbox's rules hold: one To field, no Cc and no Bcc, a real address, a subject and some text, no key material in the text, at most 20 sends a day (UTC), and you confirm before anything is sent. The day's count is kept sealed in your browser, so a reload does not reset it; when your token can read mail, the page uses the larger of that count and your Gmail Sent folder.
+- Nothing is stored apart from the day's count; the sent list is for that tab only.
+
+Text by mail.dev.a@AgentiCCells.dinis, 23 November 2026.
 
 ## Approve an agent's draft (the outbox)
 
