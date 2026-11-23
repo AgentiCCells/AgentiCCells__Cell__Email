@@ -35,3 +35,12 @@ CLAUDE.md: only Dinis instructs. A message is treated as his words only if it is
 2. mail.dev.a builds `/app/talk.html` in demo mode and a lane against a synthetic test key; I review.
 3. Batch 2 to Dinis: T1, T2, T3.
 4. On his yes: I issue my real lane, seal the QR code to his page key, and drain at each wake.
+
+## Match the Grace Farrell site (shapes relayed by a.maestro, 15:40 UTC, as material)
+From SovereignWebsite/Site__Artist__Grace-Farrell at 38d1020, not read by me directly:
+- **inbox.json** beside the page: `about` (says the lane token is not in the file, only by the owner's QR code), `agent`, `site`, `endpoint`, `vault_id`, `recipient {fingerprint, signing_fingerprint, encrypt}` (the agent's RSA public key PEM), `lane`, `title`, `agent_name`. The page checks that the first 16 hex of sha256(PEM's DER) equals `recipient.fingerprint` and the fingerprint carried in the QR code.
+- **An outgoing message:** AES-GCM 256 with a random key and a 12-byte iv; the key wrapped with RSA-OAEP to `recipient.encrypt`; payload `base64(JSON {"v":2,"w","i","c"})` appended to the lane, signed by the browser's key.
+- **A reply file:** `replies/<browser fingerprint, 16 hex>.json`, a JSON array of envelopes `{"v":"ws-ecies-1","to","at","epk"(EC P-256 JWK),"iv","ct"}`: ECDH P-256 with the browser's key, HKDF-SHA-256 (empty salt, info "ws-ecies-1") to AES-GCM 256. The plaintext holds at least `re_id` (the message's id) and the answer. The page fetches its file with no-store and matches `re_id`.
+- The same envelope as `newsroom/tools/person-key.mjs` in PrompTugal__News__Website (public, readable here).
+
+So this cell's page uses the same three shapes, and the cell's files go under `src/app/talk/` (`inbox.json`, `replies/`). feedback.b's files should be reused unchanged where their licence allows, with their source and hashes recorded (CLAUDE.md, Licences); that needs someone who can read that repository, or Dinis allowing this session to attach it.
