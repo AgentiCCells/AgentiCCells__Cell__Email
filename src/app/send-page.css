@@ -55,6 +55,9 @@ button.primary{background:var(--accent);color:var(--on-accent);border-color:var(
 button.primary:hover:not(:disabled){background:var(--accent-hover)}
 button:disabled{opacity:.5;cursor:not-allowed}
 #status{min-height:1.5em}
+.pick-first{display:none;color:var(--muted);font-size:16px;padding:2rem 0}
+.draft.waiting>:not(#draft-h):not(.pick-first){display:none}
+.draft.waiting>.pick-first{display:block}
 
 .sent{list-style:none;margin:0;padding:0}
 .sent li{padding:.4rem 0;border-top:1px solid var(--line);overflow-wrap:anywhere}

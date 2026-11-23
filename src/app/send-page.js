@@ -50,6 +50,7 @@ function showContacts() {
 
 function choose(c) {
   chosen = c;
+  $('draft').classList.remove('waiting');
   const d = box.drafts.find((x) => x.contact === c.id) || draftFor(c, box.me);
   draft = { to: d.to.join(', '), subject: d.subject, text: d.text };
   fill();
@@ -118,8 +119,9 @@ async function start() {
   }
   $('from').textContent = `From ${from}${mode === DEMO ? ' (made up)' : ''}.`;
   setMode(m.why);
-  if (mode === DEMO) choose(filterContacts(box.contacts)[0]);
-  else review();
+  // G3's order: the page opens on the contact list; the draft shows once a contact is picked.
+  $('draft').classList.toggle('waiting', mode === DEMO && !chosen);
+  review();
 }
 
 for (const f of ['to', 'subject', 'text']) $(f).addEventListener('input', review);
