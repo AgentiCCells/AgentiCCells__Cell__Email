@@ -5,14 +5,14 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-23T16:20Z",
+  "updated": "2026-11-23T15:07Z",
   "state": "docs drafted; outreach and hub notes written for a.maestro to relay; mail.dev.a's send screen reviewed (one fix asked)",
   "key": {
     "label": "mail-conductor-a-agenticcells",
     "public": "team/keys/mail-conductor-a-agenticcells.json",
     "fingerprint": "sha256:00f1dc169f01ed19",
     "signing_fingerprint": "sha256:9059ed3d9a216e52",
-    "made": "2026-11-23 ~15:20 UTC with sgit-ai 0.27.0; private halves only in this session's container",
+    "made": "2026-11-23 ~14:53 UTC with sgit-ai 0.27.0; private halves only in this session's container",
     "merged": false
   },
   "read": [
@@ -28,7 +28,7 @@
     "the briefing artifact BNqtGyScuXtq8veSV9ZyYj (private page)"
   ],
   "facts_checked": {
-    "live": "v0.1.51 at 189ac49 (https://email-cell.agenticcells.site/version.json, 23 Nov ~15:20 UTC)",
+    "live": "v0.1.51 at 189ac49 (https://email-cell.agenticcells.site/version.json, 23 Nov ~14:53 UTC)",
     "hold": "no board/HOLD.md on dev",
     "release_next2": "92bb7de, 28 commits ahead of dev, waits on Dinis's W13 in email.dev.d's session"
   },
@@ -39,19 +39,23 @@
     "Dinis (G4 5, yes): request Google's Safe Browsing review of email-cell.agenticcells.site in Search Console, as the domain's owner; W2 on account D's list"
   ],
   "log": [
-    "2026-11-23T15:20Z | own call (03:00 UTC rule) | made key mail-conductor-a-agenticcells; public half on this branch for Dinis to merge",
-    "2026-11-23T15:25Z | own call | team/mail.conductor.a/ and the day-1 plan on work/mail.conductor.a",
-    "2026-11-23T15:35Z | own call | agreed mail.dev.a's plan; real-mode recipients hand-typed until Dinis answers",
-    "2026-11-23T15:40Z | own call | relayed G3's shape to mail.dev.a",
-    "2026-11-23T15:50Z | own call | reviewed work/mail.dev.a 1bed623: 121 tests pass, no overlap with release/next2; asked for a persisted daily count",
-    "2026-11-23T16:05Z | own call | drafts docs/pages/run-your-own.md, use-the-tools.md, join.md (published at the site root once on dev); notes for outreach and the hub",
-    "2026-11-23T16:20Z | asked, not own call | release of the send screen to dev put to Dinis: new real-send page on the live site (ABP G7) and a key entry; mail.dev.a holds"
+    "2026-11-23T14:53Z | own call (03:00 UTC rule) | made key mail-conductor-a-agenticcells; public half on this branch for Dinis to merge",
+    "2026-11-23T14:54Z | own call | team/mail.conductor.a/ and the day-1 plan on work/mail.conductor.a",
+    "2026-11-23T14:57Z | own call | agreed mail.dev.a's plan; real-mode recipients hand-typed until Dinis answers",
+    "2026-11-23T14:58Z | own call | relayed G3's shape to mail.dev.a",
+    "2026-11-23T15:02Z | own call | reviewed work/mail.dev.a 1bed623: 121 tests pass, no overlap with release/next2; asked for a persisted daily count",
+    "2026-11-23T15:03Z | own call | drafts docs/pages/run-your-own.md, use-the-tools.md, join.md (published at the site root once on dev); notes for outreach and the hub",
+    "2026-11-23T15:04Z | asked, not own call | release of the send screen to dev put to Dinis: new real-send page on the live site (ABP G7) and a key entry; mail.dev.a holds",
+    "2026-11-23T15:07Z | own call | corrected my own wrong times (see corrections)"
   ],
   "team": {
-    "mail.dev.a": "work/mail.dev.a 5acb335: send screen per G3, daily count fixed, stand-in run; reviewed OK (122 tests, gates OK); release to dev waits on Dinis's word",
+    "mail.dev.a": "work/mail.dev.a 42e9fb5: send screen reviewed OK (release waits on Dinis); shared synthetic demo twin generated (seed 20261123), vault not created until a.crm.dev agrees the shape",
     "crm.dev.a": "blocked on an add-repo approval (Dinis)"
   },
   "defects": [
     "b8a8dcb fails check-commits (Agent: trailer not in the final block); force-push refused; fix by cherry-pick with a corrected message onto the landing branch"
+  ],
+  "corrections": [
+    "2026-11-23T15:07Z: times in this file, the key entry and the notes were written as estimates ahead of the clock (up to 16:20Z); corrected from the commit times (git log, date -u)"
   ]
 }
