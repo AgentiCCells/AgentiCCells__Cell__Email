@@ -106,13 +106,13 @@
   },
   {
    "id": "b5",
-   "narration": "Three and four are housekeeping. Where may the public demo vault's read key be written: the leak scan blocks long keys, so it needs one narrow allowance. And may we delete two abandoned vaults of made-up data. We recommend yes to both.",
+   "narration": "Three and four are housekeeping. The public demo vault's read key needs one narrow leak-scan allowance to be written down. And three abandoned vaults of made-up data can go: one had its passphrase printed, two hold old names. We recommend yes to both.",
    "visual": {
     "kind": "list",
     "items": [
      "Demo read key: one allowlist line for it",
-     "Delete a5a7rrbl (its passphrase was printed in a session)",
-     "Delete epk5452e (old made-up names in its history)"
+     "Delete a5a7rrbl (passphrase printed in a session)",
+     "Delete epk5452e and db5vicpi (old names; a slip made the second)"
     ]
    },
    "facts": [
@@ -273,31 +273,45 @@
    "why": "Your ask: demos everyone can see, on synthetic data."
   },
   {
-   "question": "D4. Delete the abandoned synthetic vaults a5a7rrbl and epk5452e?",
+   "question": "D4. Delete the abandoned synthetic vaults a5a7rrbl, epk5452e and db5vicpi; leave the old made-up names in work/crm.dev.a's git history?",
    "options": [
     {
      "id": "a",
-     "label": "Yes",
+     "label": "Delete the three vaults; leave the branch history",
      "good": [
-      "No stray vaults or printed passphrase"
+      "No stray vaults or printed passphrase",
+      "No force-push of a pushed branch"
      ],
-     "bad": [],
+     "bad": [
+      "Made-up names that may match real firms stay in old commits (never labelled as real)"
+     ],
      "blocks": []
     },
     {
      "id": "b",
-     "label": "Keep them",
+     "label": "Delete the three vaults and rewrite the branch history",
+     "good": [
+      "Old names gone from the branch"
+     ],
+     "bad": [
+      "Force-push; GitHub still keeps the objects by id"
+     ],
+     "blocks": []
+    },
+    {
+     "id": "c",
+     "label": "Keep everything",
      "good": [
       "Nothing deleted"
      ],
      "bad": [
-      "A vault with a printed passphrase stays"
+      "A vault whose passphrase was printed stays"
      ],
      "blocks": []
     }
    ],
    "recommendation": "a",
-   "why": "Synthetic data only; low urgency."
+   "why": "Synthetic data only; a history rewrite costs more than it removes."
   },
   {
    "question": "D5. a.crm.dev's read-only add-repo for four repositories (in its session)?",

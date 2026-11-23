@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-23T15:20Z",
+  "updated": "2026-11-23T15:18Z",
   "state": "docs drafted; outreach and hub notes written for a.maestro to relay; mail.dev.a's send screen reviewed (one fix asked)",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -37,8 +37,7 @@
     "Dinis: crm.dev.a's add-repo for PrompTugal News, the Web Summit team CRM, SovereignWebsite IaC and Site__Platform__AWS (read-only): approve or refuse in its session",
     "Dinis: real-mode contact source for the send screen (mail.dev.a proposes his sent mail, read in the browser only)",
     "Dinis (G4 5, yes): request Google's Safe Browsing review of email-cell.agenticcells.site in Search Console, as the domain's owner; W2 on account D's list",
-    "Dinis: where may the public demo vault's read key be written (it is public by design; the leak scan refuses long keys, and no one will weaken it without your yes)?",
-    "Dinis: delete two abandoned synthetic vaults on dev.send.sgraph.ai: a5a7rrbl (crm.dev.a's; write passphrase printed in its session output) and epk5452e (mail.dev.a's first demo twin; old made-up org names that may match real companies in its history)? Recommended: yes, low urgency"
+    "Dinis: where may the public demo vault's read key be written (it is public by design; the leak scan refuses long keys, and no one will weaken it without your yes)?"
   ],
   "log": [
     "2026-11-23T14:53Z | own call (03:00 UTC rule) | made key mail-conductor-a-agenticcells; public half on this branch for Dinis to merge",
@@ -54,11 +53,12 @@
     "2026-11-23T15:10Z | own call | CRM writes to its own vault pointing at epk5452e (option c); no write key travels",
     "2026-11-23T15:13Z | own call | reviewed crm.dev.a e88b1da (screenshot in Chromium); asked mail.dev.a to rename demo orgs that may match real companies (CLAUDE.md: never name a prospect)",
     "2026-11-23T15:15Z | own call | demo twin to a fresh vault so the old org names leave its history; epk5452e to Dinis's delete list",
-    "2026-11-23T15:20Z | wake 15:13 | no HOLD; dev unchanged at 189ac49; decision batch 1 to Dinis as a presentation and decision video"
+    "2026-11-23T15:20Z | wake 15:13 | no HOLD; dev unchanged at 189ac49; decision batch 1 to Dinis as a presentation and decision video",
+    "2026-11-23T15:18Z | own call | batch 1 D4 updated (three vaults; branch history left by recommendation); page republished"
   ],
   "team": {
-    "mail.dev.a": "work/mail.dev.a 606d358+: send screen reviewed OK at 5acb335 (release waits on Dinis; later commits to review before landing); demo orgs renamed 'Example ... (demo)', contrast seed, send.html?demo&contact=<id>; demo twin moving to a fresh vault (new id in its status)",
-    "crm.dev.a": "work/crm.dev.a e88b1da: lead board, follow-ups, contacts in demo mode (crm/site); reviewed OK (120 tests, gates OK, CSP self-only, no outside requests); asked for contrast, a link to the send screen, clearly made-up org names; CRM demo vault egw210lk (synthetic crm/ only, points at epk5452e by id)"
+    "mail.dev.a": "work/mail.dev.a: send screen reviewed OK at 5acb335 (release waits on Dinis D1); demo twin now vault sub3og9j (clean history, generator 606d358; id read from team/mail.dev.a/status.json demo_vault.vault_id)",
+    "crm.dev.a": "work/crm.dev.a ff87324: owners A-C, links to send.html?demo&contact=<id>, contrast; CRM vault egw210lk (ids only, no names in history); repoints to sub3og9j"
   },
   "defects": [
     "b8a8dcb fails check-commits (Agent: trailer not in the final block); force-push refused; fix by cherry-pick with a corrected message onto the landing branch"
@@ -67,14 +67,15 @@
     "2026-11-23T15:07Z: times in this file, the key entry and the notes were written as estimates ahead of the clock (up to 16:20Z); corrected from the commit times (git log, date -u)"
   ],
   "incidents": [
-    "2026-11-23 ~15:12Z | crm.dev.a | the write passphrase of its first demo vault a5a7rrbl was printed in its own session output by `sgit vault info`; not in any file, commit or message; the vault holds synthetic data only; abandoned and replaced by egw210lk; sgit output now masked. Deleting a5a7rrbl on the server is Dinis's call."
+    "2026-11-23 ~15:12Z | crm.dev.a | the write passphrase of its first demo vault a5a7rrbl was printed in its own session output by `sgit vault info`; not in any file, commit or message; the vault holds synthetic data only; abandoned and replaced by egw210lk; sgit output now masked. Deleting a5a7rrbl on the server is Dinis's call.",
+    "2026-11-23T15:14Z | mail.dev.a | re-ran sgit create in the folder holding epk5452e's clone: made vault db5vicpi (synthetic) and lost epk5452e's write key; db5vicpi's read key never given out; now creates each vault in a new empty folder"
   ],
   "decision_batch": {
     "id": "gmail-crm-decisions-1",
     "page": "https://claude.ai/artifact/Da4Thro6cG4zN3nMRJdyXz (private)",
     "storyboard": "team/mail.conductor.a/decisions/2026-11-23-gmail-crm-decisions-1.storyboard.json (studio-storyboard/0, checker ok)",
     "player": "built with studio.d's player v0 (Apache-2.0) from PrompTugal__News__Website board/team/studio.d/player",
-    "decisions": "D1 release send screen; D2 real-mode recipients; D3 demo read key; D4 delete two synthetic vaults; D5 crm.dev.a add-repo; D6 publish docs; task: Safe Browsing review",
+    "decisions": "D1 release send screen; D2 real-mode recipients; D3 demo read key; D4 delete three synthetic vaults (a5a7rrbl, epk5452e, db5vicpi); leave old made-up names in work/crm.dev.a history; D5 crm.dev.a add-repo; D6 publish docs; task: Safe Browsing review",
     "recommended": "D1 a D2 c D3 a D4 a D5 a D6 a",
     "answered": false
   }
