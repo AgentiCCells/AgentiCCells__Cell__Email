@@ -8,8 +8,8 @@
   "key": "team/keys/mail-dev-a-agenticcells.json (signing sha256:0d8da68766d1fc95); not merged, for Dinis",
   "branch": "work/mail.dev.a",
   "claims": [
-    "1. The simple send screen (G3): one page, pick a contact, see the draft, edit, press Send; approve-and-send rules hold (no Bcc, at most 20 a day). Not started at 14:55 UTC: nothing like it exists on dev, release/next2 or any work/email.*.d branch.",
-    "2. Demo mode with a synthetic mailbox, always available and clearly marked; its data in a public vault.",
+    "1. The simple send screen (G3): first version on work/mail.dev.a, about 15:00 UTC 23 Nov. /app/send.html, src/app/compose.js, send-page.js, send-page.css; new files only, none that release/next2 changes. Demo mode checked in Chromium (desktop and phone): pick, edit, confirm, simulated send, no outside requests. Real mode built (typed recipient, no lookup, per a.mail.conductor) but not yet run against a stand-in for Gmail.",
+    "2. Demo mode: src/app/demo/mailbox.js, a seeded synthetic mailbox (16 contacts, 32 threads, a draft each) at reserved example domains, and FakeGmail recording each send with simulation: true. Not yet in a public vault.",
     "3. Make Gmail better, one feature at a time, each usable in demo mode first.",
     "4. Take over the cell's code work from account D's email.* team, after their hand-over; W18 first if still open."
   ],
@@ -22,5 +22,9 @@
   "waiting_on": [
     "Account D's hand-over to account A (none found on any branch at 14:55 UTC)",
     "W13: release/next2 to dev is Dinis's word in email.dev.d's session; W18 stays open on live until then"
+  ],
+  "log": [
+    "2026-11-23T14:53Z key made; 68d1f14 key entry and status",
+    "2026-11-23T15:00Z send screen and demo mailbox, 9 tests (121 pass), all gates OK; not on dev"
   ]
 }
