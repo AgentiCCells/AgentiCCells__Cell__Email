@@ -84,3 +84,21 @@ test('FakeGmail refuses a message with Bcc, as the page does', async () => {
 test('sent today is searched from UTC midnight', () => {
   assert.equal(sentTodayQuery(new Date(NOW)), `in:sent after:${Date.UTC(2026, 10, 23) / 1000}`);
 });
+
+test('with a real token the day count survives a reload, and is the larger of the stored and Gmail counts', async () => {
+  const { dayCounter, countKey } = await import('../src/app/compose.js');
+  const store = new Map(); // stands in for the sealed IndexedDB store, which outlives the page
+  const io = { load: async (k) => store.get(k) ?? null, save: async (k, v) => { store.set(k, v); }, now: () => new Date(NOW) };
+  let page = dayCounter(io);
+  for (let i = 0; i < MAX_PER_DAY; i++) await page.add();
+  page = dayCounter(io); // a reload: a new page, the same store
+  const n = await page.count(null); // a send-only token: no Gmail count
+  assert.equal(n, MAX_PER_DAY);
+  assert.match(check(toMessage({ to: 'a@example.com', subject: 's', text: 't' }), { sentToday: n }).join(), /at most 20 a day/);
+  assert.equal(await page.count(MAX_PER_DAY + 3), MAX_PER_DAY + 3);
+  assert.equal(countKey(new Date(NOW)), 'send:count:2026-11-23');
+  const tomorrow = dayCounter({ ...io, now: () => new Date(NOW + 864e5) });
+  assert.equal(await tomorrow.count(null), 0);
+  const broken = dayCounter({ ...io, load: async () => { throw new Error('locked'); } });
+  await assert.rejects(broken.count(null), /locked/);
+});

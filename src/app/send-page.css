@@ -30,6 +30,7 @@ h2{font-size:15px;margin:0 0 .6rem}
 
 .demo-banner{margin:0;padding:.6rem 16px;color:var(--fg);border-bottom:2px solid var(--demo);
   background:repeating-linear-gradient(135deg,var(--demo-bg) 0 14px,var(--demo-stripe) 14px 28px)}
+.real-banner{margin:0;padding:.6rem 16px;border-bottom:2px solid var(--accent);background:var(--sel)}
 .why{margin:.5rem 16px 0;color:var(--muted)}
 
 .wrap{display:grid;grid-template-columns:minmax(14rem,20rem) minmax(0,1fr) minmax(12rem,18rem);gap:16px;padding:16px;max-width:90rem;margin:0 auto}
