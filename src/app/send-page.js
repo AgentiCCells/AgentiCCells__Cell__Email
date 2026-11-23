@@ -52,9 +52,10 @@ function choose(c) {
   chosen = c;
   $('draft').classList.remove('waiting');
   // Not everyone has a draft waiting; then the page starts one with only To filled in.
-  const d = box.drafts.find((x) => x.contact === c.id);
+  const d = box.drafts.find((x) => x.contact === c.id && x.status === 'draft');
+  const sent = box.drafts.find((x) => x.contact === c.id && x.status === 'sent');
   draft = d ? { to: d.to.join(', '), subject: d.subject, text: d.text } : { to: c.address, subject: '', text: '' };
-  $('status').textContent = d ? '' : `No draft waiting for ${c.first}: write one.`;
+  $('status').textContent = d ? '' : sent ? `No draft waiting for ${c.first}; "${sent.subject}" was already sent. Write a new one if you like.` : `No draft waiting for ${c.first}: write one.`;
   fill();
   showContacts();
   $('text').focus();
