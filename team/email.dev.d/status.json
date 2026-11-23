@@ -6,9 +6,9 @@
   "session": "named in the Claude-Session trailer of each of this cell's commits (the leak scan refuses session ids in committed text)",
   "conductor": "conductor.d@AgentiCCells.dinis",
   "twin_of": "cell.email.b@AgentiCCells.dinis",
-  "updated": "2026-11-23T05:10Z",
-  "state": "release/next2 ready for Dinis's word; rank 40 fixes (1) and (2) built on it",
-  "branch": "release/next2 (the next release; supersedes release/next); work/email.dev.d",
+  "updated": "2026-11-23T17:00Z",
+  "state": "handed over to account A (Dinis's G1); no further code work from email.dev.d; release/next2 (92bb7de) unchanged, lands on Dinis's word",
+  "branch": "work/email.dev.d-r2 (this hand-over); release/next2 untouched",
   "brief": "approved by Dinis in conductor.d's session, 22 Nov 2026 01:39 UTC: \"yes start cell.email.d with your proposals\"",
   "read": [
     "CLAUDE.md",
@@ -115,7 +115,7 @@
   ],
   "account_b": "Dinis, relayed by conductor.d (22 Nov 2026, 01:40 UTC): \"don't worry about the .b account\". So this cell does not wait for cell.email.b or claim items with it. It still never writes in team/cell.email.b/ or pushes to .b branches.",
   "backlog_numbers": "as in team/email-agents/backlog.md at 2bb8a6f (email.pm.d, 05:05 UTC)",
-  "handover": "team/email.dev.d/notes/2026-11-22-hand-over.md",
+  "handover": "team/email.dev.d/notes/2026-11-23-hand-over-to-account-a.md",
   "exceptions": [
     {
       "time": "2026-11-23T04:55Z",
