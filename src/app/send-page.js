@@ -54,16 +54,21 @@ function choose(c) {
   // Not everyone has a draft waiting; then the page starts one with only To filled in.
   const d = box.drafts.find((x) => x.contact === c.id && x.status === 'draft');
   const sent = box.drafts.find((x) => x.contact === c.id && x.status === 'sent');
-  draft = d ? { to: d.to.join(', '), subject: d.subject, text: d.text } : { to: c.address, subject: '', text: '' };
+  draft = d ? { to: d.to.join(', '), subject: d.subject, text: d.text, inReplyTo: d.in_reply_to || '', threadId: d.thread_id || '' } : { to: c.address, subject: '', text: '' };
   $('status').textContent = d ? '' : sent ? `No draft waiting for ${c.first}; "${sent.subject}" was already sent. Write a new one if you like.` : `No draft waiting for ${c.first}: write one.`;
   fill();
   showContacts();
   $('text').focus();
 }
 
-function fill() { $('to').value = draft.to; $('subject').value = draft.subject; $('text').value = draft.text; review(); }
+function fill() {
+  $('to').value = draft.to; $('subject').value = draft.subject; $('text').value = draft.text;
+  $('thread-note').hidden = !draft.inReplyTo;
+  $('thread-note').textContent = draft.inReplyTo ? `A follow-up: it is sent as a reply in thread ${draft.threadId}, after the last email there.` : '';
+  review();
+}
 
-function message() { return toMessage({ to: $('to').value, subject: $('subject').value, text: $('text').value }); }
+function message() { return toMessage({ to: $('to').value, subject: $('subject').value, text: $('text').value, inReplyTo: draft.inReplyTo, threadId: draft.threadId }); }
 
 // The checks, live as the person types; Send is pressable only when there is nothing in the way.
 function review() {

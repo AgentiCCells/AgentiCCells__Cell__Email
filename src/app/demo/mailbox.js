@@ -137,6 +137,15 @@ export function demoMailbox({ seed = DEMO_SEED, now = Date.now(), contacts: n = 
     if (turn === 0) drafts.push({ ...draftFor(c, DEMO_ME), status: 'sent' });
     else if (turn === 2) drafts.push(draftFor(c, DEMO_ME));
   });
+  // Follow-ups in the thread (asked by crm.dev.a, 23 Nov 2026): where a person has a thread waiting on a
+  // reply (t-001 to t-004) and a draft waiting, the draft is a follow-up in that thread.
+  for (const t of threads.filter((x) => ['t-001', 't-002', 't-003', 't-004'].includes(x.id))) {
+    const i = drafts.findIndex((d) => d.contact === t.person && d.status === 'draft');
+    if (i < 0) continue;
+    const last = messages.find((m) => m.id === t.messages[t.messages.length - 1]);
+    const c = contacts.find((x) => x.id === t.person);
+    drafts[i] = { ...drafts[i], subject: `Re: ${t.subject}`, text: `Hi ${c.first},\n\nA short follow-up on my last email about ${t.subject.toLowerCase()}. Is this still of interest? If the timing is wrong, just say and I will come back to it later.\n\nBest wishes,\n${DEMO_ME.name}`, in_reply_to: last.headers.message_id, thread_id: t.id };
+  }
   const labels = [{ id: 'INBOX', name: 'Inbox', type: 'system' }, { id: 'SENT', name: 'Sent', type: 'system' }, { id: 'UNREAD', name: 'Unread', type: 'system' }];
   return { me: DEMO_ME, orgs, people, contacts, threads, messages, drafts, labels, generated: { seed, at: new Date(now).toISOString(), synthetic: true } };
 }
@@ -163,7 +172,7 @@ export class FakeGmail {
     const head = text.slice(0, text.indexOf('\r\n\r\n'));
     const header = (name) => (head.match(new RegExp(`^${name}: (.*)$`, 'mi')) || [])[1] || '';
     if (/^Bcc:/mi.test(head)) throw new Error('the demo refuses Bcc, as the page does');
-    const rec = { id: `sim-${++this.n}`, threadId: `sim-t${this.n}`, to: header('To'), cc: header('Cc'), subject: header('Subject'), sent_at: new Date(this.now()).toISOString().slice(0, 19) + 'Z', simulation: true };
+    const rec = { id: `sim-${++this.n}`, threadId: `sim-t${this.n}`, to: header('To'), cc: header('Cc'), subject: header('Subject'), in_reply_to: header('In-Reply-To'), sent_at: new Date(this.now()).toISOString().slice(0, 19) + 'Z', simulation: true };
     this.sent.push(rec);
     return { id: rec.id, threadId: rec.threadId, simulation: true };
   }
