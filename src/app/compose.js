@@ -34,9 +34,10 @@ export function filterContacts(contacts, q = '') {
     .sort((a, b) => (b.last_contact || 0) - (a.last_contact || 0) || a.name.localeCompare(b.name));
 }
 
-// The message as the page will send it: To, Subject and text only. This screen has no Cc and no Bcc.
-export function toMessage({ to = '', subject = '', text = '' } = {}) {
-  return messageOf({ to, subject, status: 'draft' }, text);
+// The message as the page will send it: To, Subject and text, and the thread it answers when the draft
+// is a follow-up (in_reply_to, thread_id). This screen has no Cc and no Bcc.
+export function toMessage({ to = '', subject = '', text = '', inReplyTo = '', threadId = '' } = {}) {
+  return messageOf({ to, subject, status: 'draft', in_reply_to: inReplyTo, thread_id: threadId }, text);
 }
 
 // Every reason not to send; empty means the person may press Send.

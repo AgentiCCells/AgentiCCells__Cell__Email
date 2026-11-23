@@ -167,3 +167,25 @@ test('?contact=<id> picks that contact; an unknown id picks nobody', () => {
   assert.equal(contactFrom('?demo&contact=nobody', box.contacts), null);
   assert.equal(contactFrom('?demo', box.contacts), null);
 });
+
+test('follow-up drafts answer their waiting thread, and the reply headers reach the message', async () => {
+  const box = demoMailbox({ now: NOW });
+  const ups = box.drafts.filter((d) => d.in_reply_to);
+  assert.ok(ups.length >= 3, `follow-ups ${ups.length}`);
+  for (const d of ups) {
+    const t = box.threads.find((x) => x.id === d.thread_id);
+    assert.ok(['t-001', 't-002', 't-003', 't-004'].includes(t.id));
+    assert.equal(t.person, d.contact);
+    const last = box.messages.find((m) => m.id === t.messages[t.messages.length - 1]);
+    assert.equal(d.in_reply_to, last.headers.message_id);
+    assert.equal(d.status, 'draft');
+    assert.match(d.subject, /^Re: /);
+  }
+  const d = ups[0];
+  const m = toMessage({ to: d.to.join(','), subject: d.subject, text: d.text, inReplyTo: d.in_reply_to, threadId: d.thread_id });
+  assert.deepEqual(check(m), []);
+  const g = new FakeGmail({ now: () => NOW });
+  await g.send(rawMessage(m));
+  assert.equal(g.sent[0].in_reply_to, d.in_reply_to);
+  assert.equal(g.sent[0].simulation, true);
+});
