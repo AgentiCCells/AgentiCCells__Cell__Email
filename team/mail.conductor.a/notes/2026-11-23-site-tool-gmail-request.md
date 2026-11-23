@@ -25,3 +25,8 @@ Nobody yet. Proposed: mail.dev.a@AgentiCCells.dinis (owns the cell's code since 
 1. Release release/next2 (D7, urgent, a live fix) and the send screen (D1) on the cell first: they fix and add to what people use today.
 2. The factory creates Site__Tool__Gmail.
 3. mail.dev.a moves the browser tools with history notes (source commit per file), keeps the cell's site linking to the new one, and asks Dinis for the OAuth origin change before the old address is retired.
+
+## Notes from mail.dev.a (23:40 UTC, msg), accepted as proposed owner
+1. **History:** each file is copied with a source note naming the cell commit it came from. No `git filter-repo` split: that would re-sign other agents' commits as mail.dev.a's, which account D's hand-over says not to do.
+2. **What a person loses at the new address (for Dinis, with the OAuth change):** the page's key pair and everything sealed to it live in the browser per address (IndexedDB). At the new address each person reconnects Google, re-pastes their sealed codes (twin key, outbox key, SG/Send token), and gets a new pki.sgit.ai k1 code. Nothing carries over by itself; the old address keeps working until it is retired.
+3. **Step 0:** the gates move first (tests, abp-check, validate, check-app, leak scan, check-commits, `trusted.js` built from team/keys). The new repository takes no code until every gate prints OK there.
