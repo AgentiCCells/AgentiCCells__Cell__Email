@@ -26,6 +26,7 @@ test('every address in the demo mailbox is at a reserved example domain, and it 
 test('every demo draft passes the send checks', () => {
   const box = demoMailbox({ now: NOW });
   for (const d of box.drafts) assert.deepEqual(check(toMessage({ to: d.to.join(','), subject: d.subject, text: d.text })), [], d.subject);
+  assert.ok(box.drafts.every((d) => ['draft', 'sent'].includes(d.status)));
   assert.match(draftFor(box.contacts[0]).text, new RegExp(`^Hi ${box.contacts[0].first},`));
 });
 
@@ -144,7 +145,12 @@ test('the demo twin has the CRM demo\'s cases: 4 threads waiting on a reply 5 to
 
 test('contrast: not everyone has a draft, and the waiting threads sit at different organisations', () => {
   const box = demoMailbox({ now: NOW });
-  assert.ok(box.drafts.length >= 4 && box.drafts.length < box.people.length, `drafts ${box.drafts.length}`);
+  const waitingDrafts = box.drafts.filter((d) => d.status === 'draft'), sentDrafts = box.drafts.filter((d) => d.status === 'sent');
+  assert.equal(waitingDrafts.length, 8); assert.equal(sentDrafts.length, 4); assert.equal(box.people.length - box.drafts.length, 4);
+  // only t-001 to t-004 wait on a reply: half the organisations have nothing waiting
+  const byId = new Map(box.messages.map((m) => [m.id, m]));
+  const waitingNow = box.threads.filter((t) => { const m = byId.get(t.messages[t.messages.length - 1]); return m.direction === 'outbound' && (NOW - Date.parse(m.date)) / 864e5 > 5; });
+  assert.deepEqual(waitingNow.map((t) => t.id).sort(), ['t-001', 't-002', 't-003', 't-004']);
   const org = (pid) => box.people.find((p) => p.id === pid).org;
   const waitingOrgs = new Set(box.threads.filter((t) => ['t-001', 't-002', 't-003', 't-004'].includes(t.id)).map((t) => org(t.person)));
   assert.equal(waitingOrgs.size, 4);

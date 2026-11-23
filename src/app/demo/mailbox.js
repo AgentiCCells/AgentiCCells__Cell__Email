@@ -93,6 +93,9 @@ export function demoMailbox({ seed = DEMO_SEED, now = Date.now(), contacts: n = 
     // t-008 are an email from the demo user that got a reply.
     if (i < 4) { count = 1; outbound = true; at = now - (6 + i * 3) * DAY; }
     else if (i < 8) { count = 2; outbound = true; at = now - (10 + i * 2) * DAY; }
+    // Every other thread ends with an email to the demo user, so only t-001 to t-004 wait on a reply and
+    // half the organisations have nothing waiting (contrast, asked by crm.dev.a).
+    else outbound = count % 2 === 0;
     const ids = [];
     for (let k = 0; k < count; k++) {
       const id = `m-${pad(messages.length + 1, 4)}`;
@@ -126,9 +129,14 @@ export function demoMailbox({ seed = DEMO_SEED, now = Date.now(), contacts: n = 
     const mine = threads.filter((t) => t.person === p.id);
     return { id: p.id, name: p.name, first: p.first, address: p.emails[0], org: orgName[p.org], org_id: p.org, role: p.role, kind: p.kind, threads: mine.length, last_contact: mine.length ? Date.parse(mine[0].last_date) : 0 };
   });
-  // Contrast (a.mail.conductor, 23 Nov 2026): not everyone has a draft waiting. People p01 to p04
-  // always do (the CRM demo's cases); the rest about half the time, from the seed.
-  const drafts = contacts.filter((c, i) => i < 4 || r() < 0.4).map((c) => draftFor(c, DEMO_ME));
+  // Contrast (a.mail.conductor and crm.dev.a, 23 Nov 2026): p01 to p04 always have a draft waiting
+  // (the CRM demo's cases); the others in turn: a draft already sent, no draft, a draft waiting.
+  const drafts = [];
+  contacts.forEach((c, i) => {
+    const turn = i < 4 ? 2 : (i - 4) % 3;
+    if (turn === 0) drafts.push({ ...draftFor(c, DEMO_ME), status: 'sent' });
+    else if (turn === 2) drafts.push(draftFor(c, DEMO_ME));
+  });
   const labels = [{ id: 'INBOX', name: 'Inbox', type: 'system' }, { id: 'SENT', name: 'Sent', type: 'system' }, { id: 'UNREAD', name: 'Unread', type: 'system' }];
   return { me: DEMO_ME, orgs, people, contacts, threads, messages, drafts, labels, generated: { seed, at: new Date(now).toISOString(), synthetic: true } };
 }
