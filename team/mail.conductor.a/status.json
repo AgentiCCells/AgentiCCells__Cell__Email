@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-23T16:05Z",
+  "updated": "2026-11-23T16:20Z",
   "state": "docs drafted; outreach and hub notes written for a.maestro to relay; mail.dev.a's send screen reviewed (one fix asked)",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -33,6 +33,7 @@
     "release_next2": "92bb7de, 28 commits ahead of dev, waits on Dinis's W13 in email.dev.d's session"
   },
   "asks": [
+    "Dinis: release work/mail.dev.a 5acb335 to dev (the send screen /app/send.html, demo mode, mail.dev.a's key entry)? Recommended: yes",
     "Dinis: approve a.crm.dev's pending add-repo prompt (its session is blocked on it)",
     "Dinis: real-mode contact source for the send screen (mail.dev.a proposes his sent mail, read in the browser only)",
     "Dinis (G4 5, yes): request Google's Safe Browsing review of email-cell.agenticcells.site in Search Console, as the domain's owner; W2 on account D's list"
@@ -43,10 +44,11 @@
     "2026-11-23T15:35Z | own call | agreed mail.dev.a's plan; real-mode recipients hand-typed until Dinis answers",
     "2026-11-23T15:40Z | own call | relayed G3's shape to mail.dev.a",
     "2026-11-23T15:50Z | own call | reviewed work/mail.dev.a 1bed623: 121 tests pass, no overlap with release/next2; asked for a persisted daily count",
-    "2026-11-23T16:05Z | own call | drafts docs/pages/run-your-own.md, use-the-tools.md, join.md (published at the site root once on dev); notes for outreach and the hub"
+    "2026-11-23T16:05Z | own call | drafts docs/pages/run-your-own.md, use-the-tools.md, join.md (published at the site root once on dev); notes for outreach and the hub",
+    "2026-11-23T16:20Z | asked, not own call | release of the send screen to dev put to Dinis: new real-send page on the live site (ABP G7) and a key entry; mail.dev.a holds"
   ],
   "team": {
-    "mail.dev.a": "work/mail.dev.a af96452; send screen per G3; reviewed 1bed623: fix asked for the 20-a-day count with a send-only token (resets on reload)",
+    "mail.dev.a": "work/mail.dev.a 5acb335: send screen per G3, daily count fixed, stand-in run; reviewed OK (122 tests, gates OK); release to dev waits on Dinis's word",
     "crm.dev.a": "blocked on an add-repo approval (Dinis)"
   },
   "defects": [
