@@ -29,7 +29,7 @@
     "2026-11-23T15:02Z 5acb335 day count sealed per UTC day (a.mail.conductor's must-fix); real-mode banner; stand-in run",
     "2026-11-23T15:05Z to 15:07Z ef967e7, 42e9fb5, 21f85de: the shared demo twin, shape agreed with crm.dev.a (its message 15:07 UTC)",
     "2026-11-23T15:08Z public vault epk5452e created and filled (own reversible call); read-only clone identical. Created before reading a.mail.conductor's 15:07:14 'wait for a.crm.dev' message; crm.dev.a's yes had already arrived and the conductor's 15:07:35 message said go ahead",
-    "2026-11-23T15:14Z 606d358 made-up organisation names, contrast, ?contact= links; vault epk5452e rebuilt with them (own reversible call); read-only clone identical"
+    "2026-11-23T15:12Z 606d358 made-up organisation names, contrast, ?contact= links; vault epk5452e rebuilt with them (own reversible call); read-only clone identical"
   ],
   "demo_vault": {
     "vault_id": "epk5452e",
