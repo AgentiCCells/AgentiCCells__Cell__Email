@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-23T15:08Z",
+  "updated": "2026-11-23T15:10Z",
   "state": "docs drafted; outreach and hub notes written for a.maestro to relay; mail.dev.a's send screen reviewed (one fix asked)",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -36,7 +36,8 @@
     "Dinis: release work/mail.dev.a 5acb335 to dev (the send screen /app/send.html, demo mode, mail.dev.a's key entry)? Recommended: yes",
     "Dinis: crm.dev.a's add-repo for PrompTugal News, the Web Summit team CRM, SovereignWebsite IaC and Site__Platform__AWS (read-only): approve or refuse in its session",
     "Dinis: real-mode contact source for the send screen (mail.dev.a proposes his sent mail, read in the browser only)",
-    "Dinis (G4 5, yes): request Google's Safe Browsing review of email-cell.agenticcells.site in Search Console, as the domain's owner; W2 on account D's list"
+    "Dinis (G4 5, yes): request Google's Safe Browsing review of email-cell.agenticcells.site in Search Console, as the domain's owner; W2 on account D's list",
+    "Dinis: where may the public demo vault's read key be written (it is public by design; the leak scan refuses long keys, and no one will weaken it without your yes)?"
   ],
   "log": [
     "2026-11-23T14:53Z | own call (03:00 UTC rule) | made key mail-conductor-a-agenticcells; public half on this branch for Dinis to merge",
@@ -48,10 +49,11 @@
     "2026-11-23T15:04Z | asked, not own call | release of the send screen to dev put to Dinis: new real-send page on the live site (ABP G7) and a key entry; mail.dev.a holds",
     "2026-11-23T15:07Z | own call | corrected my own wrong times (see corrections)",
     "2026-11-23T15:09Z | own call | agreed crm.dev.a's plan; told mail.dev.a to create the public synthetic demo vault (Dinis: \"you can put some of that data in a public vault\")",
-    "2026-11-23T15:08Z | noted | crm.dev.a declines to clone the four repos by plain git, since its add-repo was refused pending Dinis; agreed, it is Dinis's call. My own clone of PrompTugal__News__Website was named in my brief (public; clone read-only)"
+    "2026-11-23T15:08Z | noted | crm.dev.a declines to clone the four repos by plain git, since its add-repo was refused pending Dinis; agreed, it is Dinis's call. My own clone of PrompTugal__News__Website was named in my brief (public; clone read-only)",
+    "2026-11-23T15:10Z | own call | CRM writes to its own vault pointing at epk5452e (option c); no write key travels"
   ],
   "team": {
-    "mail.dev.a": "work/mail.dev.a 42e9fb5: send screen reviewed OK (release waits on Dinis); shared synthetic demo twin generated (seed 20261123), vault not created until a.crm.dev agrees the shape",
+    "mail.dev.a": "work/mail.dev.a: send screen reviewed OK (release waits on Dinis); public demo twin vault epk5452e on dev.send.sgraph.ai (synthetic, seed 20261123, generator 21f85de, 207 files); read key held by mail.dev.a, not committed",
     "crm.dev.a": "work/crm.dev.a d8fe038, folder crm/; key crm-dev-a-agenticcells (signing sha256:5082f0417d7ae097); builds on mail.dev.a's demo twin, writes only crm/; private repos wait on Dinis's add-repo; site repo and DNS via account C's factory"
   },
   "defects": [
