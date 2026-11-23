@@ -16,6 +16,7 @@ export function buildSite(out = join(ROOT, 'crm/_build/site')) {
   cpSync(join(ROOT, 'crm/model/crm.mjs'), join(out, 'crm.mjs'));
   cpSync(join(ROOT, 'src/app/vendor/sg-vault'), join(out, 'vendor/sg-vault'), { recursive: true });
   cpSync(join(ROOT, 'src/app/vendor/pki'), join(out, 'vendor/pki'), { recursive: true });
+  cpSync(join(ROOT, 'src/app/vendor/jsqr'), join(out, 'vendor/jsqr'), { recursive: true });
   let version = 'dev';
   try { version = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim(); } catch {}
   writeFileSync(join(out, 'pki.js'), readFileSync(join(ROOT, 'src/app/pki.js'), 'utf8').replaceAll('__VERSION__', version));

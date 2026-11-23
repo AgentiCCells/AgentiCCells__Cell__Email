@@ -47,6 +47,10 @@ Your keys and your data stay in your browser. The page talks only to the vault s
 
 Press **Link** on a thread. The page shows the exact file it will write and where. Only **Write it** writes: one file, one commit, to your own CRM vault, never to the mail twin. **Unlink** removes it the same way. The vault keeps both in its history.
 
+## Requests to the keeper (the feedback loop)
+
+The **Requests** page (`send/`) lets you ask the CRM's keeper agent for something: a change, contacts to add, a workflow, a bug. Your request is sealed to the keeper and signed with your own key, which stays in your browser; the keeper answers on the same page, readable only there. It follows the Sovereign Website /send/ pattern. Until the keeper's inbox and your key exist, the page says so and sends nothing.
+
 ## For developers
 
 - `model/crm.mjs`: the CRM's records (`crm.stages/1`, `crm.lead/1`, `crm.link/1`), their checks, and what the pages show. The same code runs in Node and the browser. Draft state, last contact and follow-ups are worked out from the mail and drafts, never stored.
