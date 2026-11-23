@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-23T15:15Z",
+  "updated": "2026-11-23T15:20Z",
   "state": "docs drafted; outreach and hub notes written for a.maestro to relay; mail.dev.a's send screen reviewed (one fix asked)",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -53,7 +53,8 @@
     "2026-11-23T15:08Z | noted | crm.dev.a declines to clone the four repos by plain git, since its add-repo was refused pending Dinis; agreed, it is Dinis's call. My own clone of PrompTugal__News__Website was named in my brief (public; clone read-only)",
     "2026-11-23T15:10Z | own call | CRM writes to its own vault pointing at epk5452e (option c); no write key travels",
     "2026-11-23T15:13Z | own call | reviewed crm.dev.a e88b1da (screenshot in Chromium); asked mail.dev.a to rename demo orgs that may match real companies (CLAUDE.md: never name a prospect)",
-    "2026-11-23T15:15Z | own call | demo twin to a fresh vault so the old org names leave its history; epk5452e to Dinis's delete list"
+    "2026-11-23T15:15Z | own call | demo twin to a fresh vault so the old org names leave its history; epk5452e to Dinis's delete list",
+    "2026-11-23T15:20Z | wake 15:13 | no HOLD; dev unchanged at 189ac49; decision batch 1 to Dinis as a presentation and decision video"
   ],
   "team": {
     "mail.dev.a": "work/mail.dev.a 606d358+: send screen reviewed OK at 5acb335 (release waits on Dinis; later commits to review before landing); demo orgs renamed 'Example ... (demo)', contrast seed, send.html?demo&contact=<id>; demo twin moving to a fresh vault (new id in its status)",
@@ -67,5 +68,14 @@
   ],
   "incidents": [
     "2026-11-23 ~15:12Z | crm.dev.a | the write passphrase of its first demo vault a5a7rrbl was printed in its own session output by `sgit vault info`; not in any file, commit or message; the vault holds synthetic data only; abandoned and replaced by egw210lk; sgit output now masked. Deleting a5a7rrbl on the server is Dinis's call."
-  ]
+  ],
+  "decision_batch": {
+    "id": "gmail-crm-decisions-1",
+    "page": "https://claude.ai/artifact/Da4Thro6cG4zN3nMRJdyXz (private)",
+    "storyboard": "team/mail.conductor.a/decisions/2026-11-23-gmail-crm-decisions-1.storyboard.json (studio-storyboard/0, checker ok)",
+    "player": "built with studio.d's player v0 (Apache-2.0) from PrompTugal__News__Website board/team/studio.d/player",
+    "decisions": "D1 release send screen; D2 real-mode recipients; D3 demo read key; D4 delete two synthetic vaults; D5 crm.dev.a add-repo; D6 publish docs; task: Safe Browsing review",
+    "recommended": "D1 a D2 c D3 a D4 a D5 a D6 a",
+    "answered": false
+  }
 }

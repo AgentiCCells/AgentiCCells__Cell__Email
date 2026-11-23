@@ -1,0 +1,399 @@
+{
+ "format": "studio-storyboard/0",
+ "slug": "gmail-crm-decisions-1",
+ "title": "Gmail and CRM, account A: six decisions",
+ "audience": "Dinis: six decisions from the first day of account A's Gmail and CRM team",
+ "requested_by": "mail.conductor.a@AgentiCCells.dinis",
+ "summary": "The team built the send screen, a lead board and a synthetic demo on branches. Six decisions and one task wait on Dinis; each has a recommendation.",
+ "beats": [
+  {
+   "id": "b1",
+   "narration": "In its first half hour (go about 14:50 UTC, now 15:15), account A's Gmail and CRM team built a send screen, a lead board and a shared synthetic demo. Six things now wait on you. Here they are, each with a recommendation.",
+   "visual": {
+    "kind": "title",
+    "text": "Gmail and CRM: six decisions"
+   },
+   "facts": [
+    "s1",
+    "s2"
+   ]
+  },
+  {
+   "id": "b2",
+   "narration": "What exists, on branches, not live. The send screen follows your G3: pick a contact, see the draft, edit, press Send. The lead board shows every company's stage, draft and follow-ups. Both run on made-up data in demo mode.",
+   "visual": {
+    "kind": "flow",
+    "nodes": [
+     {
+      "id": "c",
+      "label": "Lead board (CRM)"
+     },
+     {
+      "id": "d",
+      "label": "Draft waiting"
+     },
+     {
+      "id": "s",
+      "label": "Send screen"
+     },
+     {
+      "id": "p",
+      "label": "You press Send"
+     }
+    ],
+    "edges": [
+     {
+      "from": "c",
+      "to": "d"
+     },
+     {
+      "from": "d",
+      "to": "s",
+      "label": "link"
+     },
+     {
+      "from": "s",
+      "to": "p",
+      "label": "checks, confirm"
+     }
+    ]
+   },
+   "facts": [
+    "s3",
+    "s4"
+   ]
+  },
+  {
+   "id": "b3",
+   "narration": "One: release the send screen to the live site. 122 tests and every gate pass, and nothing overlaps account D's waiting release. It sends real mail only after you confirm, at most 20 a day. We recommend yes.",
+   "visual": {
+    "kind": "list",
+    "items": [
+     "Demo mode with no sign-in",
+     "Real mode: your Gmail, your press, 20 a day",
+     "Gates OK; no overlap with release/next2",
+     "Recommended: yes"
+    ]
+   },
+   "facts": [
+    "s3"
+   ]
+  },
+  {
+   "id": "b4",
+   "narration": "Two: where the send screen finds recipients for real. Typed by hand today. Your sent mail, read in your browser only, is quick. The lead board and outbox are the lasting answer. We recommend hand-typed now, the lead board later.",
+   "visual": {
+    "kind": "compare",
+    "left": {
+     "title": "Your sent mail",
+     "points": [
+      "Quick to build",
+      "Reads more of your mail in the page"
+     ]
+    },
+    "right": {
+     "title": "Lead board and outbox",
+     "points": [
+      "One source of truth",
+      "Needs the outbox key at outreach@ first"
+     ]
+    }
+   },
+   "facts": [
+    "s1",
+    "s2"
+   ]
+  },
+  {
+   "id": "b5",
+   "narration": "Three and four are housekeeping. Where may the public demo vault's read key be written: the leak scan blocks long keys, so it needs one narrow allowance. And may we delete two abandoned vaults of made-up data. We recommend yes to both.",
+   "visual": {
+    "kind": "list",
+    "items": [
+     "Demo read key: one allowlist line for it",
+     "Delete a5a7rrbl (its passphrase was printed in a session)",
+     "Delete epk5452e (old made-up names in its history)"
+    ]
+   },
+   "facts": [
+    "s2"
+   ]
+  },
+  {
+   "id": "b6",
+   "narration": "Five: a.crm.dev asked to read four repositories, among them the team CRM and the AWS platform, so its records match ours. That prompt waits in its session. We recommend approving read-only access.",
+   "visual": {
+    "kind": "stat",
+    "value": "4",
+    "label": "repositories, read-only, waiting in a.crm.dev's session"
+   },
+   "facts": [
+    "s2"
+   ]
+  },
+  {
+   "id": "b7",
+   "narration": "Six: the documentation pages: how to use the tools, how to run your own copy with your own Google app, and how to join. They speak for the team, so they go live on your word. We recommend yes after your read.",
+   "visual": {
+    "kind": "list",
+    "items": [
+     "Use the tools",
+     "Run your own, with your own Google OAuth app",
+     "Join: team, RiskMandate, contributors"
+    ]
+   },
+   "facts": [
+    "s6"
+   ]
+  },
+  {
+   "id": "b8",
+   "narration": "And one task only you can do, from your G4 yes: ask Google to review the site in Search Console. Until then, every link from outreach or the hub lands on a red warning. The narration voice is synthetic.",
+   "visual": {
+    "kind": "title",
+    "text": "Your task: request the Safe Browsing review"
+   },
+   "facts": [
+    "s5",
+    "s1"
+   ]
+  }
+ ],
+ "decisions": [
+  {
+   "question": "D1. Release the send screen (work/mail.dev.a) to dev, which is the live site?",
+   "options": [
+    {
+     "id": "a",
+     "label": "Yes",
+     "good": [
+      "G3 live for you and the team",
+      "Demo anyone can try"
+     ],
+     "bad": [
+      "A new real-send page on a site Google flags"
+     ],
+     "blocks": []
+    },
+    {
+     "id": "b",
+     "label": "Yes, without mail.dev.a's key entry",
+     "good": [
+      "You merge keys yourself later"
+     ],
+     "bad": [
+      "One more step for you"
+     ],
+     "blocks": []
+    },
+    {
+     "id": "c",
+     "label": "Not yet",
+     "good": [
+      "Nothing changes live"
+     ],
+     "bad": [
+      "G3 waits"
+     ],
+     "blocks": []
+    }
+   ],
+   "recommendation": "a",
+   "why": "Reviewed, tested, gated; sending stays your press and confirm."
+  },
+  {
+   "question": "D2. Where does the send screen find recipients in real mode?",
+   "options": [
+    {
+     "id": "a",
+     "label": "Typed by hand (today)",
+     "good": [
+      "No extra reading"
+     ],
+     "bad": [
+      "Slow"
+     ],
+     "blocks": []
+    },
+    {
+     "id": "b",
+     "label": "Your sent mail, read in your browser only",
+     "good": [
+      "Quick"
+     ],
+     "bad": [
+      "The page reads more of your mail"
+     ],
+     "blocks": []
+    },
+    {
+     "id": "c",
+     "label": "Hand-typed now; the lead board and outbox later",
+     "good": [
+      "One source of truth"
+     ],
+     "bad": [
+      "Waits on the outbox key at outreach@"
+     ],
+     "blocks": [
+      "G4(4) outbox key"
+     ]
+    }
+   ],
+   "recommendation": "c",
+   "why": "Keeps one list of who we write to, as G4 puts private mail on the Web Summit side."
+  },
+  {
+   "question": "D3. Where may the public demo vault's read key be written?",
+   "options": [
+    {
+     "id": "a",
+     "label": "One narrow allowlist line in the leak scan for that key only",
+     "good": [
+      "Docs and hub can link the demo"
+     ],
+     "bad": [
+      "Changes a check (narrowly)"
+     ],
+     "blocks": []
+    },
+    {
+     "id": "b",
+     "label": "Given on request only",
+     "good": [
+      "No check changes"
+     ],
+     "bad": [
+      "The demo is not discoverable"
+     ],
+     "blocks": []
+    }
+   ],
+   "recommendation": "a",
+   "why": "Your ask: demos everyone can see, on synthetic data."
+  },
+  {
+   "question": "D4. Delete the abandoned synthetic vaults a5a7rrbl and epk5452e?",
+   "options": [
+    {
+     "id": "a",
+     "label": "Yes",
+     "good": [
+      "No stray vaults or printed passphrase"
+     ],
+     "bad": [],
+     "blocks": []
+    },
+    {
+     "id": "b",
+     "label": "Keep them",
+     "good": [
+      "Nothing deleted"
+     ],
+     "bad": [
+      "A vault with a printed passphrase stays"
+     ],
+     "blocks": []
+    }
+   ],
+   "recommendation": "a",
+   "why": "Synthetic data only; low urgency."
+  },
+  {
+   "question": "D5. a.crm.dev's read-only add-repo for four repositories (in its session)?",
+   "options": [
+    {
+     "id": "a",
+     "label": "Approve",
+     "good": [
+      "CRM records match the team CRM"
+     ],
+     "bad": [
+      "Wider read access for one session"
+     ],
+     "blocks": []
+    },
+    {
+     "id": "b",
+     "label": "Refuse",
+     "good": [
+      "Narrow access"
+     ],
+     "bad": [
+      "CRM record names stay a guess"
+     ],
+     "blocks": []
+    }
+   ],
+   "recommendation": "a",
+   "why": "Read only; it cannot align with the team CRM otherwise."
+  },
+  {
+   "question": "D6. Publish the three documentation pages (after your read)?",
+   "options": [
+    {
+     "id": "a",
+     "label": "Yes",
+     "good": [
+      "Your fork-it-yourself ask is met"
+     ],
+     "bad": [
+      "Not yet followed by an outsider"
+     ],
+     "blocks": []
+    },
+    {
+     "id": "b",
+     "label": "Change first",
+     "good": [
+      "Your words in them"
+     ],
+     "bad": [
+      "Later"
+     ],
+     "blocks": []
+    }
+   ],
+   "recommendation": "a",
+   "why": "They are marked as drafts until an outsider has followed them."
+  }
+ ],
+ "sources": [
+  {
+   "id": "s1",
+   "title": "Dinis's G1 to G5 and his words, 23 Nov 2026",
+   "url": "https://github.com/PrompTugal/PrompTugal__News__Website/blob/dev/board/team/maestro.a/decisions/2026-11-23-gmail-crm-go.md",
+   "read": "2026-11-23"
+  },
+  {
+   "id": "s2",
+   "title": "a.mail.conductor's status: team, asks, log, incidents",
+   "url": "https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/work/mail.conductor.a/team/mail.conductor.a/status.json",
+   "read": "2026-11-23"
+  },
+  {
+   "id": "s3",
+   "title": "The send screen on work/mail.dev.a (reviewed at 5acb335)",
+   "url": "https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/work/mail.dev.a/src/app/send.html",
+   "read": "2026-11-23"
+  },
+  {
+   "id": "s4",
+   "title": "The lead board on work/crm.dev.a (reviewed at e88b1da)",
+   "url": "https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/work/crm.dev.a/crm/README.md",
+   "read": "2026-11-23"
+  },
+  {
+   "id": "s5",
+   "title": "REALITY.md: the Safe Browsing flag, 21 Nov 2026",
+   "url": "https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/dev/REALITY.md",
+   "read": "2026-11-23"
+  },
+  {
+   "id": "s6",
+   "title": "Draft pages: run your own, use the tools, join",
+   "url": "https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/work/mail.conductor.a/docs/pages/run-your-own.md",
+   "read": "2026-11-23"
+  }
+ ]
+}
