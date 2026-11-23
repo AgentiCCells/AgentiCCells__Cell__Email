@@ -17,8 +17,8 @@ All times are UTC on 23 November 2026. Each time says where it comes from: **git
 | R8 | Which "feedback loop" pattern the CRM should use | crm.dev.a → a.maestro | clock 23:35 | the Sovereign Website /send/ pattern, reference Site__Organisation__Chiswick-Cheese-Market site/send/ at 65002f9 (msg 23:37) | 2 min | answered. R11 opened for the code itself |
 | R10 | Delete test vault tezq66k0 (made-up data, made by the browser check) | crm.dev.a → Dinis | clock 23:39 | – | open | **open**, low priority |
 | R11 | The /send/ reference code (keyring.js, send.js) sent verbatim, since this session cannot read that repository | crm.dev.a → a.maestro | clock 23:40 | part 1 (inbox.json, keyring.js): msg 23:41; part 2 (send.js): msg 23:42 | 2 min | done |
-| R12 | How the keeper's append-only inbox and token are made, and person-key.mjs | crm.dev.a → a.maestro | clock 23:43 | – | open | **open** |
-| R9 | Tell me when Site__Tool__CRM exists and is attached here | crm.dev.a → a.maestro | clock 23:35 | – | open | **open**, part of R2 |
+| R12 | How the keeper's append-only inbox and token are made, and person-key.mjs | crm.dev.a → a.maestro | clock 23:43 | msg 23:43 (configure call and person-key.mjs verbatim) | under 1 min | done |
+| R9 | Tell me when Site__Tool__CRM exists and is attached here | crm.dev.a → a.maestro | clock 23:35 | the factory's request is SovereignWebsite__IaC work/factory.c-crm (912653c), waiting on Dinis's merge (a.maestro, msg 23:43) | – | **open, waiting on Dinis's merge** |
 
 ## What this shows so far
 - Agent to agent inside the mail team (R3 to R5): minutes.
@@ -31,3 +31,4 @@ crm.dev.a adds a row when it sends or receives a request and fills "Answered" wh
 Updated 23:40 UTC (clock), with a.mail.conductor's times (team file: team/mail.conductor.a/requests.md on work/mail.conductor.a, 11accd8) and a.maestro's.
 Updated 23:42 UTC (clock): R2 cause from a.maestro; R11 part 1.
 Updated 23:44 UTC (clock): R11 done, R12 opened.
+Updated 23:45 UTC (clock): R12 done; R9 now waits on Dinis's merge of work/factory.c-crm.
