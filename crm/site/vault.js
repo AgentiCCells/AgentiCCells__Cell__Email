@@ -66,3 +66,42 @@ export function merge(crmFiles, twinFiles = null) {
   for (const [p, t] of Object.entries(crmFiles)) if (p !== 'manifest.json' && p !== 'README.md') files[p] = t;
   return { files, crmManifest, warnings };
 }
+
+// The CRM writes only to a vault that says it is a CRM vault (its manifest), that was opened with a
+// key that can write, and never to the mail twin. Returns a reason, or null when writing is allowed.
+export const CRM_SCHEMAS = ['crm.vault/1', 'crm.demo/1'];
+export function whyNotWritable(vault, manifest, { isTwin = false } = {}) {
+  if (isTwin) return 'that is the mail twin: the CRM never writes to it';
+  if (!vault) return 'no CRM vault is open';
+  if (!vault.writable) return 'the CRM vault was opened with a read key';
+  if (!manifest || !CRM_SCHEMAS.includes(manifest.schema)) return "the vault's manifest does not mark it as a CRM vault";
+  return null;
+}
+
+// One file, one commit, published with compare-and-swap (merging if someone published first), as the
+// Email Cell's vault.js does. `text` null removes the file. The access token is used for this call only.
+// The library names the commit itself ("Add <file>", "Edit <file>", "Remove <file>").
+export async function writeOne(vault, token, path, text) {
+  vault._sgSend.token = token || '';
+  try {
+    const parts = path.split('/'), name = parts.pop(), folder = '/' + parts.join('/');
+    let at = '';
+    for (const part of parts) {
+      const parent = at || '/';
+      at += '/' + part;
+      if (vault.needsLoading(parent)) await vault.loadSubTreeOnDemand(parent);
+      if (!vault.listFolder(at)) { if (text == null) throw new Error('nothing to remove'); await vault.createFolder(at); }
+      else if (vault.needsLoading(at)) await vault.loadSubTreeOnDemand(at);
+    }
+    const exists = (vault.listFolder(folder) || []).some((e) => e.name === name && e.type === 'file');
+    if (text == null) { if (!exists) throw new Error('nothing to remove'); await vault.removeFile(folder, name); }
+    else if (exists) await vault.updateFile(folder, name, new TextEncoder().encode(text));
+    else await vault.addFile(folder, name, new TextEncoder().encode(text));
+    if (vault._refManager.lastRawRef(vault._refFileId) === undefined) await vault.getBehindCount();
+    try { await vault.pushIfMatch(); return; } catch (e) { if (e.code !== 'ECAS') throw e; }
+    const theirs = await vault._refManager.readRef(vault._refFileId);
+    const r = await vault.merge(theirs, { publish: false });
+    if (r.conflicts.length) throw new Error('conflicts: ' + r.conflicts.join(', '));
+    await vault.pushIfMatch();
+  } finally { vault._sgSend.token = ''; }
+}

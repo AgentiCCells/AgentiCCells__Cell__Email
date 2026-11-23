@@ -4,14 +4,16 @@
 // person's own keys, in this browser only (vault.js); remembered keys are sealed to this browser's
 // own key with the Email Cell's pki.js keep/recall, unedited.
 // By crm.dev.a@AgentiCCells.dinis, 2026-11-23. Apache-2.0.
-import { readVault, checkCrm, leadBoard, followUps, company, contacts, FOLLOW_UP_DAYS } from './crm.mjs';
-import { keyKind, openVault, readAll, merge } from './vault.js';
+import { readVault, checkCrm, leadBoard, followUps, company, contacts, unlinkedThreads, linkFile, FOLLOW_UP_DAYS } from './crm.mjs';
+import { keyKind, openVault, readAll, merge, whyNotWritable, writeOne } from './vault.js';
 import { identity, existingIdentity, keep, recall, forget, kept } from './pki.js';
 
 const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const day = (iso) => (iso ? iso.slice(0, 10) : '–');
 let V = null, NOW = 0, MODE = 'demo', OPENED = null, SYNTHETIC = true;
+// The open CRM vault (never the twin), its manifest, and the access token for writing: memory only.
+let CRMV = null, CRM_MANIFEST = null, TOKEN = '', PENDING = null;
 const idOf = (key) => (String(key).trim().match(/:([a-z0-9]{4,32})$/) || [])[1] || '?';
 // The Email Cell's send screen, where a draft is reviewed and sent. In demo mode it opens the same
 // synthetic contact (person id) in its own demo. Parameters agreed with mail.dev.a@AgentiCCells.dinis:
@@ -39,15 +41,16 @@ async function loadDemo() {
   V = readVault(b.files);
   // The demo's clock is the twin's, so "5 days" means the same on every visit.
   NOW = Date.parse(V.manifest.generated_at);
-  OPENED = null;
+  OPENED = null; CRMV = null; CRM_MANIFEST = null; TOKEN = ''; PENDING = null;
   setMode('demo', 'Demo mode');
 }
 
 // Open the person's vaults with their keys. The keys live only in this call's memory, and are kept
 // only if `remember` is set, sealed to this browser's own key.
-async function loadVault(crmKey, twinKey, remember, status) {
+async function loadVault(crmKey, twinKey, remember, status, token = '') {
   status('Opening the CRM vault…');
-  const crmFiles = await readAll(await openVault(crmKey), { onProgress: (n) => status(`Reading the CRM vault: ${n} files…`) });
+  const crmVault = await openVault(crmKey);
+  const crmFiles = await readAll(crmVault, { onProgress: (n) => status(`Reading the CRM vault: ${n} files…`) });
   let twinFiles = null;
   if (twinKey) {
     status('Opening the mail twin…');
@@ -65,7 +68,9 @@ async function loadVault(crmKey, twinKey, remember, status) {
     const id = await identity('crm tool page, ' + location.host);
     await keep(id, 'vault:crm', crmKey);
     if (twinKey) await keep(id, 'vault:twin', twinKey); else await forget('vault:twin');
+    if (token) await keep(id, 'token:sg-send', token); else await forget('token:sg-send');
   }
+  CRMV = crmVault; CRM_MANIFEST = m.crmManifest; TOKEN = token || ''; PENDING = null;
   const synthetic = !!(v.manifest?.synthetic || m.crmManifest?.synthetic);
   V = v;
   NOW = synthetic && v.manifest?.generated_at ? Date.parse(v.manifest.generated_at) : Date.now();
@@ -82,6 +87,7 @@ async function openPage() {
   <form id="open" class="open" autocomplete="off">
     <label>CRM vault key <input id="k-crm" type="password" spellcheck="false" placeholder="sgit_private_vault_… or sgit_private_read_…:id" required></label>
     <label>Mail twin key <span class="muted">(if the CRM vault points at one)</span> <input id="k-twin" type="password" spellcheck="false" placeholder="sgit_private_read_…:id"></label>
+    <label>SG/Send access token <span class="muted">(only needed to write links)</span> <input id="k-token" type="password" spellcheck="false"></label>
     <label class="check"><input id="remember" type="checkbox"> Remember on this device, sealed to this browser's own key</label>
     <button type="submit">Open</button>
   </form>
@@ -90,23 +96,24 @@ async function openPage() {
 
 function wireOpen() {
   const status = (t, bad) => { const el = $('#status'); if (el) { el.textContent = t; el.className = bad ? 'warn' : 'muted'; } };
-  const go = (crm, twin, remember) => loadVault(crm, twin, remember, status).then(() => { location.hash = '#/board'; route(); }).catch((e) => status('Could not open: ' + e.message, true));
+  const go = (crm, twin, remember, token) => loadVault(crm, twin, remember, status, token).then(() => { location.hash = '#/board'; route(); }).catch((e) => status('Could not open: ' + e.message, true));
   $('#open')?.addEventListener('submit', (ev) => {
     ev.preventDefault();
     const crm = $('#k-crm').value.trim(), twin = $('#k-twin').value.trim();
     if (!keyKind(crm)) return status('That does not look like a vault key or a read key.', true);
     if (twin && !keyKind(twin)) return status('The mail twin key does not look like a vault key or a read key.', true);
-    $('#k-crm').value = ''; $('#k-twin').value = '';
-    go(crm, twin || null, $('#remember').checked);
+    const token = $('#k-token').value.trim();
+    $('#k-crm').value = ''; $('#k-twin').value = ''; $('#k-token').value = '';
+    go(crm, twin || null, $('#remember').checked, token);
   });
   $('#recall')?.addEventListener('click', async () => {
     try {
       const id = await existingIdentity();
       if (!id) throw new Error("this browser's key is gone");
-      go(await recall(id, 'vault:crm'), await recall(id, 'vault:twin'), false);
+      go(await recall(id, 'vault:crm'), await recall(id, 'vault:twin'), false, (await recall(id, 'token:sg-send')) || '');
     } catch (e) { status('Could not open: ' + e.message, true); }
   });
-  $('#forget')?.addEventListener('click', async () => { await forget('vault:crm'); await forget('vault:twin'); route(); });
+  $('#forget')?.addEventListener('click', async () => { await forget('vault:crm'); await forget('vault:twin'); await forget('token:sg-send'); route(); });
   $('#to-demo')?.addEventListener('click', () => loadDemo().then(() => { location.hash = '#/board'; route(); }));
 }
 
@@ -154,7 +161,7 @@ function companyPage(id) {
   <h2>People</h2>
   <ul class="list">${c.contacts.map((p) => `<li>${esc(p.name)} <span class="muted">${esc(p.role || '')} · ${esc((p.emails || [])[0] || '')}</span></li>`).join('') || '<li class="muted">None yet</li>'}</ul>
   <h2>Mail threads</h2>
-  <ul class="list">${c.threads.map((t) => `<li id="t-${esc(t.id)}"><strong>${esc(t.subject)}</strong> <span class="muted">${day(t.last_date)} · ${t.direction === 'outbound' ? 'we wrote last' : 'they wrote last'} · ${esc(who(t.person))} · ${t.linked ? 'linked' : 'matched by address'}</span></li>`).join('') || '<li class="muted">None</li>'}</ul>
+  <ul class="list">${c.threads.map((t) => `<li id="t-${esc(t.id)}"><strong>${esc(t.subject)}</strong> <span class="muted">${day(t.last_date)} · ${t.direction === 'outbound' ? 'we wrote last' : 'they wrote last'} · ${esc(who(t.person))} · ${t.linked ? 'linked' : 'matched by address'}</span> ${linkButton(t.id, t.linked ? null : c.org, t.person)}</li>`).join('') || '<li class="muted">None</li>'}</ul>
   <h2>Drafts</h2>
   <ul class="list">${c.drafts.map((d) => `<li><strong>${esc(d.subject)}</strong> <span class="muted">to ${esc((d.to || []).join(', '))} · ${esc(d.status)}</span>${d.status === 'draft' ? ` <a href="${esc(sendLink(d.person))}">Review and send (demo) →</a>` : ''}</li>`).join('') || '<li class="muted">None</li>'}</ul>`;
 }
@@ -171,11 +178,78 @@ function contactsPage() {
   <tbody>${contacts(V).map((p) => `<tr><td>${esc(p.name)}</td><td><a href="#/company/${esc(p.org)}">${esc(p.org_name)}</a></td><td>${esc(p.role || '')}</td><td>${esc(p.email)}</td><td class="num">${p.threads}</td><td>${day(p.last_contact)}</td></tr>`).join('')}</tbody></table></div>`;
 }
 
+// Hand-made links. A press shows exactly what will be written; only a second press writes it, one
+// file and one commit per link, to the person's own CRM vault (never the twin). In the demo nothing
+// is written anywhere: the link is made in this tab's memory only.
+function linkButton(thread, org, person) {
+  if (!org) return `<button type="button" class="small quiet" data-unlink="${esc(thread)}">Unlink</button>`;
+  return `<button type="button" class="small quiet" data-link="${esc(thread)}" data-org="${esc(org)}" data-person="${esc(person || '')}">Link to ${esc(orgName(org))}</button>`;
+}
+
+function threadsPage() {
+  const list = unlinkedThreads(V);
+  return `<h1>Unlinked threads</h1><p class="muted">Mail threads with no link to a company. A link ties the thread to the company's row, whatever addresses it holds.</p>
+  <div class="scroll"><table class="grid"><thead><tr><th>Thread</th><th>Last</th><th>Matched by address</th><th>Link to</th></tr></thead>
+  <tbody>${list.map((t) => `<tr><td>${esc(t.subject)} <span class="muted small">${esc(t.id)}</span></td><td>${day(t.last_date)}</td><td>${t.org ? esc(orgName(t.org)) : '–'}</td>
+  <td><select data-for="${esc(t.id)}">${V.orgs.map((o) => `<option value="${esc(o.id)}"${o.id === t.org ? ' selected' : ''}>${esc(o.name)}</option>`).join('')}</select>
+  <button type="button" class="small" data-link="${esc(t.id)}" data-pick="1" data-person="${esc(t.person || '')}">Link</button></td></tr>`).join('') || '<tr><td colspan="4" class="muted">Every thread is linked.</td></tr>'}</tbody></table></div>`;
+}
+
+function pendingPanel() {
+  if (!PENDING) return '';
+  const where = MODE === 'demo' ? 'the demo, in this tab only: nothing is written anywhere' : `your CRM vault ${esc(OPENED.split(' + ')[0])}, as one commit`;
+  const blocked = MODE === 'vault' ? whyNotWritable(CRMV, CRM_MANIFEST) : null;
+  return `<section class="pending" id="pending"><h2>${PENDING.text == null ? 'Remove this link?' : 'Write this link?'}</h2>
+  <p>To ${where}:</p><p><code>${esc(PENDING.path)}</code></p>
+  ${PENDING.text == null ? '<p>The file will be removed. The vault keeps it in its history.</p>' : `<pre>${esc(PENDING.text)}</pre>`}
+  ${blocked ? `<p class="warn">Cannot write: ${esc(blocked)}.</p>` : ''}
+  ${MODE === 'vault' && !blocked && !TOKEN ? '<label>SG/Send access token, for this write <input id="w-token" type="password" spellcheck="false"></label>' : ''}
+  <p><button type="button" id="w-go"${blocked ? ' disabled' : ''}>${PENDING.text == null ? 'Remove it' : 'Write it'}</button> <button type="button" id="w-cancel" class="quiet">Cancel</button></p>
+  <p id="w-status" class="muted" role="status"></p></section>`;
+}
+
+function askLink(thread, org, person) {
+  const by = MODE === 'demo' ? 'Demo user' : (CRM_MANIFEST?.owner || 'the vault owner');
+  try {
+    const f = linkFile(V, { thread, org, person: person || null, by, at: new Date().toISOString().replace(/\.\d+Z$/, 'Z') });
+    PENDING = { thread, path: f.path, text: f.text, record: f.record };
+  } catch (e) { PENDING = null; alert('That link would not check out: ' + e.message); }
+  route();
+}
+function askUnlink(thread) { PENDING = { thread, path: `crm/links/${thread}.json`, text: null }; route(); }
+
+async function doPending() {
+  const st = (t, bad) => { $('#w-status').textContent = t; $('#w-status').className = bad ? 'warn' : 'muted'; };
+  const p = PENDING;
+  if (MODE === 'vault') {
+    const token = TOKEN || $('#w-token')?.value.trim();
+    if (!token) return st('Writing needs your SG/Send access token.', true);
+    $('#w-go').disabled = true; st('Writing one commit to your vault…');
+    try { await writeOne(CRMV, token, p.path, p.text); } catch (e) { $('#w-go').disabled = false; return st('Not written: ' + e.message, true); }
+  }
+  V = { ...V, links: p.text == null ? V.links.filter((k) => k.thread !== p.thread) : [...V.links.filter((k) => k.thread !== p.thread), p.record] };
+  PENDING = null; route();
+}
+
+function wireActions() {
+  for (const b of document.querySelectorAll('[data-link]')) b.addEventListener('click', () => {
+    const org = b.dataset.pick ? document.querySelector(`select[data-for="${b.dataset.link}"]`).value : b.dataset.org;
+    const person = V.people.find((x) => x.id === b.dataset.person)?.org === org ? b.dataset.person : null;
+    askLink(b.dataset.link, org, person);
+  });
+  for (const b of document.querySelectorAll('[data-unlink]')) b.addEventListener('click', () => askUnlink(b.dataset.unlink));
+  $('#w-go')?.addEventListener('click', doPending);
+  $('#w-cancel')?.addEventListener('click', () => { PENDING = null; route(); });
+}
+
 async function route() {
   const [path] = (location.hash.slice(1) || '/board').split('?');
   const [, page, id] = path.split('/');
-  $('#main').innerHTML = page === 'open' ? await openPage() : page === 'company' ? companyPage(id) : page === 'follow-ups' ? followUpsPage() : page === 'contacts' ? contactsPage() : board();
+  const body = page === 'open' ? await openPage() : page === 'company' ? companyPage(id) : page === 'threads' ? threadsPage() : page === 'follow-ups' ? followUpsPage() : page === 'contacts' ? contactsPage() : board();
+  $('#main').innerHTML = pendingPanel() + body;
   if (page === 'open') wireOpen();
+  wireActions();
+  if (PENDING) $('#pending')?.scrollIntoView();
   for (const a of document.querySelectorAll('nav a')) a.classList.toggle('on', a.getAttribute('href') === `#/${page || 'board'}`);
 }
 

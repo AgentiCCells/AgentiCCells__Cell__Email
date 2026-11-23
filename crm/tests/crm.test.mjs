@@ -136,3 +136,29 @@ test('vault merge: the twin first, the CRM vault adds crm/ on top and keeps its 
   assert.equal(m.crmManifest.twin.vault, 'abcd1234');
   assert.equal(merge(crm).files, crm);
 });
+
+test('hand-made links: unlinked threads, the exact file, and refusals', async () => {
+  const { unlinkedThreads, linkFile } = await import('../model/crm.mjs');
+  const v = readVault(twin());
+  assert.deepEqual(unlinkedThreads(v).map((t) => [t.id, t.org]), [['t-004', 'o03'], ['t-002', 'o02'], ['t-001', 'o01'], ['t-003', 'o02']]);
+  const f = linkFile(v, { thread: 't-004', org: 'o03', by: 'Owner A', at: '2026-11-23T15:30:00Z' });
+  assert.equal(f.path, 'crm/links/t-004.json');
+  assert.deepEqual(JSON.parse(f.text), { schema: 'crm.link/1', thread: 't-004', org: 'o03', linked_by: 'Owner A', linked_at: '2026-11-23T15:30:00Z' });
+  assert.throws(() => linkFile(v, { thread: 't-999', org: 'o01', by: 'x', at: '2026-11-23T15:30:00Z' }), /no such thread/);
+  assert.throws(() => linkFile(v, { thread: 't-001', org: 'o01', person: 'p02', by: 'x', at: '2026-11-23T15:30:00Z' }), /not at o01/);
+  assert.throws(() => linkFile(v, { thread: 't-001', org: 'o01', by: '', at: '2026-11-23T15:30:00Z' }), /who made it/);
+  const linked = readVault({ ...twin(), [f.path]: f.text });
+  assert.ok(!unlinkedThreads(linked).some((t) => t.id === 't-004'));
+});
+
+test('writes go only to a writable vault marked as a CRM vault, never the twin', async () => {
+  const { whyNotWritable } = await import('../site/vault.js');
+  const w = { writable: true }, r = { writable: false };
+  assert.equal(whyNotWritable(w, { schema: 'crm.demo/1' }), null);
+  assert.equal(whyNotWritable(w, { schema: 'crm.vault/1' }), null);
+  assert.match(whyNotWritable(r, { schema: 'crm.vault/1' }), /read key/);
+  assert.match(whyNotWritable(w, { schema: 'demo.twin/1' }), /not mark it as a CRM vault/);
+  assert.match(whyNotWritable(w, null), /not mark it/);
+  assert.match(whyNotWritable(w, { schema: 'crm.vault/1' }, { isTwin: true }), /mail twin/);
+  assert.match(whyNotWritable(null, null), /no CRM vault/);
+});

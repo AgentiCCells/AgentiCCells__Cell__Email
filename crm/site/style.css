@@ -33,3 +33,9 @@ a.badge { text-decoration: none; }
 .open input[type=password] { font: 14px ui-monospace, monospace; padding: 8px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); color: var(--fg); width: 100%; }
 button { font: inherit; padding: 6px 14px; border-radius: 6px; border: 1px solid var(--accent); background: var(--accent); color: var(--bg); cursor: pointer; justify-self: start; }
 button.quiet { background: transparent; color: var(--accent); }
+.pending { border: 1px solid var(--warn); border-radius: 8px; padding: 4px 16px 8px; margin: 16px 0; }
+.pending pre { background: var(--chip); padding: 8px; border-radius: 6px; overflow-x: auto; font-size: 13px; }
+.pending label { display: grid; gap: 4px; max-width: 420px; }
+button.small { font-size: 12px; padding: 1px 8px; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+select { font: inherit; font-size: 13px; }

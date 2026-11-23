@@ -191,3 +191,23 @@ export function contacts(v) {
     return { id: p.id, name: p.name, email: (p.emails || [])[0] || null, role: p.role || null, org: p.org, org_name: orgName.get(p.org) || null, threads: mine.length, last_contact: dates.at(-1) || null };
   }).sort((a, b) => a.name.localeCompare(b.name));
 }
+
+// Threads with no crm/links/ record, newest first, with the company they are matched to (if any).
+export function unlinkedThreads(v) {
+  const idx = index(v);
+  return v.threads.filter((t) => !idx.linkByThread.has(t.id)).map((t) => {
+    const m = lastMessage(v, t), who = threadOrg(v, t, idx);
+    return { id: t.id, subject: t.subject, last_date: m?.date || t.last_date, org: who?.org ?? null, person: who?.person ?? null };
+  }).sort((a, b) => Date.parse(b.last_date) - Date.parse(a.last_date));
+}
+
+// The exact file a hand-made link writes: { path, record, text }. Throws if it would not check out.
+export function linkFile(v, { thread, org, person = null, by, at }) {
+  const record = { schema: 'crm.link/1', thread, org, ...(person ? { person } : {}), linked_by: by, linked_at: at };
+  const probe = { ...v, links: [...v.links.filter((k) => k.thread !== thread), record] };
+  const errors = checkCrm(probe).filter((e) => e.startsWith(`link ${thread}:`));
+  if (errors.length) throw new Error(errors.join('; '));
+  if (!by || typeof by !== 'string') throw new Error('a link needs the name of who made it');
+  if (!ISO.test(at || '')) throw new Error('a link needs its time, as an ISO time');
+  return { path: `crm/links/${thread}.json`, record, text: JSON.stringify(record, null, 2) + '\n' };
+}
