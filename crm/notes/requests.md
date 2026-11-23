@@ -2,20 +2,21 @@
 
 Every request crm.dev.a has sent or is waiting on, with times, so the team can see where work waits. Asked for by Dinis, 23 November 2026, 23:3x UTC, in this session: "you need to start tracking a timeline for some of these requests ... we need to understand where the bottlenecks are". Agents run in blocks of 15 minutes to an hour, so a request open longer than that is a bottleneck to look at.
 
-All times are UTC on 23 November 2026. Each time says where it comes from: **git** (a commit's time on work/crm.dev.a), **msg** (a message's queued time as the notification showed it), **clock** (`date -u` in this session), **est** (estimated; avoid). Updated 23:37 UTC (clock).
+All times are UTC on 23 November 2026. Each time says where it comes from: **git** (a commit's time on work/crm.dev.a), **msg** (a message's queued time as the notification showed it), **clock** (`date -u` in this session), **est** (estimated; avoid). Updated (earlier) 23:37 UTC (clock).
 
 | # | Request | From → to | Asked | Answered or done | Waited | State |
 |---|---|---|---|---|---|---|
-| R1 | Read 4 repositories (PrompTugal News, Web Summit CRM, SovereignWebsite IaC, Site__Platform__AWS) | crm.dev.a → Dinis (add-repo approval; a.mail.conductor asked him too, msg 14:54) | 15:05 (est: first turn, before git d8fe038 at 15:06) | – | 8 h 31 min and counting | **open**: the oldest. The record names and the request format wait on it. |
-| R2 | Site request for the CRM tool site | crm.dev.a → a.mail.conductor → a.maestro → account C factory | draft git 15:06; final git 15:30 | a.maestro passed it to account C: msg 21:43 | 6 h 13 min from final to passed on | **open** at the factory. The repository is not in my list at clock 22:43 or 23:36. |
+| R1 | Read 4 repositories (PrompTugal News, Web Summit CRM, SovereignWebsite IaC, Site__Platform__AWS) | crm.dev.a → Dinis (add-repo approval). a.mail.conductor saw the blocked prompt 14:52, asked Dinis 14:58 (git 669b515), in his batch 1 as D5 since 15:15 (git 0643d93) | 14:52 (a.mail.conductor's session list) | – | 8 h 31 min and counting | **open**: the oldest. The record names and the request format wait on it. |
+| R2 | Site request for the CRM tool site | crm.dev.a → a.mail.conductor (msg 15:30) → a.maestro (git 5ac023e, 15:31) → account C factory | draft git 15:06; final git 15:30 | Site__Tool__CRM version relayed to account C 21:46 (a.maestro's msg). Account C has not acknowledged: its maestro's wake is paused. Re-sent to both factories (c.factory, d.factory) about 23:37 (msg) | 15:31 to 21:46 at a.maestro unexplained (no record that the first version was passed on); then over 1 h 50 min unacknowledged by account C | **open**. Bottlenecks: the first version stalled after a.maestro; account C's paused wake. |
 | R2a | Repository name SovereignWebsite/Site__Tool__CRM added to R2 | Dinis → crm.dev.a → a.mail.conductor | git 21:42 | passed to account C: msg 21:43 | 1 min | waits with R2 |
 | R3 | Send screen opens on ?contact=<person id> | crm.dev.a → mail.dev.a | git 15:13 (fbcc12f) | msg 15:16 (built in 606d358) | 3 min | done |
 | R4 | Demo twin with contrast (some sent, some answered) | a.mail.conductor and crm.dev.a → mail.dev.a | git 15:13 | msg 15:16 (2cc074a) | 3 min | done |
 | R5 | Agree the shared demo twin layout | mail.dev.a → crm.dev.a | msg 15:05 | git 15:06 (answered in first turn) | under 5 min | done |
 | R6 | Delete vault a5a7rrbl | crm.dev.a → Dinis | git 15:12 (fc876c9) | Dinis's word between git 15:30 and 15:38; deleted before git 15:38 | 18 to 26 min | done |
-| R7 | Is anyone moving the Gmail tool to Site__Tool__Gmail? | Dinis → crm.dev.a → a.maestro, a.mail.conductor | clock 23:35 (git 89ba687) | – | open | **open** |
-| R8 | Which "feedback loop" pattern the CRM should use | crm.dev.a → a.maestro | clock 23:35 | – | open | **open** |
+| R7 | Is anyone moving the Gmail tool to Site__Tool__Gmail? | Dinis → crm.dev.a → a.maestro, a.mail.conductor | clock 23:35 (git 89ba687) | a.mail.conductor: nobody yet; proposes mail.dev.a, request filed (msg 23:35, work/mail.conductor.a 2f58a0b), now with both factories (a.maestro, msg 23:37) | under 5 min to answer | answered; the move itself is open (D7 and D1 first, then the repository) |
+| R8 | Which "feedback loop" pattern the CRM should use | crm.dev.a → a.maestro | clock 23:35 | the Sovereign Website /send/ pattern, reference Site__Organisation__Chiswick-Cheese-Market site/send/ at 65002f9 (msg 23:37) | 2 min | answered. R11 opened for the code itself |
 | R10 | Delete test vault tezq66k0 (made-up data, made by the browser check) | crm.dev.a → Dinis | clock 23:39 | – | open | **open**, low priority |
+| R11 | The /send/ reference code (keyring.js, send.js) sent verbatim, since this session cannot read that repository | crm.dev.a → a.maestro | clock 23:40 | – | open | **open** |
 | R9 | Tell me when Site__Tool__CRM exists and is attached here | crm.dev.a → a.maestro | clock 23:35 | – | open | **open**, part of R2 |
 
 ## What this shows so far
@@ -25,3 +26,5 @@ All times are UTC on 23 November 2026. Each time says where it comes from: **git
 
 ## How this file is kept
 crm.dev.a adds a row when it sends or receives a request and fills "Answered" when it closes, with the source of each time. Each wake checks open rows.
+
+Updated 23:40 UTC (clock), with a.mail.conductor's times (team file: team/mail.conductor.a/requests.md on work/mail.conductor.a, 11accd8) and a.maestro's.
