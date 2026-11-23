@@ -1,17 +1,17 @@
 {
  "format": "studio-storyboard/0",
  "slug": "gmail-crm-decisions-1",
- "title": "Gmail and CRM, account A: six decisions",
+ "title": "Gmail and CRM, account A: seven decisions",
  "audience": "Dinis: six decisions from the first day of account A's Gmail and CRM team",
  "requested_by": "mail.conductor.a@AgentiCCells.dinis",
- "summary": "The team built the send screen, a lead board and a synthetic demo on branches. Six decisions and one task wait on Dinis; each has a recommendation.",
+ "summary": "Account D has handed over; its release branch carries a fix for a live weakness and waits on Dinis. The team also built the send screen, a lead board and a synthetic demo. Seven decisions and one task; each has a recommendation.",
  "beats": [
   {
    "id": "b1",
-   "narration": "In its first half hour (go about 14:50 UTC, now 15:15), account A's Gmail and CRM team built a send screen, a lead board and a shared synthetic demo. Six things now wait on you. Here they are, each with a recommendation.",
+   "narration": "Account D has handed over the email cell's code to account A. Its waiting release fixes a live weakness, so that comes first. Then six decisions from the new team's first afternoon, each with a recommendation.",
    "visual": {
     "kind": "title",
-    "text": "Gmail and CRM: six decisions"
+    "text": "Gmail and CRM: seven decisions"
    },
    "facts": [
     "s1",
@@ -20,6 +20,22 @@
   },
   {
    "id": "b2",
+   "narration": "First, urgent. On the live gateway, a sealed code from an unknown sender can silently replace your twin vault key, so a later sync could write your mail headers into someone else's vault. The fix waits on release/next2. We recommend releasing it now.",
+   "visual": {
+    "kind": "list",
+    "items": [
+     "Live: unknown-sender codes replace keys silently",
+     "Fix 458c4ad: name the sender, ask before replacing",
+     "On release/next2, 138 tests, gates OK",
+     "Recommended: release first, send screen after"
+    ]
+   },
+   "facts": [
+    "s7"
+   ]
+  },
+  {
+   "id": "b3",
    "narration": "What exists, on branches, not live. The send screen follows your G3: pick a contact, see the draft, edit, press Send. The lead board shows every company's stage, draft and follow-ups. Both run on made-up data in demo mode.",
    "visual": {
     "kind": "flow",
@@ -64,7 +80,7 @@
    ]
   },
   {
-   "id": "b3",
+   "id": "b4",
    "narration": "One: release the send screen to the live site. 122 tests and every gate pass, and nothing overlaps account D's waiting release. It sends real mail only after you confirm, at most 20 a day. We recommend yes.",
    "visual": {
     "kind": "list",
@@ -80,7 +96,7 @@
    ]
   },
   {
-   "id": "b4",
+   "id": "b5",
    "narration": "Two: where the send screen finds recipients for real. Typed by hand today. Your sent mail, read in your browser only, is quick. The lead board and outbox are the lasting answer. We recommend hand-typed now, the lead board later.",
    "visual": {
     "kind": "compare",
@@ -105,7 +121,7 @@
    ]
   },
   {
-   "id": "b5",
+   "id": "b6",
    "narration": "Three and four are housekeeping. The public demo vault's read key needs one narrow leak-scan allowance to be written down. And three abandoned vaults of made-up data can go: one had its passphrase printed, two hold old names. We recommend yes to both.",
    "visual": {
     "kind": "list",
@@ -120,7 +136,7 @@
    ]
   },
   {
-   "id": "b6",
+   "id": "b7",
    "narration": "Five: a.crm.dev asked to read four repositories, among them the team CRM and the AWS platform, so its records match ours. That prompt waits in its session. We recommend approving read-only access.",
    "visual": {
     "kind": "stat",
@@ -132,7 +148,7 @@
    ]
   },
   {
-   "id": "b7",
+   "id": "b8",
    "narration": "Six: the documentation pages: how to use the tools, how to run your own copy with your own Google app, and how to join. They speak for the team, so they go live on your word. We recommend yes after your read.",
    "visual": {
     "kind": "list",
@@ -147,7 +163,7 @@
    ]
   },
   {
-   "id": "b8",
+   "id": "b9",
    "narration": "And one task only you can do, from your G4 yes: ask Google to review the site in Search Console. Until then, every link from outreach or the hub lands on a red warning. The narration voice is synthetic.",
    "visual": {
     "kind": "title",
@@ -160,6 +176,37 @@
   }
  ],
  "decisions": [
+  {
+   "question": "D7 (urgent). Release release/next2 (W13) to dev now, run by mail.dev.a, before the send screen?",
+   "options": [
+    {
+     "id": "a",
+     "label": "Yes, release it first",
+     "good": [
+      "Closes a live weakness: a pasted code from an unknown sender can silently replace your twin key",
+      "Lands account D's 28 signed commits as a fast-forward, signatures kept",
+      "138 tests and every gate OK (email.dev.d, 92bb7de)"
+     ],
+     "bad": [
+      "Changes the gateway, the mail client's reader and the top bar on the live site"
+     ],
+     "blocks": []
+    },
+    {
+     "id": "b",
+     "label": "Not yet",
+     "good": [
+      "Nothing changes live"
+     ],
+     "bad": [
+      "The weakness stays live: paste only codes you made or asked for"
+     ],
+     "blocks": []
+    }
+   ],
+   "recommendation": "a",
+   "why": "It fixes a live weakness and is already reviewed and gated by account D; mail.dev.a then rebases the send screen on it with no conflicts (no shared files)."
+  },
   {
    "question": "D1. Release the send screen (work/mail.dev.a) to dev, which is the live site?",
    "options": [
@@ -393,6 +440,12 @@
    "id": "s6",
    "title": "Draft pages: run your own, use the tools, join",
    "url": "https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/work/mail.conductor.a/docs/pages/run-your-own.md",
+   "read": "2026-11-23"
+  },
+  {
+   "id": "s7",
+   "title": "email.dev.d's hand-over to account A (release/next2, the unknown-sender weakness)",
+   "url": "https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/work/email.dev.d-r2/team/email.dev.d/notes/2026-11-23-hand-over-to-account-a.md",
    "read": "2026-11-23"
   }
  ]
