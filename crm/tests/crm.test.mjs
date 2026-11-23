@@ -13,27 +13,27 @@ function twin() {
   const f = {
     'manifest.json': { schema: 'demo.twin/1', synthetic: true, seed: 7, generated_at: iso(NOW) },
     'mail/mailbox.json': { schema: 'twin.mailbox/1', address: ME },
-    'orgs/o01.json': { id: 'o01', name: 'Harbour Analytics', domain: 'harbour.example.com', kind: 'investor', synthetic: true },
-    'orgs/o02.json': { id: 'o02', name: 'Atlas Insurance', domain: 'atlas.example.com', kind: 'customer', synthetic: true },
-    'orgs/o03.json': { id: 'o03', name: 'Quiet Co', domain: 'quiet.example.net', kind: 'prospect', synthetic: true },
-    'people/p01.json': { id: 'p01', name: 'Ana Costa', emails: ['ana.costa@harbour.example.com'], org: 'o01' },
-    'people/p02.json': { id: 'p02', name: 'Bruno Ito', emails: ['bruno.ito@atlas.example.com'], org: 'o02' },
-    'drafts/p01.json': { person: 'p01', org: 'o01', status: 'draft', to: ['ana.costa@harbour.example.com'] },
-    'drafts/p02.json': { person: 'p02', status: 'sent', to: ['bruno.ito@atlas.example.com'] },
+    'orgs/o01.json': { id: 'o01', name: 'Example Analytics (demo)', domain: 'analytics.example.com', kind: 'investor', synthetic: true },
+    'orgs/o02.json': { id: 'o02', name: 'Example Insurance (demo)', domain: 'insurance.example.com', kind: 'customer', synthetic: true },
+    'orgs/o03.json': { id: 'o03', name: 'Example Quiet (demo)', domain: 'quiet.example.net', kind: 'prospect', synthetic: true },
+    'people/p01.json': { id: 'p01', name: 'Ana Costa', emails: ['ana.costa@analytics.example.com'], org: 'o01' },
+    'people/p02.json': { id: 'p02', name: 'Bruno Ito', emails: ['bruno.ito@insurance.example.com'], org: 'o02' },
+    'drafts/p01.json': { person: 'p01', org: 'o01', status: 'draft', to: ['ana.costa@analytics.example.com'] },
+    'drafts/p02.json': { person: 'p02', status: 'sent', to: ['bruno.ito@insurance.example.com'] },
   };
   const msg = (id, thread, direction, at, other) => {
     f[`mail/raw/messages/2026/11/${id}.json`] = { schema: 'twin.message/1', id, thread, direction, date: iso(at), from: { address: direction === 'outbound' ? ME : other }, to: [{ address: direction === 'outbound' ? other : ME }] };
   };
   // t-001: we wrote 8 days ago, no answer -> follow-up. t-002: we wrote 3 days ago -> not yet.
   // t-003: we wrote, they answered -> not a follow-up. t-004: no person, matched by domain.
-  msg('m1', 't-001', 'outbound', NOW - 8 * DAY, 'ana.costa@harbour.example.com');
-  msg('m2', 't-002', 'outbound', NOW - 3 * DAY, 'bruno.ito@atlas.example.com');
-  msg('m3', 't-003', 'outbound', NOW - 20 * DAY, 'bruno.ito@atlas.example.com');
-  msg('m4', 't-003', 'inbound', NOW - 18 * DAY, 'bruno.ito@atlas.example.com');
+  msg('m1', 't-001', 'outbound', NOW - 8 * DAY, 'ana.costa@analytics.example.com');
+  msg('m2', 't-002', 'outbound', NOW - 3 * DAY, 'bruno.ito@insurance.example.com');
+  msg('m3', 't-003', 'outbound', NOW - 20 * DAY, 'bruno.ito@insurance.example.com');
+  msg('m4', 't-003', 'inbound', NOW - 18 * DAY, 'bruno.ito@insurance.example.com');
   msg('m5', 't-004', 'inbound', NOW - 1 * DAY, 'someone@quiet.example.net');
-  f['mail/threads/t-001.json'] = { id: 't-001', subject: 'A', messages: ['m1'], participants: [ME, 'ana.costa@harbour.example.com'], person: 'p01' };
-  f['mail/threads/t-002.json'] = { id: 't-002', subject: 'B', messages: ['m2'], participants: [ME, 'bruno.ito@atlas.example.com'], person: 'p02' };
-  f['mail/threads/t-003.json'] = { id: 't-003', subject: 'C', messages: ['m3', 'm4'], participants: [ME, 'bruno.ito@atlas.example.com'], person: 'p02' };
+  f['mail/threads/t-001.json'] = { id: 't-001', subject: 'A', messages: ['m1'], participants: [ME, 'ana.costa@analytics.example.com'], person: 'p01' };
+  f['mail/threads/t-002.json'] = { id: 't-002', subject: 'B', messages: ['m2'], participants: [ME, 'bruno.ito@insurance.example.com'], person: 'p02' };
+  f['mail/threads/t-003.json'] = { id: 't-003', subject: 'C', messages: ['m3', 'm4'], participants: [ME, 'bruno.ito@insurance.example.com'], person: 'p02' };
   f['mail/threads/t-004.json'] = { id: 't-004', subject: 'D', messages: ['m5'], participants: [ME, 'someone@quiet.example.net'] };
   return f;
 }

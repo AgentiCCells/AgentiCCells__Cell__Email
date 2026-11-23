@@ -12,3 +12,6 @@
   - From now on every sgit command's output goes through a mask that drops passphrase, key and web URL lines.
 - The CRM demo vault in use: egw210lk (synthetic). When the container ends, its write key ends with it; a later session rebuilds it from crm/sim/build-crm.mjs.
 - 2026-11-23 ~15:25 UTC: a.mail.conductor's review asks: owners are now Owner A to C; "Draft waiting" and each draft link to the Email Cell's send screen in demo mode (?demo&contact=<person-id>, proposed to mail.dev.a; dead until send.html lands there). Rebuilt the bundle and updated vault egw210lk. Contrast (some drafts sent, some none, some answered) needs mail.dev.a's generator; asked.
+- 2026-11-23 ~15:30 UTC: rebuilt crm/ on the twin's generator 606d358 (organisations renamed "Example ... (demo)"), from a read-only clone of epk5452e; updated vault egw210lk and the bundle. Test fixtures renamed the same way.
+  - egw210lk's history has no organisation names at all (only ids), so it does not need a fresh vault.
+  - This branch's history does: crm/site/demo/twin.json and crm/tests/crm.test.mjs at e88b1da, fc876c9 and fbcc12f hold the earlier made-up names (Atlas, Meridian and so on). They are gone from the files now. Clearing them from history means rewriting a pushed branch, which I leave to Dinis.

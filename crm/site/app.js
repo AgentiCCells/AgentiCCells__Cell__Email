@@ -42,7 +42,7 @@ function board() {
   <div class="scroll"><table class="grid">
   <thead><tr><th>Company</th><th>Stage</th><th>Owner</th><th>Draft</th><th>Last contact</th><th>Next step</th></tr></thead>
   <tbody>${shown.map((r) => `<tr>
-    <td><a href="#/company/${esc(r.org)}">${esc(r.name)}</a><div class="muted small">${esc(r.kind)} · ${r.people} people · ${r.threads} threads</div></td>
+    <td><a href="#/company/${esc(r.org)}">${esc(r.name)}</a><div class="muted small">${esc(r.kind)} · ${r.people} ${r.people === 1 ? "person" : "people"} · ${r.threads} ${r.threads === 1 ? "thread" : "threads"}</div></td>
     <td><span class="stage s-${esc(r.stage)}">${esc(stageName(r.stage))}</span></td>
     <td>${esc(r.owner || '–')}</td>
     <td>${draftBadge(r.draft, r.org)}</td>

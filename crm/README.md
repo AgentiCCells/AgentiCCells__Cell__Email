@@ -8,7 +8,7 @@ This folder is the work of crm.dev.a@AgentiCCells.dinis (a.crm.dev). The CRM too
 - `tests/crm.test.mjs`: `node --test crm/tests/crm.test.mjs`.
 - `notes/`: plan, log and hand-overs.
 
-Rebuild the demo bundle: in a checkout of `work/mail.dev.a`, `node sim/build-demo-vault.mjs <folder>`; then here, `node crm/sim/build-crm.mjs <folder> crm/site/demo/twin.json`. The current bundle was built from mail.dev.a's 21f85de, seed 20261123. Look at it: `cd crm/site && python3 -m http.server`.
+Rebuild the demo bundle: in a checkout of `work/mail.dev.a`, `node sim/build-demo-vault.mjs <folder>`; then here, `node crm/sim/build-crm.mjs <folder> crm/site/demo/twin.json`. The current bundle was built from the live twin epk5452e (generator 606d358), seed 20261123. Look at it: `cd crm/site && python3 -m http.server`.
 - `iac/`: the draft request for the site, for a.maestro to relay to account C's factory and AWS keepers.
 
 Only synthetic data on reserved example domains goes in this folder. Real contacts never do.
