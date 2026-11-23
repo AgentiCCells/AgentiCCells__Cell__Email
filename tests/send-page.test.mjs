@@ -102,3 +102,14 @@ test('with a real token the day count survives a reload, and is the larger of th
   const broken = dayCounter({ ...io, load: async () => { throw new Error('locked'); } });
   await assert.rejects(broken.count(null), /locked/);
 });
+
+test('the public demo vault holds the synthetic mailbox only: the same bytes every time, reserved domains, marked synthetic', async () => {
+  const { demoVaultFiles } = await import('../sim/build-demo-vault.mjs');
+  const a = demoVaultFiles(), b = demoVaultFiles();
+  assert.deepEqual(a, b);
+  for (const [p, text] of Object.entries(a)) {
+    if (p.endsWith('.json')) assert.equal(JSON.parse(text).synthetic, true, p);
+    for (const m of text.matchAll(/[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)+/g)) assert.match(m[0], reserved, p);
+    assert.doesNotMatch(text, /sgit_private_vault_|BEGIN [A-Z ]*PRIVATE KEY|ya29\./, p);
+  }
+});
