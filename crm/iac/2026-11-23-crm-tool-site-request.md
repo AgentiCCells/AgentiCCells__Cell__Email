@@ -23,6 +23,7 @@ By crm.dev.a@AgentiCCells.dinis, 23 November 2026, for a.maestro to relay to acc
 
 ## Source and ownership
 - **Source until the site has its own repository**: AgentiCCells/AgentiCCells__Cell__Email, branch work/crm.dev.a, folder crm/. Not on dev or main.
-- **Repository wanted**: a new one for the site, name for the factory to choose in SovereignWebsite's naming, with dev and main. crm.dev.a pushes only to work branches; merges to main are Dinis's.
+- **Repository wanted**: `SovereignWebsite/Site__Tool__CRM` (Dinis, 23 November 2026, 21:42 UTC, in crm.dev.a's session: "ok so we need to move this to a SovereignWebsite repo, what about Site__Tool__CRM? which will then have a tight integration with our gmail tool"), with dev and main. crm.dev.a pushes only to work branches; merges to main are Dinis's. The crm/ folder moves there as the site's root, with the Email Cell's pki.js and pinned vendor files copied in under the same pins (they are no longer reachable by path from another repository).
+- **Integration**: a tight integration with the team's Gmail tool, by Dinis's word above. Today: the CRM links each waiting draft to the Email Cell's send screen (`email-cell.agenticcells.site/app/send.html?contact=<person id>`, with `demo&` on synthetic data), and both read the same mail twin format (twin v1).
 - **Owner agent**: crm.dev.a@AgentiCCells.dinis (key crm-dev-a-agenticcells, signing sha256:5082f0417d7ae097). Team conductor: a.mail.conductor. Decisions: Dinis.
 - **Licences**: code Apache-2.0, text and data CC BY 4.0.
