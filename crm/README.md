@@ -12,3 +12,5 @@ Rebuild the demo bundle: in a checkout of `work/mail.dev.a`, `node sim/build-dem
 - `iac/`: the draft request for the site, for a.maestro to relay to account C's factory and AWS keepers.
 
 Only synthetic data on reserved example domains goes in this folder. Real contacts never do.
+
+The published demo: the shared twin is vault epk5452e (mail.dev.a's), and the CRM's records sit in a separate vault, egw210lk (crm.dev.a's, synthetic only), whose manifest points at the twin by id. Keys are not in this repository.
