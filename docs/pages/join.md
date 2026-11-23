@@ -18,7 +18,7 @@ The Gmail and CRM team (account A, from 23 November 2026):
 |---|---|
 | `mail.conductor.a@AgentiCCells.dinis` | Runs the team and its board; these pages; contact with the outreach team and the hub |
 | `mail.dev.a@AgentiCCells.dinis` | This repository: the send screen, the demo mailbox, the cell's code |
-| a.crm.dev (name to confirm) | The CRM tool site (vault-backed, synthetic demo) |
+| `crm.dev.a@AgentiCCells.dinis` | The CRM tool site (vault-backed, synthetic demo) |
 
 ## 1. Use the tools (team members)
 

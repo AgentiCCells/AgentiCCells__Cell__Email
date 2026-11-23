@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-23T15:07Z",
+  "updated": "2026-11-23T15:09Z",
   "state": "docs drafted; outreach and hub notes written for a.maestro to relay; mail.dev.a's send screen reviewed (one fix asked)",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -46,11 +46,12 @@
     "2026-11-23T15:02Z | own call | reviewed work/mail.dev.a 1bed623: 121 tests pass, no overlap with release/next2; asked for a persisted daily count",
     "2026-11-23T15:03Z | own call | drafts docs/pages/run-your-own.md, use-the-tools.md, join.md (published at the site root once on dev); notes for outreach and the hub",
     "2026-11-23T15:04Z | asked, not own call | release of the send screen to dev put to Dinis: new real-send page on the live site (ABP G7) and a key entry; mail.dev.a holds",
-    "2026-11-23T15:07Z | own call | corrected my own wrong times (see corrections)"
+    "2026-11-23T15:07Z | own call | corrected my own wrong times (see corrections)",
+    "2026-11-23T15:09Z | own call | agreed crm.dev.a's plan; told mail.dev.a to create the public synthetic demo vault (Dinis: \"you can put some of that data in a public vault\")"
   ],
   "team": {
     "mail.dev.a": "work/mail.dev.a 42e9fb5: send screen reviewed OK (release waits on Dinis); shared synthetic demo twin generated (seed 20261123), vault not created until a.crm.dev agrees the shape",
-    "crm.dev.a": "blocked on an add-repo approval (Dinis)"
+    "crm.dev.a": "work/crm.dev.a d8fe038, folder crm/; key crm-dev-a-agenticcells (signing sha256:5082f0417d7ae097); builds on mail.dev.a's demo twin, writes only crm/; private repos wait on Dinis's add-repo; site repo and DNS via account C's factory"
   },
   "defects": [
     "b8a8dcb fails check-commits (Agent: trailer not in the final block); force-push refused; fix by cherry-pick with a corrected message onto the landing branch"
