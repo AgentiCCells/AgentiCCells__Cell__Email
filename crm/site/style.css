@@ -1,0 +1,27 @@
+:root { --bg: #fbfaf7; --fg: #1d1d1b; --muted: #6b6a66; --line: #e3e0d8; --accent: #2f5d50; --warn: #a3401f; --chip: #efece4; }
+@media (prefers-color-scheme: dark) { :root { --bg: #161615; --fg: #ecebe6; --muted: #9b9a94; --line: #2e2d2a; --accent: #7fb8a6; --warn: #e48a68; --chip: #24231f; } }
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 15px/1.45 system-ui, sans-serif; }
+a { color: var(--accent); }
+.bar { display: flex; gap: 16px; align-items: center; padding: 10px 16px; border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+.bar nav { display: flex; gap: 12px; flex-wrap: wrap; }
+.bar nav a { text-decoration: none; padding: 2px 6px; border-radius: 6px; }
+.bar nav a.on, .filters a.on { background: var(--chip); color: var(--fg); }
+.mode { margin-left: auto; font-size: 13px; padding: 2px 8px; border: 1px solid var(--accent); border-radius: 999px; color: var(--accent); }
+.banner { padding: 8px 16px; background: var(--chip); font-size: 14px; }
+main { padding: 8px 16px 32px; max-width: 1100px; margin: 0 auto; }
+h1 { font-size: 22px; margin: 16px 0 8px; } h2 { font-size: 17px; margin: 20px 0 6px; }
+.muted { color: var(--muted); } .small { font-size: 13px; } .warn { color: var(--warn); }
+.scroll { overflow-x: auto; }
+.grid { border-collapse: collapse; width: 100%; min-width: 640px; }
+.grid th, .grid td { text-align: left; vertical-align: top; padding: 8px 10px; border-bottom: 1px solid var(--line); }
+.grid th { font-size: 13px; color: var(--muted); font-weight: 600; }
+.num { text-align: right; font-variant-numeric: tabular-nums; }
+.stage, .badge { display: inline-block; font-size: 12px; padding: 1px 8px; border-radius: 999px; background: var(--chip); white-space: nowrap; }
+.s-won { color: var(--accent); } .s-parked { color: var(--muted); }
+.d-draft { color: var(--warn); } .d-sent { color: var(--accent); }
+.filters a { text-decoration: none; padding: 1px 6px; border-radius: 6px; }
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: 4px 16px; }
+.facts dt { color: var(--muted); }
+.list { padding-left: 18px; } .list li { margin: 4px 0; }
+.foot { padding: 16px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
