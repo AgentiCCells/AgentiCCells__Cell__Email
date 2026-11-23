@@ -28,20 +28,23 @@
     "2026-11-23T14:59Z 1bed623 send screen and demo mailbox; 15:00 af96452 opens on the contact list (G3's order)",
     "2026-11-23T15:02Z 5acb335 day count sealed per UTC day (a.mail.conductor's must-fix); real-mode banner; stand-in run",
     "2026-11-23T15:05Z to 15:07Z ef967e7, 42e9fb5, 21f85de: the shared demo twin, shape agreed with crm.dev.a (its message 15:07 UTC)",
-    "2026-11-23T15:08Z public vault epk5452e created and filled (own reversible call); read-only clone identical. Created before reading a.mail.conductor's 15:07:14 'wait for a.crm.dev' message; crm.dev.a's yes had already arrived and the conductor's 15:07:35 message said go ahead"
+    "2026-11-23T15:08Z public vault epk5452e created and filled (own reversible call); read-only clone identical. Created before reading a.mail.conductor's 15:07:14 'wait for a.crm.dev' message; crm.dev.a's yes had already arrived and the conductor's 15:07:35 message said go ahead",
+    "2026-11-23T15:14Z 606d358 made-up organisation names, contrast, ?contact= links; vault epk5452e rebuilt with them (own reversible call); read-only clone identical"
   ],
   "demo_vault": {
     "vault_id": "epk5452e",
     "server": "https://dev.send.sgraph.ai",
     "name": "demo-twin",
-    "content": "synthetic only: generated from seed 20261123 at reserved example domains; manifest.json, README.md, orgs/, people/, drafts/, mail/ (twin format v1); crm/ is crm.dev.a's",
+    "content": "synthetic only: generated from seed 20261123 at reserved example domains; organisations named 'Example ... (demo)'; manifest.json, README.md, orgs/, people/, drafts/, mail/ (twin format v1); crm/ lives in crm.dev.a's own vault",
     "rebuild": "node sim/build-demo-vault.mjs <folder> (seed 20261123, clock 2026-11-23T12:00Z), then copy into a clone and sgit commit and push",
     "first_commit": "from generator 21f85de; checked by a read-only clone, byte-identical to the generator's output",
     "read_key": "public by design; not committed and the leak scan is not changed; given out by mail.dev.a on request until Dinis says where a public demo key lives (a.mail.conductor, 15:09 UTC 23 Nov)",
     "write_key": "only in this session's container; never committed",
     "decision": "mail.dev.a's own reversible call, on a.mail.conductor's go (15:04 UTC) under Dinis's words \"you can put some of that data in a public vault\"; the vault can be deleted from the server",
     "crm": "crm.dev.a keeps its own crm vault that points at epk5452e by id; no write key travels (a.mail.conductor, 15:09 UTC 23 Nov)",
-    "if_this_container_ends": "the write key ends with it; rebuild into a new vault (same seed and generator, new id) and update vault_id here. Anything linking to the demo twin reads the id from this field until the docs page carries it."
+    "if_this_container_ends": "the write key ends with it; rebuild into a new vault (same seed and generator, new id) and update vault_id here. Anything linking to the demo twin reads the id from this field until the docs page carries it.",
+    "current_commit": "rebuilt from generator 606d358 (made-up organisation names, contrast); read-only clone identical",
+    "history_note": "the vault's first commit (generator 21f85de) still holds the earlier organisation names, which could be read as real companies; anyone with the read key can see that history. A clean history needs a new vault, and deleting epk5452e is Dinis's (deletions)."
   },
   "landing": "work/mail.dev.a is a straight line of signed commits on dev 189ac49; release.sh from this branch is a fast-forward unless dev moves first, then it rebases (re-signed by mail.dev.a, its own commits only). Waits on Dinis's word via a.mail.conductor."
 }
