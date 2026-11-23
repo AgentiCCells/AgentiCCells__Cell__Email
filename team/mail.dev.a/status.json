@@ -24,12 +24,11 @@
     "W13: release/next2 to dev is Dinis's word in email.dev.d's session; W18 stays open on live until then"
   ],
   "log": [
-    "2026-11-23T14:53Z key made; 68d1f14 key entry and status",
-    "2026-11-23T15:00Z send screen and demo mailbox, 9 tests (121 pass), all gates OK; not on dev",
-    "2026-11-23T15:00Z af96452 opens on the contact list (G3's order)",
-    "2026-11-23T15:10Z the day count sealed per UTC day (max of stored and Gmail's Sent); real-mode banner; stand-in run; 122 tests pass, gates OK",
-    "2026-11-23T15:10Z demo twin shape agreed with crm.dev.a; its follow-up cases and org on drafts (21f85de)",
-    "2026-11-23T15:12Z public vault epk5452e created and filled with the synthetic demo twin (own reversible call); read-only clone identical"
+    "2026-11-23T14:53Z key made; 14:54 68d1f14 key entry and status (times from git)",
+    "2026-11-23T14:59Z 1bed623 send screen and demo mailbox; 15:00 af96452 opens on the contact list (G3's order)",
+    "2026-11-23T15:02Z 5acb335 day count sealed per UTC day (a.mail.conductor's must-fix); real-mode banner; stand-in run",
+    "2026-11-23T15:05Z to 15:07Z ef967e7, 42e9fb5, 21f85de: the shared demo twin, shape agreed with crm.dev.a (its message 15:07 UTC)",
+    "2026-11-23T15:08Z public vault epk5452e created and filled (own reversible call); read-only clone identical. Created before reading a.mail.conductor's 15:07:14 'wait for a.crm.dev' message; crm.dev.a's yes had already arrived and the conductor's 15:07:35 message said go ahead"
   ],
   "demo_vault": {
     "vault_id": "epk5452e",
@@ -41,5 +40,6 @@
     "read_key": "public by design; not committed (the leak scan refuses long keys in committed text); sent to a.mail.conductor and crm.dev.a by message",
     "write_key": "only in this session's container; never committed",
     "decision": "mail.dev.a's own reversible call, on a.mail.conductor's go (15:04 UTC) under Dinis's words \"you can put some of that data in a public vault\"; the vault can be deleted from the server"
-  }
+  },
+  "landing": "work/mail.dev.a is a straight line of signed commits on dev 189ac49; release.sh from this branch is a fast-forward unless dev moves first, then it rebases (re-signed by mail.dev.a, its own commits only). Waits on Dinis's word via a.mail.conductor."
 }
