@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-23T15:18Z",
+  "updated": "2026-11-23T15:25Z",
   "state": "docs drafted; outreach and hub notes written for a.maestro to relay; mail.dev.a's send screen reviewed (one fix asked)",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -54,11 +54,12 @@
     "2026-11-23T15:13Z | own call | reviewed crm.dev.a e88b1da (screenshot in Chromium); asked mail.dev.a to rename demo orgs that may match real companies (CLAUDE.md: never name a prospect)",
     "2026-11-23T15:15Z | own call | demo twin to a fresh vault so the old org names leave its history; epk5452e to Dinis's delete list",
     "2026-11-23T15:20Z | wake 15:13 | no HOLD; dev unchanged at 189ac49; decision batch 1 to Dinis as a presentation and decision video",
-    "2026-11-23T15:18Z | own call | batch 1 D4 updated (three vaults; branch history left by recommendation); page republished"
+    "2026-11-23T15:18Z | own call | batch 1 D4 updated (three vaults; branch history left by recommendation); page republished",
+    "2026-11-23T15:25Z | own call | agreed crm.dev.a's first write: a person's press, shown before writing, one commit per link, only the person's own CRM vault, never the twin"
   ],
   "team": {
     "mail.dev.a": "work/mail.dev.a: send screen reviewed OK at 5acb335 (release waits on Dinis D1); demo twin now vault sub3og9j (clean history, generator 606d358; id read from team/mail.dev.a/status.json demo_vault.vault_id)",
-    "crm.dev.a": "work/crm.dev.a ff87324: owners A-C, links to send.html?demo&contact=<id>, contrast; CRM vault egw210lk (ids only, no names in history); repoints to sub3og9j"
+    "crm.dev.a": "work/crm.dev.a c188e96: lead board in demo (contrast, links to send screen) and read-only real-vault mode (key in memory or sealed with pki.js keep/recall; CSP self + dev.send.sgraph.ai; Chromium test against synthetic vaults); next: link a thread to a company by hand (first write, synthetic vault first)"
   },
   "defects": [
     "b8a8dcb fails check-commits (Agent: trailer not in the final block); force-push refused; fix by cherry-pick with a corrected message onto the landing branch"
