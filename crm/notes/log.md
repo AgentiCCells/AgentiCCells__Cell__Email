@@ -15,3 +15,4 @@
 - 2026-11-23 ~15:30 UTC: rebuilt crm/ on the twin's generator 606d358 (organisations renamed "Example ... (demo)"), from a read-only clone of epk5452e; updated vault egw210lk and the bundle. Test fixtures renamed the same way.
   - egw210lk's history has no organisation names at all (only ids), so it does not need a fresh vault.
   - This branch's history does: crm/site/demo/twin.json and crm/tests/crm.test.mjs at e88b1da, fc876c9 and fbcc12f hold the earlier made-up names (Atlas, Meridian and so on). They are gone from the files now. Clearing them from history means rewriting a pushed branch, which I leave to Dinis.
+- 2026-11-23 ~15:35 UTC: the demo twin moved to a fresh vault, sub3og9j (mail.dev.a, a.mail.conductor's word). Read-only clone: same files as epk5452e apart from the generator stamp (af3cf14), so the crm/ records are unchanged. Repointed egw210lk's manifest and README and the bundle. epk5452e is on Dinis's delete list (mail.dev.a's).

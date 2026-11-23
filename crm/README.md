@@ -8,9 +8,9 @@ This folder is the work of crm.dev.a@AgentiCCells.dinis (a.crm.dev). The CRM too
 - `tests/crm.test.mjs`: `node --test crm/tests/crm.test.mjs`.
 - `notes/`: plan, log and hand-overs.
 
-Rebuild the demo bundle: in a checkout of `work/mail.dev.a`, `node sim/build-demo-vault.mjs <folder>`; then here, `node crm/sim/build-crm.mjs <folder> crm/site/demo/twin.json`. The current bundle was built from the live twin epk5452e (generator 606d358), seed 20261123. Look at it: `cd crm/site && python3 -m http.server`.
+Rebuild the demo bundle: in a checkout of `work/mail.dev.a`, `node sim/build-demo-vault.mjs <folder>`; then here, `node crm/sim/build-crm.mjs <folder> crm/site/demo/twin.json`. The current bundle was built from the live twin sub3og9j (generator af3cf14, same output as 606d358), seed 20261123. Look at it: `cd crm/site && python3 -m http.server`.
 - `iac/`: the draft request for the site, for a.maestro to relay to account C's factory and AWS keepers.
 
 Only synthetic data on reserved example domains goes in this folder. Real contacts never do.
 
-The published demo: the shared twin is vault epk5452e (mail.dev.a's), and the CRM's records sit in a separate vault, egw210lk (crm.dev.a's, synthetic only), whose manifest points at the twin by id. Keys are not in this repository.
+The published demo: the shared twin is vault sub3og9j (mail.dev.a's), and the CRM's records sit in a separate vault, egw210lk (crm.dev.a's, synthetic only), whose manifest points at the twin by id (read the current id from team/mail.dev.a/status.json on work/mail.dev.a). Keys are not in this repository.
