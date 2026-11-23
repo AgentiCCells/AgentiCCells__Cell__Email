@@ -80,9 +80,14 @@ export function demoMailbox({ seed = DEMO_SEED, now = Date.now(), contacts: n = 
     const p = people[Math.floor(r() * people.length)];
     const them = { name: p.name, address: p.emails[0] };
     const tid = `t-${pad(i + 1, 3)}`, subject = pick(r, TOPICS);
-    const count = 1 + Math.floor(r() * 3);
+    let count = 1 + Math.floor(r() * 3);
     let at = Math.round(now - (5 + r() * 55) * DAY);
     let outbound = r() < 0.4;
+    // Fixed cases for the CRM demo's "no reply in 5 days" (asked by crm.dev.a, 23 Nov 2026): threads
+    // t-001 to t-004 end with an email from the demo user 6 to 15 days ago and no answer; t-005 to
+    // t-008 are an email from the demo user that got a reply.
+    if (i < 4) { count = 1; outbound = true; at = now - (6 + i * 3) * DAY; }
+    else if (i < 8) { count = 2; outbound = true; at = now - (10 + i * 2) * DAY; }
     const ids = [];
     for (let k = 0; k < count; k++) {
       const id = `m-${pad(messages.length + 1, 4)}`;
@@ -104,6 +109,7 @@ export function demoMailbox({ seed = DEMO_SEED, now = Date.now(), contacts: n = 
       });
       ids.push(id);
       at += Math.round((0.1 + r() * 2) * DAY);
+      if (at > now) at = now - 3600e3;
       outbound = !outbound;
     }
     const list = messages.slice(-count);
@@ -113,7 +119,7 @@ export function demoMailbox({ seed = DEMO_SEED, now = Date.now(), contacts: n = 
   const orgName = Object.fromEntries(orgs.map((o) => [o.id, o.name]));
   const contacts = people.map((p) => {
     const mine = threads.filter((t) => t.person === p.id);
-    return { id: p.id, name: p.name, first: p.first, address: p.emails[0], org: orgName[p.org], role: p.role, kind: p.kind, threads: mine.length, last_contact: mine.length ? Date.parse(mine[0].last_date) : 0 };
+    return { id: p.id, name: p.name, first: p.first, address: p.emails[0], org: orgName[p.org], org_id: p.org, role: p.role, kind: p.kind, threads: mine.length, last_contact: mine.length ? Date.parse(mine[0].last_date) : 0 };
   });
   const drafts = contacts.map((c) => draftFor(c, DEMO_ME));
   const labels = [{ id: 'INBOX', name: 'Inbox', type: 'system' }, { id: 'SENT', name: 'Sent', type: 'system' }, { id: 'UNREAD', name: 'Unread', type: 'system' }];
@@ -124,7 +130,7 @@ export function demoMailbox({ seed = DEMO_SEED, now = Date.now(), contacts: n = 
 export function draftFor(c, me = DEMO_ME) {
   const [subject, text] = DRAFTS[c.kind] || DRAFTS.customer;
   const fill = (s) => s.replace(/\{first\}/g, c.first).replace(/\{me\}/g, me.name);
-  return { contact: c.id, to: [c.address], subject: fill(subject), text: fill(text), status: 'draft' };
+  return { contact: c.id, ...(c.org_id ? { org: c.org_id } : {}), to: [c.address], subject: fill(subject), text: fill(text), status: 'draft' };
 }
 
 const fromB64url = (s) => {
