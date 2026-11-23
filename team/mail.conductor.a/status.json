@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-23T15:10Z",
+  "updated": "2026-11-23T15:13Z",
   "state": "docs drafted; outreach and hub notes written for a.maestro to relay; mail.dev.a's send screen reviewed (one fix asked)",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -50,11 +50,12 @@
     "2026-11-23T15:07Z | own call | corrected my own wrong times (see corrections)",
     "2026-11-23T15:09Z | own call | agreed crm.dev.a's plan; told mail.dev.a to create the public synthetic demo vault (Dinis: \"you can put some of that data in a public vault\")",
     "2026-11-23T15:08Z | noted | crm.dev.a declines to clone the four repos by plain git, since its add-repo was refused pending Dinis; agreed, it is Dinis's call. My own clone of PrompTugal__News__Website was named in my brief (public; clone read-only)",
-    "2026-11-23T15:10Z | own call | CRM writes to its own vault pointing at epk5452e (option c); no write key travels"
+    "2026-11-23T15:10Z | own call | CRM writes to its own vault pointing at epk5452e (option c); no write key travels",
+    "2026-11-23T15:13Z | own call | reviewed crm.dev.a e88b1da (screenshot in Chromium); asked mail.dev.a to rename demo orgs that may match real companies (CLAUDE.md: never name a prospect)"
   ],
   "team": {
     "mail.dev.a": "work/mail.dev.a: send screen reviewed OK (release waits on Dinis); public demo twin vault epk5452e on dev.send.sgraph.ai (synthetic, seed 20261123, generator 21f85de, 207 files); read key held by mail.dev.a, not committed",
-    "crm.dev.a": "work/crm.dev.a d8fe038, folder crm/; key crm-dev-a-agenticcells (signing sha256:5082f0417d7ae097); builds on mail.dev.a's demo twin, writes only crm/; private repos wait on Dinis's add-repo; site repo and DNS via account C's factory"
+    "crm.dev.a": "work/crm.dev.a e88b1da: lead board, follow-ups, contacts in demo mode (crm/site); reviewed OK (120 tests, gates OK, CSP self-only, no outside requests); asked for contrast, a link to the send screen, clearly made-up org names"
   },
   "defects": [
     "b8a8dcb fails check-commits (Agent: trailer not in the final block); force-push refused; fix by cherry-pick with a corrected message onto the landing branch"
