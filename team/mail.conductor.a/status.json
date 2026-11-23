@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-23T15:42Z",
+  "updated": "2026-11-23T16:16Z",
   "state": "docs drafted; outreach and hub notes written for a.maestro to relay; mail.dev.a's send screen reviewed (one fix asked)",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -62,7 +62,8 @@
     "2026-11-23T15:32Z | own call | CRM site request relayed to a.maestro for account C's factory; crm.dev.a stopped after its hand-over",
     "2026-11-23T15:39Z | own call | W10 plan (talk to the team from the site) written as a proposal; one-way parts T1 to T3 for batch 2",
     "2026-11-23T15:41Z | dinis (relayed by crm.dev.a, its session, ~15:38 UTC by the clock; it wrote 16:40) | \"yes delete a5a7rrbl, leave the history as is\": a5a7rrbl deleted by crm.dev.a; branch history kept",
-    "2026-11-23T15:42Z | noted | crm.dev.a corrected its log times from git (3a41ef2); Dinis's a5a7rrbl word placed between 15:30 and 15:38 UTC"
+    "2026-11-23T15:42Z | noted | crm.dev.a corrected its log times from git (3a41ef2); Dinis's a5a7rrbl word placed between 15:30 and 15:38 UTC",
+    "2026-11-23T16:16Z | wake 16:13 | no HOLD; dev and release/next2 unchanged; email.pm.d's 16:05 pass still lacks G1; wrote board/2026-11-23-for-account-d-from-mail-conductor-a.md on this branch"
   ],
   "team": {
     "mail.dev.a": "work/mail.dev.a: send screen reviewed OK at 5acb335 (release waits on Dinis D1); demo twin now vault sub3og9j (clean history, generator 606d358; id read from team/mail.dev.a/status.json demo_vault.vault_id)",
