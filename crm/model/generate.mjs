@@ -17,7 +17,7 @@ function rng(seed) {
 }
 const pick = (r, list) => list[Math.floor(r() * list.length)];
 
-export const DEMO_OWNERS = ['demo-owner-1', 'demo-owner-2', 'demo-owner-3'];
+export const DEMO_OWNERS = ['Owner A', 'Owner B', 'Owner C'];
 // Plausible stages by kind of company; the generator picks among them.
 const BY_KIND = {
   investor: ['contacted', 'talking', 'proposal'],

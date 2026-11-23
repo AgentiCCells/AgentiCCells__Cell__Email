@@ -7,6 +7,11 @@ const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]);
 const day = (iso) => (iso ? iso.slice(0, 10) : '–');
 let V = null, NOW = 0;
+// The Email Cell's send screen, where a draft is reviewed and sent. In demo mode it opens the same
+// synthetic contact (person id) in its own demo. Parameters agreed with mail.dev.a@AgentiCCells.dinis:
+// ?demo&contact=<person-id>. The send screen is not live yet, so the link may be dead until it lands.
+const SEND_URL = 'https://email-cell.agenticcells.site/app/send.html';
+const sendLink = (person) => `${SEND_URL}?demo&contact=${encodeURIComponent(person)}`;
 
 async function loadDemo() {
   const b = await (await fetch('demo/twin.json')).json();
@@ -20,7 +25,11 @@ async function loadDemo() {
 
 const stageName = (id) => V.stages.find((s) => s.id === id)?.name || id;
 const orgName = (id) => V.orgs.find((o) => o.id === id)?.name || id;
-const draftBadge = (d) => `<span class="badge d-${d.state}">${{ draft: 'Draft waiting', sent: 'Sent', none: 'No draft' }[d.state]}</span>`;
+function draftBadge(d, orgId) {
+  const label = { draft: 'Draft waiting', sent: 'Sent', none: 'No draft' }[d.state];
+  const first = d.state === 'draft' && V.drafts.find((x) => x.status === 'draft' && (x.org ?? V.people.find((p) => p.id === x.person)?.org) === orgId);
+  return first ? `<a class="badge d-draft" href="${esc(sendLink(first.person))}" title="Open the draft in the send screen (demo)">${label} →</a>` : `<span class="badge d-${d.state}">${label}</span>`;
+}
 
 function board() {
   const rows = leadBoard(V, NOW);
@@ -36,7 +45,7 @@ function board() {
     <td><a href="#/company/${esc(r.org)}">${esc(r.name)}</a><div class="muted small">${esc(r.kind)} · ${r.people} people · ${r.threads} threads</div></td>
     <td><span class="stage s-${esc(r.stage)}">${esc(stageName(r.stage))}</span></td>
     <td>${esc(r.owner || '–')}</td>
-    <td>${draftBadge(r.draft)}</td>
+    <td>${draftBadge(r.draft, r.org)}</td>
     <td>${day(r.last_contact?.date)} <span class="muted small">${r.last_contact ? (r.last_contact.direction === 'outbound' ? 'we wrote' : 'they wrote') : ''}</span>${r.waiting ? `<div class="warn small">${r.waiting.count === 1 ? '1 thread' : r.waiting.count + ' threads'} with no reply, oldest ${r.waiting.days} days</div>` : ''}</td>
     <td>${esc(r.next_step || '–')}<div class="small ${r.overdue ? 'warn' : 'muted'}">${r.next_step_due ? (r.overdue ? 'overdue, ' : 'due ') + r.next_step_due : ''}</div></td>
   </tr>`).join('')}</tbody></table></div>`;
@@ -53,14 +62,14 @@ function companyPage(id) {
     <dt>Stage</dt><dd><span class="stage s-${esc(c.stage)}">${esc(stageName(c.stage))}</span></dd>
     <dt>Owner</dt><dd>${esc(c.owner || '–')}</dd>
     <dt>Next step</dt><dd>${esc(c.next_step || '–')} ${c.next_step_due ? `<span class="${c.overdue ? 'warn' : 'muted'}">(${c.overdue ? 'overdue, ' : 'due '}${c.next_step_due})</span>` : ''}</dd>
-    <dt>Draft</dt><dd>${draftBadge(c.draft)}</dd>
+    <dt>Draft</dt><dd>${draftBadge(c.draft, c.org)}</dd>
   </dl>
   <h2>People</h2>
   <ul class="list">${c.contacts.map((p) => `<li>${esc(p.name)} <span class="muted">${esc(p.role || '')} · ${esc((p.emails || [])[0] || '')}</span></li>`).join('') || '<li class="muted">None yet</li>'}</ul>
   <h2>Mail threads</h2>
   <ul class="list">${c.threads.map((t) => `<li id="t-${esc(t.id)}"><strong>${esc(t.subject)}</strong> <span class="muted">${day(t.last_date)} · ${t.direction === 'outbound' ? 'we wrote last' : 'they wrote last'} · ${esc(who(t.person))} · ${t.linked ? 'linked' : 'matched by address'}</span></li>`).join('') || '<li class="muted">None</li>'}</ul>
   <h2>Drafts</h2>
-  <ul class="list">${c.drafts.map((d) => `<li><strong>${esc(d.subject)}</strong> <span class="muted">to ${esc((d.to || []).join(', '))} · ${esc(d.status)}</span></li>`).join('') || '<li class="muted">None</li>'}</ul>`;
+  <ul class="list">${c.drafts.map((d) => `<li><strong>${esc(d.subject)}</strong> <span class="muted">to ${esc((d.to || []).join(', '))} · ${esc(d.status)}</span>${d.status === 'draft' ? ` <a href="${esc(sendLink(d.person))}">Review and send (demo) →</a>` : ''}</li>`).join('') || '<li class="muted">None</li>'}</ul>`;
 }
 
 function followUpsPage() {

@@ -25,3 +25,4 @@ h1 { font-size: 22px; margin: 16px 0 8px; } h2 { font-size: 17px; margin: 20px 0
 .facts dt { color: var(--muted); }
 .list { padding-left: 18px; } .list li { margin: 4px 0; }
 .foot { padding: 16px; color: var(--muted); font-size: 13px; border-top: 1px solid var(--line); }
+a.badge { text-decoration: none; }
