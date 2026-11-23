@@ -20,6 +20,9 @@
 <div id="demo-banner" class="demo-banner" role="note" hidden>
   <strong>Demo mode.</strong> A synthetic mailbox: every person, address and email here is made up, at reserved example domains. Nothing leaves this page; each send is recorded as a <strong>simulation</strong>.
 </div>
+<div id="real-banner" class="real-banner" role="note" hidden>
+  <strong>Your own Gmail.</strong> Send sends a real email from <span id="real-from"></span> to a real person, after you confirm.
+</div>
 <p id="why" class="why" hidden></p>
 
 <main class="wrap">
@@ -29,7 +32,7 @@
       <label class="field"><span>Search</span><input id="q" type="search" autocomplete="off" placeholder="Name, address or organisation"></label>
       <ul id="contacts" class="contacts"></ul>
     </div>
-    <p id="no-lookup" class="muted" hidden>With your own Gmail, type the address on the right. There is no contact lookup yet: where the list comes from is Dinis's decision.</p>
+    <p id="no-lookup" class="muted" hidden>With your own Gmail, type the address in To. There is no contact lookup yet: where the list comes from is Dinis's decision.</p>
   </section>
 
   <section id="draft" class="draft" aria-labelledby="draft-h">
@@ -48,7 +51,7 @@
 
   <section class="log" aria-labelledby="log-h">
     <h2 id="log-h">Sent from this page</h2>
-    <p class="muted small">This tab only; nothing is stored.</p>
+    <p class="muted small">This list is for this tab only. With your own Gmail, the day's count is also kept, sealed in this browser, for the daily limit.</p>
     <ul id="sent" class="sent"></ul>
   </section>
 </main>

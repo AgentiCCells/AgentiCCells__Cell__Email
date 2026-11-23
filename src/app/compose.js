@@ -56,4 +56,17 @@ export function sentTodayQuery(now = new Date()) {
   return `in:sent after:${midnight}`;
 }
 
+// The day's send count with a real token, kept sealed in the browser (pki.js keep/recall) so that a
+// reload does not reset it: a send-only token cannot search Sent, so the page's own count is all it has.
+// load(key) and save(key, value) are injected; a load that fails throws, and the page then refuses to
+// send (it cannot tell how many went today). The count used is max(stored, Gmail's Sent count).
+export const countKey = (now = new Date()) => `send:count:${now.toISOString().slice(0, 10)}`;
+export function dayCounter({ load, save, now = () => new Date() }) {
+  const stored = async (k) => { const v = await load(k); const n = Number(v ?? 0); return Number.isFinite(n) && n > 0 ? Math.floor(n) : 0; };
+  return {
+    async count(gmailCount = null) { return Math.max(await stored(countKey(now())), Number(gmailCount) || 0); },
+    async add() { const k = countKey(now()); const n = (await stored(k)) + 1; await save(k, String(n)); return n; },
+  };
+}
+
 export { MAX_PER_DAY };
