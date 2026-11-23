@@ -1,0 +1,26 @@
+{
+  "agent": "mail.dev.a@AgentiCCells.dinis",
+  "account": "A",
+  "session": "https://claude.ai/code/session_018yvwtQtFZjm6Q291BnjYgY",
+  "started": "2026-11-23T14:52Z",
+  "started_by": "a.maestro (account A), at Dinis's word in its session, about 15:05 UTC 23 Nov 2026: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
+  "operator": "Dinis Cruz, in this session only",
+  "key": "team/keys/mail-dev-a-agenticcells.json (signing sha256:0d8da68766d1fc95); not merged, for Dinis",
+  "branch": "work/mail.dev.a",
+  "claims": [
+    "1. The simple send screen (G3): one page, pick a contact, see the draft, edit, press Send; approve-and-send rules hold (no Bcc, at most 20 a day). Not started at 14:55 UTC: nothing like it exists on dev, release/next2 or any work/email.*.d branch.",
+    "2. Demo mode with a synthetic mailbox, always available and clearly marked; its data in a public vault.",
+    "3. Make Gmail better, one feature at a time, each usable in demo mode first.",
+    "4. Take over the cell's code work from account D's email.* team, after their hand-over; W18 first if still open."
+  ],
+  "read": [
+    "CLAUDE.md, README.md, REALITY.md, board/ and board/handovers/ on dev (189ac49)",
+    "release/next2 to 92bb7de (W18 fixes 1 and 2 built at 458c4ad, not on dev)",
+    "work/email.pm.d to 4429428, with board/2026-11-22-waits-on-dinis.md (W1 to W19) and team/email-agents/backlog.md",
+    "PrompTugal__News__Website dev: board/team/maestro.a/decisions/2026-11-23-scale-phase-and-gmail-crm-focus.md (the file named 2026-11-23-gmail-crm-go.md is not there yet)"
+  ],
+  "waiting_on": [
+    "Account D's hand-over to account A (none found on any branch at 14:55 UTC)",
+    "W13: release/next2 to dev is Dinis's word in email.dev.d's session; W18 stays open on live until then"
+  ]
+}
