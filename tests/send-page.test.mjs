@@ -128,3 +128,16 @@ test('the public demo twin: the same bytes every time, reserved domains, marked 
     assert.equal(twin.messages.size, JSON.parse(a['manifest.json']).counts.messages);
   } finally { rmSync(dir, { recursive: true, force: true }); }
 });
+
+test('the demo twin has the CRM demo\'s cases: 4 threads waiting on a reply 5 to 20 days, 4 answered', () => {
+  const box = demoMailbox({ now: NOW });
+  const DAY = 864e5;
+  const byId = new Map(box.messages.map((m) => [m.id, m]));
+  const last = (t) => byId.get(t.messages[t.messages.length - 1]);
+  const waiting = box.threads.filter((t) => { const m = last(t); const age = (NOW - Date.parse(m.date)) / DAY; return m.direction === 'outbound' && age >= 5 && age <= 20; });
+  const answered = box.threads.filter((t) => t.messages.length > 1 && byId.get(t.messages[0]).direction === 'outbound' && last(t).direction === 'inbound');
+  assert.ok(waiting.length >= 4, `waiting ${waiting.length}`);
+  assert.ok(answered.length >= 4, `answered ${answered.length}`);
+  for (const m of box.messages) assert.ok(Date.parse(m.date) <= NOW, m.id);
+  for (const d of box.drafts) assert.match(d.org, /^o\d\d$/);
+});
