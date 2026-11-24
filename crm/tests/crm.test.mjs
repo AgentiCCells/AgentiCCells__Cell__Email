@@ -260,3 +260,17 @@ test('The Day: overdue first, then follow-ups, then drafts; one card per company
   const v2 = readVault({ ...f, 'drafts/p99.json': JSON.stringify({ person: 'p99', org: 'o02', status: 'draft' }) });
   assert.equal(draftState(v2, 'o02').state, 'draft');
 });
+
+test('follow-ups: a reply logged later clears a waiting thread; our own new contact restarts the clock', async () => {
+  const { actionFile } = await import('../model/crm.mjs');
+  const base = withCrm(twin()), v = readVault(base), at = '2026-11-23T12:00:00Z';
+  assert.ok(followUps(v, NOW).some((f) => f.thread === 't-001'));            // waiting 8 days
+  const [reply] = actionFile(v, { id: 'a-r', org: 'o01', kind: 'call', direction: 'in', at: '2026-11-23', by: 'Owner A', summary: 'They called back', logged_at: at });
+  const v2 = readVault({ ...base, [reply.path]: reply.text });
+  assert.ok(!followUps(v2, NOW).some((f) => f.org === 'o01'), 'a logged reply clears it');
+  assert.equal(leadBoard(v2, NOW).find((r) => r.org === 'o01').waiting, null);
+  const [nudge] = actionFile(v, { id: 'a-n', org: 'o01', kind: 'email', direction: 'out', at: '2026-11-23', by: 'Owner A', summary: 'Nudge', logged_at: at });
+  const v3 = readVault({ ...base, [nudge.path]: nudge.text });
+  assert.ok(!followUps(v3, NOW).some((f) => f.org === 'o01'), 'our new contact restarts the clock');
+  assert.ok(followUps(v3, NOW + 6 * DAY).some((f) => f.org === 'o01' && f.action === 'a-n'), 'and it comes back after 5 days');
+});
