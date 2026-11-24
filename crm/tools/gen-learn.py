@@ -23,6 +23,7 @@ PATH = [
     {'title': 'Verified keys on people', 'kind': 'video', 'url': VIDEOS + '07-verified-keys/', 'about': 'Add a contact\'s key from the QR code they sent, checked and signed for with yours.'},
     {'title': 'How the agents build the CRM in parallel', 'kind': 'video', 'url': VIDEOS + '05-agents-in-parallel/', 'about': 'Who builds what, in which repository, and how work moves between the agents.'},
     {'title': 'Asking the CRM\'s agent for something', 'kind': 'video', 'url': VIDEOS + '08-requests/', 'about': 'Send a request from the Requests page, signed with your key, and read the answer.'},
+    {'title': 'For you: questions from the agents', 'kind': 'video', 'url': VIDEOS + '10-for-you/', 'about': 'A question sealed to your key, answered on the site and signed with it.'},
     {'title': 'Open the CRM', 'kind': 'app', 'url': '/app/', 'about': 'Start in the demo, then log in on You.'},
 ]
 WORD = dict(enumerate('zero one two three four five six seven eight nine ten eleven twelve'.split()))
