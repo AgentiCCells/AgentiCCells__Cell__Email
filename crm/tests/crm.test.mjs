@@ -342,3 +342,13 @@ test('outbox: mail.dev.a\'s shared vector, and a draft written here is approved 
   assert.ok(reachedBefore(v2, { org: 'o01', person: p.id }).some((e) => e.type === 'sent'), 'a sent email counts as reaching out');
   assert.equal(v2.drafts.some((d) => d.v === 1), false, 'outbox drafts stay out of the twin\'s drafts');
 });
+
+test('Today: every company with a waiting draft offers it, whatever else it has; counts; owner filter', async () => {
+  const { theDay } = await import('../model/crm.mjs');
+  const v = readVault(withCrm(twin())), d = theDay(v, NOW), board = leadBoard(v, NOW);
+  assert.equal(d.counts.draft, board.filter((r) => r.draft.state === 'draft').length, 'Today shows as many drafts as the board');
+  assert.equal(new Set(d.cards.map((c) => c.org)).size, d.cards.length, 'one card per company');
+  assert.ok(d.cards.every((c) => c.reasons.some((r) => r.why === c.why)), 'the card leads with one of its reasons');
+  const owner = board[0].owner, mine = theDay(v, NOW, { owner });
+  assert.ok(mine.cards.every((c) => c.owner === owner));
+});
