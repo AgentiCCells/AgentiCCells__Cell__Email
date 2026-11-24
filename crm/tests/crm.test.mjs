@@ -309,17 +309,22 @@ test('reached before: a second outreach to the same person is flagged, a note or
   assert.ok(reachedBefore(v3, { org: 'o02' }).every((e) => e.kind !== 'note'), 'notes never count');
 });
 
-test('outbox: mail.dev.a\'s hash vector, and a draft written here is approved and verified by the cell\'s own functions', async () => {
-  // batch.js is mail.dev.a's, vendored unedited (crm/vendor/cell-batch/3f6bc8b), as built into the site: build first.
-  const B = await import('../_build/site/batch.js');
+test('outbox: mail.dev.a\'s shared vector, and a draft written here is approved and verified by the cell\'s own functions', async () => {
+  // signoff.mjs is mail.dev.a's, vendored unedited (crm/vendor/cell-signoff/3a1bb14), as built into the site: build first.
+  const B = await import('../_build/site/signoff.mjs');
+  const { canon } = await import('../../src/app/vendor/pki/v0.2.28/keys.js');
   const { outboxDraftFile, approvalFile, outbox, reachedBefore } = await import('../model/crm.mjs');
-  const vector = { v: 1, id: 'd-1', crm: { org: 'o01', person: 'p01' }, to: ['reader1@example.com'], subject: 'Book note 1', text: 'Hi,\n\nNote 1.\n', attachments: [], created_at: '2026-11-24T15:00:00Z', created_by: 'crm.dev.a (demo)' };
-  // The exact bytes mail.dev.a hashes (canonical JSON, keys sorted, no newline); its published hash of them begins 1fd4bffa.
-  const bytes = '{"attachments":[],"created_at":"2026-11-24T15:00:00Z","created_by":"crm.dev.a (demo)","crm":{"org":"o01","person":"p01"},"id":"d-1","subject":"Book note 1","text":"Hi,\\n\\nNote 1.\\n","to":["reader1@example.com"],"v":1}';
   const { createHash } = await import('node:crypto');
-  const expected = createHash('sha256').update(bytes, 'utf8').digest('hex');
-  assert.ok(expected.startsWith('1fd4bffa'), 'the bytes are the ones mail.dev.a hashed');
-  assert.equal(await B.draftHash(vector), expected);
+  const fx = JSON.parse((await import('node:fs')).readFileSync(new URL('./fixtures/signoff-vector.json', import.meta.url), 'utf8'));
+  // The hashes were sent by message (the leak scan refuses long hex): d-1 begins 1fd4bffa, d-2 begins db5cc57a.
+  const starts = { 'd-1': '1fd4bffa', 'd-2': 'db5cc57a' };
+  for (const c of fx.cases) {
+    assert.equal(canon(c.draft), c.canon, `canon of ${c.draft.id}`);
+    const h = createHash('sha256').update(c.canon, 'utf8').digest('hex');
+    assert.ok(h.startsWith(starts[c.draft.id]), `hash of ${c.draft.id}`);
+    assert.equal(await B.draftHash(c.draft), h);
+    assert.deepEqual(B.draftProblems(c.draft), []);
+  }
   const base = withCrm(twin()), v = readVault(base), p = v.people.find((x) => x.org === 'o01');
   const [f] = outboxDraftFile(v, { id: 'd-t1', org: 'o01', person: p.id, subject: 'A test', text: 'Hello', created_at: '2026-11-24T16:00:00Z', created_by: 'Owner A' });
   const stored = JSON.parse(f.text);                                   // what the cell will read back from the vault
@@ -328,6 +333,7 @@ test('outbox: mail.dev.a\'s hash vector, and a draft written here is approved an
   const batch = B.newBatchId(new Date('2026-11-24T16:01:00Z'));
   const a = await B.approve(kp.privateKey, spki, f.record, batch);
   const pinned = [{ fingerprint: await B.fingerprint(spki), spki, name: 'test' }];
+  assert.deepEqual(B.draftProblems(stored), [], 'a draft written here passes the cell\'s draft checks');
   assert.ok((await B.verifyApproval(stored, a, pinned, batch)).ok, 'the cell accepts the CRM\'s sign-off');
   assert.ok(!(await B.verifyApproval({ ...stored, subject: 'Changed' }, a, pinned, batch)).ok, 'a changed draft is refused');
   const ap = approvalFile(a), sentRec = B.sentRecord(stored, a, { id: 'g1', threadId: 't1', simulation: true }, new Date('2026-11-24T16:05:00Z'));

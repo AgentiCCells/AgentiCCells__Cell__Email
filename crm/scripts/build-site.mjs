@@ -23,8 +23,8 @@ export function buildSite(out = join(ROOT, 'crm/_build/site')) {
   writeFileSync(join(out, 'trusted.js'), `// Built by crm/scripts/build-site.mjs from team/keys/: the senders whose sealed codes this site opens.\nexport const TRUSTED = ${JSON.stringify(TRUSTED, null, 2)};\n`);
   let version = 'dev';
   try { version = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim(); } catch {}
-  // mail.dev.a's signed-batch functions, unedited, pinned to a commit (crm/vendor/cell-batch/<commit>/README.md).
-  for (const f of ['batch.js', 'send.js']) writeFileSync(join(out, f), readFileSync(join(ROOT, 'crm/vendor/cell-batch/3f6bc8b', f), 'utf8').replaceAll('__VERSION__', version));
+  // mail.dev.a's sign-off functions, unedited, pinned to a commit (crm/vendor/cell-signoff/<commit>/README.md).
+  cpSync(join(ROOT, 'crm/vendor/cell-signoff/3a1bb14/signoff.mjs'), join(out, 'signoff.mjs'));
   writeFileSync(join(out, 'pki.js'), readFileSync(join(ROOT, 'src/app/pki.js'), 'utf8').replaceAll('__VERSION__', version));
   writeFileSync(join(out, 'version.json'), JSON.stringify({ site: 'crm.tool.sovereignweb.site', commit: version, built: new Date().toISOString().slice(0, 19) + 'Z', from: 'AgentiCCells__Cell__Email work/crm.dev.a crm/' }, null, 2) + '\n');
   return out;
