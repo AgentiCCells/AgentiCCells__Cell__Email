@@ -245,3 +245,18 @@ test('import: a CSV the team fills in becomes the CRM files, shown before writin
   assert.throws(() => importFiles(v, 'name,email\nA,a@b.example.com', { by: 'x', at: '2026-11-24T12:00:00Z' }), /"company" column/);
   assert.throws(() => importFiles(v, csv, { by: '', at: '2026-11-24T12:00:00Z' }), /your name/);
 });
+
+test('The Day: overdue first, then follow-ups, then drafts; one card per company; counts by stage', async () => {
+  const { theDay, draftState } = await import('../model/crm.mjs');
+  const f = withCrm(twin());
+  f['crm/leads/o02.json'] = JSON.stringify({ schema: 'crm.lead/1', org: 'o02', stage: 'talking', owner: 'Owner A', next_step: 'Call', next_step_due: '2026-11-20' });
+  const v = readVault(f);
+  const d = theDay(v, NOW);
+  assert.equal(d.cards[0].org, 'o02'); assert.equal(d.cards[0].why, 'overdue');
+  assert.ok(d.cards.some((c) => c.org === 'o01' && c.why === 'follow-up'));
+  assert.equal(new Set(d.cards.map((c) => c.org)).size, d.cards.length);
+  assert.equal(d.stages.reduce((n, s) => n + s.count, 0), d.total);
+  // a waiting draft wins over a sent one
+  const v2 = readVault({ ...f, 'drafts/p99.json': JSON.stringify({ person: 'p99', org: 'o02', status: 'draft' }) });
+  assert.equal(draftState(v2, 'o02').state, 'draft');
+});
