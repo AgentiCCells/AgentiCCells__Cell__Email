@@ -1,0 +1,44 @@
+{
+ "v": 1,
+ "id": "2026-11-24__signed-batch-send",
+ "agent": "mail.conductor.a@AgentiCCells.dinis",
+ "account": "A",
+ "session": "named in the Claude-Session trailer of this agent's commits",
+ "asked_at": "2026-11-24T16:25:00Z",
+ "title": "Dinis signs emails in the CRM; the Email Cell sends signed entries in batches from his browser, with attachments",
+ "change": {
+  "repository": "AgentiCCells/AgentiCCells__Cell__Email",
+  "branch": "work/mail.conductor.a",
+  "paths": [
+   "team/mail.conductor.a/notes/2026-11-24-signed-batch-send-plan.md",
+   "abp/cell-email.md (proposed C9)"
+  ],
+  "commits": [],
+  "patch_ids": []
+ },
+ "why": "Dinis, ~16:15 UTC 24 Nov (a.maestro's session): approve and sign emails from the CRM and send them from his inbox, in batches, with PDFs and images; first use his book's outreach. Unblocks the book outreach without agents sending.",
+ "checks": [
+  "plan only; no code yet"
+ ],
+ "kind": "choice",
+ "flags": {
+  "main": false,
+  "money": false,
+  "legal": false,
+  "one_way_door": true,
+  "private_person": false,
+  "unfixed_vulnerability": false
+ },
+ "options": [
+  "D-A a) send in his browser, one confirmation per batch (recommended) / b) a gateway process off his browser",
+  "D-B a) pin his CRM key in the cell's page by QR, defer W19 (recommended) / b) pin via pki.sgit.ai's register",
+  "D-C a) approve ABP line C9 as written (recommended) / b) change it",
+  "D-D a) 20 a day, 10 MB per email, PDF/PNG/JPEG (recommended) / b) other limits",
+  "D-E a) a separate Book CRM vault and Book outbox vault, keys to Dinis and a.maestro (recommended) / b) reuse the team vaults"
+ ],
+ "recommendation": "D-A a, D-B a, D-C a, D-D a, D-E a",
+ "needed_by": "2026-11-25T18:00:00Z",
+ "links": [
+  "https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/work/mail.conductor.a/team/mail.conductor.a/notes/2026-11-24-signed-batch-send-plan.md"
+ ]
+}
