@@ -1,6 +1,6 @@
 # Builds the "Learn the CRM" pages in Site__Tool__CRM: the path (site/learn/path.json and /learn/), the overview
 # By crm.dev.a@AgentiCCells.dinis, 2026-11-24. Apache-2.0. The deck folder is the slide files of the presentation artifact; the
-# viewer (learn/viewer.js, learn/viewer.css) is copied in by hand.
+# viewer (learn/viewer.js, learn/viewer.css) is copied in by hand. Safe to run again: it takes out what it added before.
 # presentation as a static page (/learn/overview/, from the deck's slide files), and the learn bar on /how-to/.
 # python3 -I gen-learn.py <deck folder> <shots folder> <site repo>
 import json, os, re, sys, html
@@ -50,6 +50,9 @@ LEARN_CSS = """.learn-nav{display:flex;flex-wrap:wrap;align-items:center;gap:.6r
 # ---- the head and the frame, taken from /how-to/ so the site stays one site
 howto_p = os.path.join(S, 'how-to', 'index.html')
 howto = open(howto_p, encoding='utf-8').read()
+# A second run starts from the page as the first run left it: take its learn bar and styles out first.
+howto = re.sub(r'\n?<nav class="learn-nav".*?</nav>\n\n?', '\n', howto, flags=re.S)
+howto = re.sub(r'\.learn-nav\{.*?\.learn-nav \.learn-prev\{[^}]*\}\n?', '', howto, flags=re.S)
 head_end = howto.index('</head>')
 body_start = howto.index('<body>') + len('<body>')
 top_end = howto.index('<main id="main">')
@@ -146,8 +149,6 @@ open(os.path.join(S, 'learn', 'overview', 'index.html'), 'w', encoding='utf-8').
 
 # ---- the learn bar on /how-to/ (step 3), above its footer; replaced on each run
 i = next(k for k, p in enumerate(PATH) if p['url'] == '/how-to/')
-howto = re.sub(r'\n?<nav class="learn-nav".*?</nav>\n?', '\n', howto, flags=re.S)
-howto = re.sub(r'\.learn-nav\{.*?\.learn-nav \.learn-prev\{[^}]*\}\n?', '', howto, flags=re.S)
 howto = re.sub(r'<nav class="own" aria-label="This site">.*?</nav>', OWN_NAV, howto, count=1, flags=re.S)
 howto = howto.replace('</style>', LEARN_CSS + '\n</style>', 1).replace('\n<footer>', '\n' + learn_nav(i) + '\n\n<footer>', 1)
 open(howto_p, 'w', encoding='utf-8').write(howto)
@@ -170,6 +171,11 @@ if STUDIO_SRC:
             h = h.replace(AGENTS + 'videos/' + rel, 'https://crm.tool.sovereignweb.site' + here).replace(AGENTS + 'videos/', 'https://crm.tool.sovereignweb.site' + VIDEOS)
             h = h.replace('href="../agent.json"', 'href="' + AGENTS + 'agent.json"').replace('href="../now.md"', 'href="' + AGENTS + 'now.md"')
             h = h.replace('https://crm.tool.sovereignweb.site/how-to/', '/how-to/')
+            if '<header class="site">' in h and 'class="learn"' in h:
+                # The studio's own header and learning bar are there (since Site__Agent__CRM c7aef99): keep them, add nothing.
+                h = re.sub(r'(href|data-next-href)="https://crm\.tool\.sovereignweb\.site/(app|learn)/', r'\1="/\2/', h)
+                h = h.replace('<link rel="canonical" href="/learn/', '<link rel="canonical" href="https://crm.tool.sovereignweb.site/learn/')
+                open(fp, 'w', encoding='utf-8').write(h); continue
             h = h.replace('</head>', NAVCSS + '\n</head>', 1).replace('<body>', '<body>\n' + TOP, 1)
             k = next((j for j, p in enumerate(PATH) if p['url'] == here), None)
             bar = learn_nav(k) if k is not None else '<nav class="learn-nav" aria-label="Learn the CRM"><a class="learn-all" href="/learn/">Learn the CRM</a> <span class="learn-step">All the steps, in order</span><a class="learn-next" href="' + PATH[0]['url'] + '">Start with step 1 →</a></nav>'
