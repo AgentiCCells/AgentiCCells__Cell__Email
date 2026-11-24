@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-24T12:12Z",
+  "updated": "2026-11-24T12:13Z",
   "state": "hand-over written (board/handovers/2026-11-23-mail-conductor-a.md); waiting on Dinis's batch 1",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -84,11 +84,12 @@
     "2026-11-24T11:48Z | dinis (crm.dev.a's session ~11:45, relayed) | \"ok let's accelerate on this, we need this side done asap and get the team starting to add data to it\"; pushed a.maestro to work with the factory today; R14 (shared CRM vault key) to Dinis. D8 still not landed (dev 189ac49, live v0.1.51 at 11:46). My wake has not fired since 00:14 UTC.",
     "2026-11-24T11:51Z | noted (a.maestro 11:50 msg) | my wake was disabled at Dinis's word, 01:59 UTC: \"stop all sessions apart from the observability\"; it returns only at his word. CRM site: a.factory has it first in queue; waits on Dinis (merge ba0d197, re-enable Org apply, push). D8 raised with him again.",
     "2026-11-24T12:11Z | factory (a.maestro 12:10 msg) | Dinis re-enabled Org apply; 12:03 run created SovereignWebsite/Site__Tool__Google__Gmail (gmail.google.tool), Site__Tool__CRM, Site__Agent__CRM. Gmail conditions: not a look-alike, no Google logo, not affiliated, Sovereign Website branded, \"a variation of Gmail\". Passed to mail.dev.a and crm.dev.a with the move order.",
-    "2026-11-24T12:12Z | blocked | mail.dev.a's add_repo (push) for Site__Tool__Google__Gmail refused by its permission check (~12:09 msg); no workaround. Two things now wait on Dinis in mail.dev.a's session: the D8 push and this add_repo."
+    "2026-11-24T12:12Z | blocked | mail.dev.a's add_repo (push) for Site__Tool__Google__Gmail refused by its permission check (~12:09 msg); no workaround. Two things now wait on Dinis in mail.dev.a's session: the D8 push and this add_repo.",
+    "2026-11-24T12:13Z | progress | CRM moved to Site__Tool__CRM dev by crm.dev.a; Pages deploying"
   ],
   "team": {
     "mail.dev.a": "work/mail.dev.a: send screen reviewed OK at 5acb335 (release waits on Dinis D1); demo twin now vault sub3og9j (clean history, generator 606d358; id read from team/mail.dev.a/status.json demo_vault.vault_id); a69d321/b5d0599: follow-up drafts sent as replies on the send screen (to review before landing)",
-    "crm.dev.a": "work/crm.dev.a 0228006: CRM vault wired from the start, add company/person, Requests page (crm/site/send/, SWS /send/ pattern from Chiswick Cheese Market, Apache-2.0, inert without an inbox); workflow and virtual-inbox design with mail.dev.a"
+    "crm.dev.a": "SovereignWebsite/Site__Tool__CRM attached (push, approved); on its dev: 8c2903b (key file only), 2ec3b4a (app at /app/, source notes from work/crm.dev.a and Email Cell dev 189ac49); repo gates and Signers run pass; Pages deploying (12:12 msg). crm.tool.sovereignweb.site and the dev host did not answer from this container at 12:12 UTC (000, not yet up or not reachable from here). main via the decision route; shared vault key with Dinis (R14)."
   },
   "defects": [
     "b8a8dcb fails check-commits (Agent: trailer not in the final block); force-push refused; fix by cherry-pick with a corrected message onto the landing branch"
