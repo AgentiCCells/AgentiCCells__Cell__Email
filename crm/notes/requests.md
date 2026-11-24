@@ -18,6 +18,7 @@ All times are UTC on 23 November 2026. Each time says where it comes from: **git
 | R10 | Delete test vault tezq66k0 (made-up data, made by the browser check) | crm.dev.a → Dinis | clock 23:39 | – | open | **open**, low priority |
 | R11 | The /send/ reference code (keyring.js, send.js) sent verbatim, since this session cannot read that repository | crm.dev.a → a.maestro | clock 23:40 | part 1 (inbox.json, keyring.js): msg 23:41; part 2 (send.js): msg 23:42 | 2 min | done |
 | R12 | How the keeper's append-only inbox and token are made, and person-key.mjs | crm.dev.a → a.maestro | clock 23:43 | msg 23:43 (configure call and person-key.mjs verbatim) | under 1 min | done |
+| R13 | Confirm the relayed rule "every vault key goes to the account's maestro" before any key is sent | crm.dev.a → Dinis | clock 00:26 | – | open | **open** |
 | R9 | Tell me when Site__Tool__CRM exists and is attached here | crm.dev.a → a.maestro | clock 23:35 | the factory's request is SovereignWebsite__IaC work/factory.c-crm (912653c), waiting on Dinis's merge (a.maestro, msg 23:43) | – | **open, waiting on Dinis's merge** |
 
 ## What this shows so far
