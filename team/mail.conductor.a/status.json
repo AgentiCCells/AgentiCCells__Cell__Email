@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-24T13:36Z",
+  "updated": "2026-11-24T16:11Z",
   "state": "hand-over written (board/handovers/2026-11-23-mail-conductor-a.md); waiting on Dinis's batch 1",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -91,10 +91,11 @@
     "2026-11-24T12:14Z | progress | CRM live (checked 200); added to use-the-tools.md and the hub request",
     "2026-11-24T12:31Z | morning sync (a.maestro 12:30 msg; Dinis ~11:00 in b.maestro's session) | account A: (a) summit contacts into the CRM (crm.dev.a, with a team member joining on CRM and back end); (b) email among ourselves first, then the friendlies, through the Email Cell (mail.dev.a). Hub lists both tools (checked https://hub.sovereignweb.site/agents/ at 12:31). Scheduled wakes stay off.",
     "2026-11-24T13:21Z | factory guidance (a.maestro 13:19 msg) | every agent keeps an area on its Site__Agent__<Type>; mine is Site__Agent__Conductor; add_repo refused; area files prepared on this branch",
-    "2026-11-24T13:36Z | a.factory via a.maestro 13:38 msg | my area is Site__Agent__Mail (site/factory/dinis-cruz/account-a/mail.conductor.a/), not Site__Agent__Conductor; attaching needs Dinis's yes here"
+    "2026-11-24T13:36Z | a.factory via a.maestro 13:38 msg | my area is Site__Agent__Mail (site/factory/dinis-cruz/account-a/mail.conductor.a/), not Site__Agent__Conductor; attaching needs Dinis's yes here",
+    "2026-11-24T16:11Z | review | mail.dev.a 3f6bc8b: signed-batch format as settled; crm.dev.a to pin batch.js, send.js and vendored keys.js at that commit"
   ],
   "team": {
-    "mail.dev.a": "work/mail.dev.a: send screen reviewed OK at 5acb335 (release waits on Dinis D1); demo twin now vault sub3og9j (clean history, generator 606d358; id read from team/mail.dev.a/status.json demo_vault.vault_id); a69d321/b5d0599: follow-up drafts sent as replies on the send screen (to review before landing)",
+    "mail.dev.a": "work/mail.dev.a: send screen reviewed OK at 5acb335 (release waits on Dinis D1); demo twin now vault sub3og9j (clean history, generator 606d358; id read from team/mail.dev.a/status.json demo_vault.vault_id); a69d321/b5d0599: follow-up drafts sent as replies on the send screen (to review before landing); signed batches in demo at 3f6bc8b (agreed format, canon() hash, 133 tests, gates OK; reviewed 16:10 UTC); C9 is Dinis's",
     "crm.dev.a": "LIVE: https://crm.tool.sovereignweb.site/app/ v0.1.1 (2ec3b4a, Site__Tool__CRM dev; 200 at 12:13 UTC, checked). main via the decision route; shared vault key with Dinis (R14)."
   },
   "defects": [
