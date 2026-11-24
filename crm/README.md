@@ -39,6 +39,10 @@ On a company's page, **Log an action** records each thing done with a contact: a
 
 **Import** takes a CSV the team fills in (download the template from the page): one line per person or company, with company, domain, kind, person, email, role, stage, owner, next step and the last contact. Only *company* is required; empty cells stay empty. The page shows how many companies, people and contacts it will add, and every file; **Write it** adds them to your vault in one commit. Companies already there are matched by domain then name, people by email, and nothing existing is changed.
 
+## You: logging in and being given a vault
+
+**You** → **Log in** makes this browser's own key (its private half cannot leave the browser). If the device has a passkey (Touch ID, Face ID, Windows Hello), the page also makes one for the site and asks for it before it uses any vault key; without one, the key is tied to that browser. The page shows your public key as a QR code and text: send it to Dinis (a WhatsApp screenshot is fine). The agent then seals the vault's key to your browser and signs it (`crm/tools/seal-for.mjs`); paste the sealed code on the same page, and the vault joins **Your vaults**, one press to open. Only codes signed by the CRM's agent are opened.
+
 ## Open your own vault
 
 1. Press **Open your vault**.

@@ -17,6 +17,10 @@ export function buildSite(out = join(ROOT, 'crm/_build/site')) {
   cpSync(join(ROOT, 'src/app/vendor/sg-vault'), join(out, 'vendor/sg-vault'), { recursive: true });
   cpSync(join(ROOT, 'src/app/vendor/pki'), join(out, 'vendor/pki'), { recursive: true });
   cpSync(join(ROOT, 'src/app/vendor/jsqr'), join(out, 'vendor/jsqr'), { recursive: true });
+  cpSync(join(ROOT, 'src/app/vendor/qrcode-generator'), join(out, 'vendor/qrcode-generator'), { recursive: true });
+  // The senders whose sealed codes this site opens: the CRM agent's published key (team/keys/).
+  const TRUSTED = ['crm-dev-a-agenticcells'].map((n) => { const b = JSON.parse(readFileSync(join(ROOT, `team/keys/${n}.json`), 'utf8')); return { label: b.agent || b.label, bundle: { v: b.v, encrypt: b.encrypt, sign: b.sign, label: b.label, fingerprint: b.fingerprint, signing_fingerprint: b.signing_fingerprint } }; });
+  writeFileSync(join(out, 'trusted.js'), `// Built by crm/scripts/build-site.mjs from team/keys/: the senders whose sealed codes this site opens.\nexport const TRUSTED = ${JSON.stringify(TRUSTED, null, 2)};\n`);
   let version = 'dev';
   try { version = execFileSync('git', ['rev-parse', '--short', 'HEAD'], { cwd: ROOT, encoding: 'utf8' }).trim(); } catch {}
   writeFileSync(join(out, 'pki.js'), readFileSync(join(ROOT, 'src/app/pki.js'), 'utf8').replaceAll('__VERSION__', version));
