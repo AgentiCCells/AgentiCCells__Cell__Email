@@ -18,6 +18,7 @@ PATH = [
     {'title': 'Logging in, and the QR key hand-over', 'kind': 'video', 'url': VIDEOS + '06-log-in/', 'about': 'Log in on You, send your QR code, and drop the one you get back.'},
     {'title': 'Today, and logging an action', 'kind': 'video', 'url': VIDEOS + '02-today-and-actions/', 'about': 'An overdue company, a follow-up logged, and the next step set.'},
     {'title': 'Follow-ups', 'kind': 'video', 'url': VIDEOS + '03-follow-ups/', 'about': 'The 5-day rule: what puts a company on the list and what takes it off.'},
+    {'title': 'Writing an email, and signing it off', 'kind': 'video', 'url': VIDEOS + '09-outbox/', 'about': 'Write an email from a company page and sign it off with your key, for the Email Cell to send.'},
     {'title': 'Importing a spreadsheet', 'kind': 'video', 'url': VIDEOS + '04-import/', 'about': 'Bring your contacts in from a CSV file: what is matched, what is skipped.'},
     {'title': 'Verified keys on people', 'kind': 'video', 'url': VIDEOS + '07-verified-keys/', 'about': 'Add a contact\'s key from the QR code they sent, checked and signed for with yours.'},
     {'title': 'How the agents build the CRM in parallel', 'kind': 'video', 'url': VIDEOS + '05-agents-in-parallel/', 'about': 'Who builds what, in which repository, and how work moves between the agents.'},

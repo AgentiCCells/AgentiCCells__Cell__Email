@@ -82,3 +82,4 @@
 - 2026-11-24 17:07 UTC (clock): video 7 (verified keys) added to the learn path after Import (ten steps); mirror re-run from Site__Agent__CRM 75fab43 (Site__Tool__CRM 8067a4a).
 - 2026-11-24 17:07 UTC (clock): a.crm.design round 5 CSS (quiet Log an action next to brass Review and send, Everyone/Mine as a switch, count line as headline, signature check wins on Outbox chips) applied; header one row at 1280, no sideways scroll at 390.
 - 2026-11-24 17:13 UTC (clock): video 8 (Requests) added before Open the CRM (eleven steps); mirror re-run from Site__Agent__CRM bb25b31 (Site__Tool__CRM 6f5908f).
+- 2026-11-24 17:19 UTC (clock): video 9 (Outbox) added after Follow-ups (twelve steps); mirror re-run from Site__Agent__CRM 7a60242 (Site__Tool__CRM 3c669ba). Proposed the 'For you' decisions page to a.maestro; waiting for the first decision request.
