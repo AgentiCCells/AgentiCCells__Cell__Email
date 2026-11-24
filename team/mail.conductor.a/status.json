@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-24T00:17Z",
+  "updated": "2026-11-24T00:57Z",
   "state": "hand-over written (board/handovers/2026-11-23-mail-conductor-a.md); waiting on Dinis's batch 1",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -74,7 +74,8 @@
     "2026-11-23T21:44Z | dinis (crm.dev.a's session, 21:42 UTC, relayed) | \"ok so we need to move this to a SovereignWebsite repo, what about Site__Tool__CRM? which will then have a tight integration with our gmail tool\"; request updated by crm.dev.a (305ee54); relayed to a.maestro",
     "2026-11-23T23:38Z | dinis (crm.dev.a's session ~22:50 UTC, relayed) | Gmail tool to move from the Email Cell to Site__Tool__Gmail; \"anybody working on that?\": nobody yet; proposed mail.dev.a; request notes/2026-11-23-site-tool-gmail-request.md for a.maestro",
     "2026-11-24T00:17Z | wake 00:14 | no HOLD; dev unchanged; crm.dev.a's Requests page checked (inert, licence recorded); asked that crm/site/send/ be the one copy the Gmail tool's talk page reuses",
-    "2026-11-24T00:17Z | noted | crm.dev.a: the safety check refused further code copied via a.maestro from repositories D5 has not opened; crm/site/send/ came that way; it asked Dinis (approve access, confirm copying is fine, or remove the page). W10 is not built on crm/site/send/ until he answers. My own W10 plan took only shapes (formats) from a.maestro, no code."
+    "2026-11-24T00:17Z | noted | crm.dev.a: the safety check refused further code copied via a.maestro from repositories D5 has not opened; crm/site/send/ came that way; it asked Dinis (approve access, confirm copying is fine, or remove the page). W10 is not built on crm/site/send/ until he answers. My own W10 plan took only shapes (formats) from a.maestro, no code.",
+    "2026-11-24T00:57Z | rules | read in PrompTugal guidance README and from-b.md: every vault key to the maestro; b.decisions decides routine asks (security underwrites); decision requests as files. D6 landing branch land/mail.conductor.a-docs (28aae62, signed); requests for D6 and D2 committed"
   ],
   "team": {
     "mail.dev.a": "work/mail.dev.a: send screen reviewed OK at 5acb335 (release waits on Dinis D1); demo twin now vault sub3og9j (clean history, generator 606d358; id read from team/mail.dev.a/status.json demo_vault.vault_id); a69d321/b5d0599: follow-up drafts sent as replies on the send screen (to review before landing)",
@@ -97,9 +98,10 @@
     "player": "built with studio.d's player v0 (Apache-2.0) from PrompTugal__News__Website board/team/studio.d/player",
     "decisions": "D7 (urgent) release release/next2 first; D1 release send screen; D2 real-mode recipients; D3 demo read key; D4 delete epk5452e and db5vicpi (a5a7rrbl deleted and history left as is on Dinis's word in crm.dev.a's session); D5 crm.dev.a add-repo; D6 publish docs; task: Safe Browsing review",
     "recommended": "D7 a D1 a D2 c D3 a D4 a D5 a D6 a",
-    "answered": false
+    "answered": "D7 decided by b.decisions under Dinis's delegation, underwritten by security.b (record 2026-11-24__batch-1-underwritten, relayed by a.maestro 00:39 msg; from-b.md 00:25Z): release/next2 lands, run by mail.dev.a. D2 and D6 moved to b.decisions as request files (site/decisions/requests/). D1 follows once the send screen is rebased and reviewed. D3 (a check change), D4 (deletions), D5 (repository access) stay with Dinis."
   },
   "team_rules": [
     "Every time comes from `date -u`, git, or a notification's own timestamp; never an estimate. All three agents on this team wrote times ahead of the clock on 23 Nov and corrected them (mail.conductor.a 15:07, mail.dev.a 01454a5, crm.dev.a 3a41ef2)."
-  ]
+  ],
+  "vault_keys_held": "none (mail.conductor.a created no vault); mail.dev.a and crm.dev.a hold their synthetic vaults' keys and seal them to the maestro themselves (record 2026-11-24__decisions-b-decides)"
 }

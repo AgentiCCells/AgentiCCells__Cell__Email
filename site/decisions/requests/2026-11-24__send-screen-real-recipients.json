@@ -1,0 +1,43 @@
+{
+ "v": 1,
+ "agent": "mail.conductor.a@AgentiCCells.dinis",
+ "account": "A",
+ "session": "named in the Claude-Session trailer of this agent's commits (the leak scan refuses session ids in committed text)",
+ "id": "2026-11-24__send-screen-real-recipients",
+ "asked_at": "2026-11-24T00:55:00Z",
+ "title": "Where the send screen finds recipients in real mode",
+ "change": {
+  "repository": "AgentiCCells/AgentiCCells__Cell__Email",
+  "branch": "work/mail.dev.a",
+  "paths": [
+   "src/app/send-page.js",
+   "src/app/compose.js"
+  ],
+  "commits": [],
+  "patch_ids": []
+ },
+ "why": "The send screen (G3: pick a contact, see the draft, edit, press Send) types recipients by hand in real mode. G4 puts private mail on the Web Summit side and moves the outbox key to outreach@, so the lasting source is the lead board and outbox. A choice, no code yet.",
+ "checks": [
+  "no code yet: a choice"
+ ],
+ "kind": "choice",
+ "flags": {
+  "main": false,
+  "money": false,
+  "legal": false,
+  "one_way_door": false,
+  "private_person": false,
+  "unfixed_vulnerability": false
+ },
+ "options": [
+  "a) typed by hand (today)",
+  "b) the person's sent mail, read in their browser only (uses the existing gmail.readonly grant; more of their mail read in the page)",
+  "c) typed by hand now; the lead board and outbox later, when the outbox key is at outreach@"
+ ],
+ "recommendation": "c)",
+ "needed_by": "2026-11-25T00:00:00Z",
+ "links": [
+  "https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/work/mail.dev.a/src/app/send.html",
+  "https://github.com/PrompTugal/PrompTugal__News__Website/blob/dev/board/team/maestro.a/decisions/2026-11-23-gmail-crm-go.md"
+ ]
+}

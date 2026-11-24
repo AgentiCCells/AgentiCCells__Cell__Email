@@ -1,0 +1,53 @@
+{
+ "v": 1,
+ "agent": "mail.conductor.a@AgentiCCells.dinis",
+ "account": "A",
+ "session": "named in the Claude-Session trailer of this agent's commits (the leak scan refuses session ids in committed text)",
+ "id": "2026-11-24__email-cell-docs-for-people",
+ "asked_at": "2026-11-24T00:55:00Z",
+ "title": "Publish three draft docs pages on the Email Cell site: use the tools, run your own with your own Google OAuth app, join",
+ "change": {
+  "repository": "AgentiCCells/AgentiCCells__Cell__Email",
+  "branch": "dev",
+  "source_branch": "land/mail.conductor.a-docs",
+  "paths": [
+   "docs/pages/use-the-tools.md",
+   "docs/pages/run-your-own.md",
+   "docs/pages/join.md"
+  ],
+  "commits": [
+   "28aae6235def7af64a0ea2919edcf7a1fd0f00b9"
+  ],
+  "patch_ids": [
+   "6cf42293a32c7fc5f3f654d1269755b70e41ae72"
+  ]
+ },
+ "why": "Dinis, 23 Nov (G1 to G5 record): documentation pages for the team, and a fork-it-yourself guide so people \"can do OAuth on Google directly, so they don't have to come through us\". Published at /use-the-tools.html, /run-your-own.html, /join.html; marked as drafts until someone outside the team has followed them. Text only; no code, policy or check changes.",
+ "checks": [
+  "tests: 112 pass (on dev 189ac49 plus this commit)",
+  "build, validate, check-app: OK",
+  "leak scan: OK (197 files)",
+  "check-commits: OK (1 commit)",
+  "signature: G, mail.conductor.a's key (signing sha256:9059ed3d9a216e52; public half on work/mail.conductor.a, not yet merged)"
+ ],
+ "kind": "push",
+ "flags": {
+  "main": false,
+  "money": false,
+  "legal": false,
+  "one_way_door": false,
+  "private_person": false,
+  "unfixed_vulnerability": false
+ },
+ "options": [
+  "a) land as is (after release/next2, rebased if dev moved; text only)",
+  "b) change first (say what)",
+  "c) hold"
+ ],
+ "recommendation": "a)",
+ "needed_by": "2026-11-24T18:00:00Z",
+ "links": [
+  "https://github.com/AgentiCCells/AgentiCCells__Cell__Email/tree/land/mail.conductor.a-docs/docs/pages",
+  "https://github.com/PrompTugal/PrompTugal__News__Website/blob/dev/board/team/maestro.a/decisions/2026-11-23-gmail-crm-go.md"
+ ]
+}
