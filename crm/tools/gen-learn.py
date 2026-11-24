@@ -41,6 +41,7 @@ def learn_nav(i):
     out.append('</nav>')
     return '\n'.join(out)
 
+FRAME_LINK = '<link rel="stylesheet" href="/app/brand/site-frame.css">'  # a.crm.design's brand for the site's own pages
 LEARN_CSS = """.learn-nav{display:flex;flex-wrap:wrap;align-items:center;gap:.6rem 1.2rem;margin:2rem 0 1rem;padding:1rem 1.2rem;border:2px solid var(--accent);border-radius:12px;font-size:1rem}
 .learn-nav a{color:var(--accent);font-weight:600;min-height:24px}
 .learn-nav .learn-step{color:var(--muted)}
@@ -67,6 +68,7 @@ def page(url, title, desc, main, extra_head='', main_attr=''):
     old_desc = re.search(r'<meta name="description" content="([^"]*)">', h).group(1)
     h = h.replace(old_title, html.escape(title)).replace(old_desc, html.escape(desc, quote=True)).replace('https://crm.tool.sovereignweb.site/how-to/', 'https://crm.tool.sovereignweb.site' + url)
     h = h.replace('</style>', LEARN_CSS + '\n</style>' + extra_head, 1)
+    if FRAME_LINK not in h: h = h + FRAME_LINK + '\n'
     return f'{h}</head>\n<body>{frame_top}<main id="main"{main_attr}>\n{main}\n{foot}</main>\n</body>\n</html>\n'
 
 # ---- /learn/path.json and /learn/
@@ -150,7 +152,7 @@ open(os.path.join(S, 'learn', 'overview', 'index.html'), 'w', encoding='utf-8').
 # ---- the learn bar on /how-to/ (step 3), above its footer; replaced on each run
 i = next(k for k, p in enumerate(PATH) if p['url'] == '/how-to/')
 howto = re.sub(r'<nav class="own" aria-label="This site">.*?</nav>', OWN_NAV, howto, count=1, flags=re.S)
-howto = howto.replace('</style>', LEARN_CSS + '\n</style>', 1).replace('\n<footer>', '\n' + learn_nav(i) + '\n\n<footer>', 1)
+howto = howto.replace('</style>', LEARN_CSS + '\n</style>' + ('' if FRAME_LINK in howto else '\n' + FRAME_LINK), 1).replace('\n<footer>', '\n' + learn_nav(i) + '\n\n<footer>', 1)
 open(howto_p, 'w', encoding='utf-8').write(howto)
 
 # ---- /learn/videos/: a.crm.studio's explainers, mirrored from Site__Agent__CRM so the team has them on the tool's own site.
