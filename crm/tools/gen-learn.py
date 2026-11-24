@@ -18,8 +18,10 @@ PATH = [
     {'title': 'Today, and logging an action', 'kind': 'video', 'url': VIDEOS + '02-today-and-actions/', 'about': 'An overdue company, a follow-up logged, and the next step set.'},
     {'title': 'Follow-ups', 'kind': 'video', 'url': VIDEOS + '03-follow-ups/', 'about': 'The 5-day rule: what puts a company on the list and what takes it off.'},
     {'title': 'Importing a spreadsheet', 'kind': 'video', 'url': VIDEOS + '04-import/', 'about': 'Bring your contacts in from a CSV file: what is matched, what is skipped.'},
+    {'title': 'How the agents build the CRM in parallel', 'kind': 'video', 'url': VIDEOS + '05-agents-in-parallel/', 'about': 'Who builds what, in which repository, and how work moves between the agents.'},
     {'title': 'Open the CRM', 'kind': 'app', 'url': '/app/', 'about': 'Start in the demo, then log in on You.'},
 ]
+WORD = dict(enumerate('zero one two three four five six seven eight nine ten eleven twelve'.split()))
 KIND = {'presentation': 'Presentation', 'video': 'Video', 'guide': 'Guide', 'app': 'The app'}
 BLOBS = {'202d8b712f2866d3c2c34f615020dc51': 'today', '2c9a91ea79ec4c2b6423628e295a44e5': 'board', '442481b77f5d1ba4891c67cddea9bb93': 'you',
          'f1df5c334c3b94dc327f5664df5a6b0e': 'people', '04a1e6ed75e1534c0b3a3f9ba02df952': 'key-preview', 'fe52ef184b0d504ccc6bf55b4c53cef7': 'log-preview',
@@ -78,13 +80,13 @@ json.dump({'schema': 'crm.learn-path/1', 'title': 'Learn the CRM', 'about': 'The
 items = '\n'.join(f'<li><a href="{p["url"]}"><strong>{html.escape(p["title"])}</strong></a> <span class="kind">{KIND[p["kind"]]}</span><br><span class="about">{html.escape(p["about"])}</span></li>' for p in PATH)
 learn_main = f'''<div class="mark">Learn</div>
 <h1>Learn the CRM</h1>
-<p>Seven steps, in order: a short presentation, four explainers, the guide, and then the CRM itself. Each one ends with a link to the next.</p>
+<p>{WORD[len(PATH)].capitalize()} steps, in order: a short presentation, {WORD[sum(p["kind"] == "video" for p in PATH)]} explainers, the guide, and then the CRM itself. Each one ends with a link to the next.</p>
 <ol class="path">
 {items}
 </ol>
 <p><a class="start" href="{PATH[0]["url"]}">Start with step 1 →</a></p>'''
 learn_css = '<style>.path{padding-left:1.4rem}.path li{margin:1rem 0}.path .kind{font-size:.8rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-left:.4rem}.path .about{color:var(--muted)}.start{display:inline-block;background:var(--accent);color:var(--bg);font-weight:600;padding:.6rem 1.1rem;border-radius:999px;text-decoration:none}</style>'
-open(os.path.join(S, 'learn', 'index.html'), 'w', encoding='utf-8').write(page('/learn/', 'Learn the CRM', 'Learn the SovereignWeb.site CRM in seven steps: a short presentation, four explainers and the step-by-step guide, each linking to the next.', learn_main, learn_css))
+open(os.path.join(S, 'learn', 'index.html'), 'w', encoding='utf-8').write(page('/learn/', 'Learn the CRM', f'Learn the SovereignWeb.site CRM in {WORD[len(PATH)]} steps: a short presentation, {WORD[sum(p["kind"] == "video" for p in PATH)]} explainers and the step-by-step guide, each linking to the next.', learn_main, learn_css))
 
 # ---- /learn/overview/: the deck as a page
 deck = json.load(open(os.path.join(DECK, 'project', 'deck.json')))
