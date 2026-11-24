@@ -17,6 +17,7 @@ Demo mode runs on a made-up mailbox: synthetic people and organisations at reser
 | `/app/connect.html`, the gateway | Connect your Gmail; swap keys by QR code; open your twin vault and sync headers and labels into it | `gmail.metadata` on Connect |
 | `/app/mail.html`, the mail client | Read, search, reply, reply all, forward, compose; with Allow managing, archive, Bin, star, labels, with Undo | `gmail.readonly` (Allow reading) or `gmail.modify` (Allow managing), each with `gmail.send` |
 | `/app/send.html`, the send screen (**not live yet**) | Pick a contact, see the draft, edit, press Send | `gmail.send` (Allow sending) |
+| [crm.tool.sovereignweb.site/app/](https://crm.tool.sovereignweb.site/app/), the CRM (live since 24 November 2026, v0.1.1) | A lead board per company, follow-ups, contacts, logging actions; demo by default, or your own CRM vault opened in your browser | none from Google; your own SG/Send token to write to your own vault |
 | Approve and send, inside the gateway | Open an outbox entry an agent prepared, see the exact email, approve and send it | `gmail.send` |
 
 ## Connect your Gmail

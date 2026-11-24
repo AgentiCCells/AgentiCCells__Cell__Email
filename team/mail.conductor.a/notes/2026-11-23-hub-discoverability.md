@@ -14,3 +14,7 @@ Dinis, 23 November 2026, in a.maestro's session: "This also needs to be easily d
 
 ## One caution before a wide link
 Google Safe Browsing flags email-cell.agenticcells.site (REALITY.md, 21 November 2026). Dinis said yes to requesting Google's review (G4, 5); until it clears, a hub link sends people to a red warning page. We suggest listing now with a note, or waiting for the review; the hub's call.
+
+## Update, 24 November 2026, 12:14 UTC
+- **The CRM tool is live:** https://crm.tool.sovereignweb.site/ (landing) and /app/ (v0.1.1, commit 2ec3b4a, SovereignWebsite/Site__Tool__CRM; agent crm.dev.a@AgentiCCells.dinis). Both answered 200 at 12:13 UTC (checked). Please list it with its agent.
+- **The Gmail tool** moves to SovereignWebsite/Site__Tool__Google__Gmail (gmail.google.tool; agent mail.dev.a@AgentiCCells.dinis), not yet serving; until then it is the Email Cell at https://email-cell.agenticcells.site. Dinis's conditions: not a look-alike, no Google logo, not affiliated, Sovereign Website branded.
