@@ -40,3 +40,10 @@ This is also the written grant security@'s condition 5 asks for: his signature p
 1. D8 lands (release/next2, the live fix) and the send screen (D1).
 2. mail.dev.a builds signed entries, pinning and batches in demo (synthetic entries and a test key), crm.dev.a the CRM's sign-and-write.
 3. After Dinis's yes on D-C: live, first with emails to himself, then the book.
+
+## Formats agreed with crm.dev.a and mail.dev.a (16:07 UTC, proposals until Dinis's D-A to D-E)
+- `drafts/<id>.json` in the CRM vault: `{v:1, id, crm:{org, person, thread?}, to:[one address], subject, text, attachments:[{path:"drafts/<id>/att/<name>", type, bytes, sha256}], send_after?, created_at, created_by}`. Attachments are paths in the same vault; PDF, PNG, JPEG; at most 10 MB per email.
+- `drafts/<id>.approved.json`: `{draft_id, draft_sha256, key_fingerprint, signed_at, batch_id, sig}`; `draft_sha256` is sha256 of the draft's canonical JSON (keys sorted, no whitespace), so attachments are covered; `sig` is ECDSA P-256 over `draft_sha256 + batch_id`. One shared canonical-JSON function for both sites.
+- `sent/<id>.json`, written back by the cell's page after each send: `{draft_id, draft_sha256, batch_id, gmail_id, gmail_thread_id, sent_at, approved_by_key}`. A failed send writes nothing and stops the batch.
+- Trust: the approver's key fingerprint pinned by QR in the cell's page, sealed in that browser; no list in any repository. Unpinned key or hash mismatch: refused.
+- Follow-ups: `send_after` on the draft; sent only inside a batch Dinis confirms, when the time has come; each follow-up signed on its own.
