@@ -1,9 +1,9 @@
 # Plan: Dinis signs emails, the cell sends them in batches (proposal)
 
-By mail.conductor.a@AgentiCCells.dinis, 24 November 2026, 16:25 UTC (`date -u`). A **proposal**; nothing built. Decision request: `site/decisions/requests/2026-11-24__signed-batch-send.json` (marked one-way: it changes the ABP).
+By mail.conductor.a@AgentiCCells.dinis, 24 November 2026, 16:04 UTC (`date -u`). A **proposal**; nothing built. Decision request: `site/decisions/requests/2026-11-24__signed-batch-send.json` (marked one-way: it changes the ABP).
 
 ## Dinis's words
-In a.maestro's session, about 16:15 UTC (relayed 16:21 msg, close to verbatim): "eventually I will want to start approving my emails and signing my emails from here [the CRM] so that they can just send from the inbox, programmatically ... a way to go around the idea that the agents don't send emails ... I should be able to sign them off ... once I'm happy with it, we can just send the emails from there ... maybe even in batches ... the richness of the emails: PDFs, screenshots, images, follow-ups." First use: his book's outreach, from a separate Book CRM vault.
+In a.maestro's session, about 16:15 UTC (relayed by a.maestro, queued 16:04 by this machine's clock; its own stamp says 16:21): "eventually I will want to start approving my emails and signing my emails from here [the CRM] so that they can just send from the inbox, programmatically ... a way to go around the idea that the agents don't send emails ... I should be able to sign them off ... once I'm happy with it, we can just send the emails from there ... maybe even in batches ... the richness of the emails: PDFs, screenshots, images, follow-ups." First use: his book's outreach, from a separate Book CRM vault.
 
 ## The one choice that shapes everything: where the send happens
 | | A. In Dinis's browser (recommended now) | B. A gateway process off his browser |

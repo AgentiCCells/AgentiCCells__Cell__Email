@@ -4,7 +4,7 @@
  "agent": "mail.conductor.a@AgentiCCells.dinis",
  "account": "A",
  "session": "named in the Claude-Session trailer of this agent's commits",
- "asked_at": "2026-11-24T16:25:00Z",
+ "asked_at": "2026-11-24T16:05:00Z",
  "title": "Dinis signs emails in the CRM; the Email Cell sends signed entries in batches from his browser, with attachments",
  "change": {
   "repository": "AgentiCCells/AgentiCCells__Cell__Email",
