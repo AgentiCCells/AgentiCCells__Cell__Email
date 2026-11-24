@@ -70,7 +70,7 @@ The **Requests** page (`send/`) lets you ask the CRM's keeper agent for somethin
 - `site/`: the pages. `site/vault.js` reads and writes vaults through the Email Cell's pinned vault library; `site/demo/twin.json` is the demo bundle.
 - `scripts/build-site.mjs`: builds the site into `crm/_build/site` (ignored by git), reusing the Email Cell's `src/app/pki.js` and `src/app/vendor/` unedited.
 - Tests: `node --test crm/tests/crm.test.mjs`. `tests/browser-vault.cjs` and `tests/browser-link.cjs` drive Chromium against the vault service with synthetic vaults only; their keys come from files outside the repository.
-- Rebuild the demo: build the twin with mail.dev.a's `sim/build-demo-vault.mjs` (branch `work/mail.dev.a`), then `node crm/sim/build-crm.mjs <folder> crm/site/demo/twin.json`. The current bundle comes from mail twin vault sub3og9j, generator 2cc074a, seed 20261123.
+- Rebuild the demo: build the twin with mail.dev.a's `sim/build-demo-vault.mjs` (branch `work/mail.dev.a`), then `node crm/sim/build-crm.mjs <folder> crm/site/demo/twin.json` and `node crm/sim/demo-met.mjs crm/site/demo/twin.json` (made-up "where we met", in the CRM's bundle only). The current bundle comes from mail twin vault sub3og9j, generator 2cc074a, seed 20261123.
 - The CRM's demo records also sit in vault egw210lk (synthetic), which points at the mail twin by id. Keys are never in this repository.
 - `iac/`: the site request. `notes/`: plan, log and hand-overs.
 

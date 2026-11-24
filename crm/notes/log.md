@@ -88,3 +88,4 @@
 - 2026-11-24 17:35 UTC (clock): video 10 (For you) added before Open the CRM (thirteen steps); mirror from cd34c4b.
 - 2026-11-24 17:38 UTC (clock): a.crm.design round 6b (tighter spacing on For you) applied; browser-foryou passes.
 - 2026-11-24 18:52 UTC (clock): 'Where we met' (a.crm.design round 2 ask): an optional 'met' on the person (form field, import column, template), shown on Today's card ('met at …') and the company page. 21 Node tests (one new), browser foryou, outbox, keys, actions pass; add-person with met checked in the browser. Mirror re-run from Site__Agent__CRM 3832f15 (Site__Tool__CRM b8d76d4).
+- 2026-11-24 18:55 UTC (clock): made-up 'where we met' on 14 of the demo's people, in the CRM's own bundle only (crm/sim/demo-met.mjs, deterministic; the shared twin vault unchanged), at a.crm.design's ask; shown as 'met: …'.
