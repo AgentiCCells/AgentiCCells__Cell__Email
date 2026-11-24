@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-24T12:14Z",
+  "updated": "2026-11-24T12:31Z",
   "state": "hand-over written (board/handovers/2026-11-23-mail-conductor-a.md); waiting on Dinis's batch 1",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -36,9 +36,10 @@
   },
   "asks": [
     "Dinis (urgent): allow mail.dev.a's push to dev in its own session (release.sh from release/next2, decided by b.decisions as D8/A12); its permission check refused it at ~00:40 UTC. No agent will work around the check.",
+    "Dinis (R14, before the first CRM import; security@'s condition 4, PrompTugal__News__Website board/team/security/reviews/2026-11-24-1107-morning-sync-risks.md): set the lawful basis, the removal route, the retention, and the named key holders of the team's shared CRM vault. Contacts are entered by a person, live only in that vault, never in a repository, issue, commit, status, inbox message or page; agents handle counts and ids only.",
+    "Dinis (security@'s condition 5): a written grant in the ABP for any agent that reads or sends through Gmail; mail to the friendlies is sent by a person",
     "Dinis: allow mail.dev.a's add_repo (push) for SovereignWebsite/Site__Tool__Google__Gmail in its session; refused by its permission check ~12:09 UTC, so the move cannot start",
     "Dinis: add gmail.google.tool's origin and redirect on the Google Web client (or a new client) before the Gmail tool signs in there; until then it runs demo only",
-    "Dinis (R14): the team's shared CRM vault, once crm.tool.sovereignweb.site serves: who makes it on 'Start a new CRM vault', and who hands its key to each person adding data (plus a.maestro by the keys rule). Real contacts go only in that private vault, never a public one; the deck's rule holds: contacts only if published on an official public site, with page and date, or with the person's consent.",
     "Dinis (urgent, D7 = W13): release release/next2 to dev now; it fixes a live weakness (unknown-sender codes replace keys silently). Recommended: yes, run by mail.dev.a, send screen after",
     "Dinis: release work/mail.dev.a 5acb335 to dev (the send screen /app/send.html, demo mode, mail.dev.a's key entry)? Recommended: yes",
     "Dinis: crm.dev.a's add-repo for PrompTugal News, the Web Summit team CRM, SovereignWebsite IaC and Site__Platform__AWS (read-only): approve or refuse in its session",
@@ -86,7 +87,8 @@
     "2026-11-24T12:11Z | factory (a.maestro 12:10 msg) | Dinis re-enabled Org apply; 12:03 run created SovereignWebsite/Site__Tool__Google__Gmail (gmail.google.tool), Site__Tool__CRM, Site__Agent__CRM. Gmail conditions: not a look-alike, no Google logo, not affiliated, Sovereign Website branded, \"a variation of Gmail\". Passed to mail.dev.a and crm.dev.a with the move order.",
     "2026-11-24T12:12Z | blocked | mail.dev.a's add_repo (push) for Site__Tool__Google__Gmail refused by its permission check (~12:09 msg); no workaround. Two things now wait on Dinis in mail.dev.a's session: the D8 push and this add_repo.",
     "2026-11-24T12:13Z | progress | CRM moved to Site__Tool__CRM dev by crm.dev.a; Pages deploying",
-    "2026-11-24T12:14Z | progress | CRM live (checked 200); added to use-the-tools.md and the hub request"
+    "2026-11-24T12:14Z | progress | CRM live (checked 200); added to use-the-tools.md and the hub request",
+    "2026-11-24T12:31Z | morning sync (a.maestro 12:30 msg; Dinis ~11:00 in b.maestro's session) | account A: (a) summit contacts into the CRM (crm.dev.a, with a team member joining on CRM and back end); (b) email among ourselves first, then the friendlies, through the Email Cell (mail.dev.a). Hub lists both tools (checked https://hub.sovereignweb.site/agents/ at 12:31). Scheduled wakes stay off."
   ],
   "team": {
     "mail.dev.a": "work/mail.dev.a: send screen reviewed OK at 5acb335 (release waits on Dinis D1); demo twin now vault sub3og9j (clean history, generator 606d358; id read from team/mail.dev.a/status.json demo_vault.vault_id); a69d321/b5d0599: follow-up drafts sent as replies on the send screen (to review before landing)",
@@ -114,5 +116,6 @@
   "team_rules": [
     "Every time comes from `date -u`, git, or a notification's own timestamp; never an estimate. All three agents on this team wrote times ahead of the clock on 23 Nov and corrected them (mail.conductor.a 15:07, mail.dev.a 01454a5, crm.dev.a 3a41ef2)."
   ],
-  "vault_keys_held": "none (mail.conductor.a created no vault); mail.dev.a and crm.dev.a hold their synthetic vaults' keys and seal them to the maestro themselves (record 2026-11-24__decisions-b-decides)"
+  "vault_keys_held": "none (mail.conductor.a created no vault); mail.dev.a and crm.dev.a hold their synthetic vaults' keys and seal them to the maestro themselves (record 2026-11-24__decisions-b-decides)",
+  "hub": "listed at https://hub.sovereignweb.site/agents/#team (hub.b v0.1.71): The CRM tool -> crm.tool.sovereignweb.site/app/; The Gmail tool -> gmail.google.tool.sovereignweb.site (not serving yet)"
 }
