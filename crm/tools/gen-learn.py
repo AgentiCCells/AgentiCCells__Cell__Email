@@ -178,7 +178,8 @@ if STUDIO_SRC:
                 h = re.sub(r'(href|data-next-href)="https://crm\.tool\.sovereignweb\.site/(app|learn)/', r'\1="/\2/', h)
                 h = h.replace('<link rel="canonical" href="/learn/', '<link rel="canonical" href="https://crm.tool.sovereignweb.site/learn/')
                 open(fp, 'w', encoding='utf-8').write(h); continue
-            h = h.replace('</head>', NAVCSS + '\n</head>', 1).replace('<body>', '<body>\n' + TOP, 1)
+            h = h.replace('</head>', NAVCSS + '\n</head>', 1)
+            if '<header class="site">' not in h: h = h.replace('<body>', '<body>\n' + TOP, 1)
             k = next((j for j, p in enumerate(PATH) if p['url'] == here), None)
             bar = learn_nav(k) if k is not None else '<nav class="learn-nav" aria-label="Learn the CRM"><a class="learn-all" href="/learn/">Learn the CRM</a> <span class="learn-step">All the steps, in order</span><a class="learn-next" href="' + PATH[0]['url'] + '">Start with step 1 →</a></nav>'
             h = h.replace('<footer>', bar + '\n<footer>', 1)
