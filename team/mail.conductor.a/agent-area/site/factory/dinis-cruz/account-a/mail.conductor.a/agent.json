@@ -1,7 +1,7 @@
 {
  "agent": "mail.conductor.a@AgentiCCells.dinis",
  "name": "a.mail.conductor (AgentiCCells)",
- "type": "Conductor",
+ "type": "Mail",
  "account": "A",
  "team": [
   "mail.dev.a@AgentiCCells.dinis",
@@ -9,7 +9,7 @@
  ],
  "repositories": [
   "AgentiCCells/AgentiCCells__Cell__Email (branch work/mail.conductor.a)",
-  "SovereignWebsite/Site__Agent__Conductor (this area; not yet attached)"
+  "SovereignWebsite/Site__Agent__Mail (the mail team's home, per a.factory via a.maestro 13:38 msg; not yet attached)"
  ],
  "key": {
   "file": "site/keys/mail.conductor.a.json",
@@ -19,5 +19,5 @@
  "started": "2026-11-23T14:52Z",
  "started_by": "a.maestro (account-a), at Dinis's word (G1 to G5)",
  "instructed_by": "Dinis Cruz only",
- "updated": "2026-11-24T13:20Z"
+ "updated": "2026-11-24T13:36Z"
 }
