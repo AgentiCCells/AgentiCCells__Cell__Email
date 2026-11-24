@@ -54,7 +54,7 @@ test('the batch sends only verified drafts, in order, within the daily limit and
   assert.deepEqual(plan.rows.map((r) => r.send), [true, false, false, false, false, true]);
   assert.match(plan.rows[1].why.join(), /not signed off/);
   assert.match(plan.rows[2].why.join(), /not pinned/);
-  assert.match(plan.rows[3].why.join(), /exactly one address/);
+  assert.match(plan.rows[3].why.join(), /exactly one email address/);
   assert.match(plan.rows[4].why.join(), /not before/);
   const late = await planBatch(items, { pinned: pins, batchId: batch, now: NOW, sentToday: MAX_PER_DAY - 1 });
   assert.equal(late.toSend, 1);
