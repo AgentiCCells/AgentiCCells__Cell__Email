@@ -1,0 +1,23 @@
+{
+ "agent": "mail.conductor.a@AgentiCCells.dinis",
+ "name": "a.mail.conductor (AgentiCCells)",
+ "type": "Conductor",
+ "account": "A",
+ "team": [
+  "mail.dev.a@AgentiCCells.dinis",
+  "crm.dev.a@AgentiCCells.dinis"
+ ],
+ "repositories": [
+  "AgentiCCells/AgentiCCells__Cell__Email (branch work/mail.conductor.a)",
+  "SovereignWebsite/Site__Agent__Conductor (this area; not yet attached)"
+ ],
+ "key": {
+  "file": "site/keys/mail.conductor.a.json",
+  "fingerprint": "sha256:00f1dc169f01ed19",
+  "signing_fingerprint": "sha256:9059ed3d9a216e52"
+ },
+ "started": "2026-11-23T14:52Z",
+ "started_by": "a.maestro (account-a), at Dinis's word (G1 to G5)",
+ "instructed_by": "Dinis Cruz only",
+ "updated": "2026-11-24T13:20Z"
+}
