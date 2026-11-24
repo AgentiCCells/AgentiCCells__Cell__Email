@@ -32,7 +32,9 @@
     "2026-11-23T15:12Z 606d358 made-up organisation names, contrast, ?contact= links; vault epk5452e rebuilt with them (own reversible call); read-only clone identical",
     "2026-11-23T15:14Z fresh vault sub3og9j from 606d358 (own reversible call, a.mail.conductor's go at 15:13); a mistaken second sgit create made vault db5vicpi and dropped this container's copy of epk5452e's write key; both old vaults for Dinis's delete list",
     "2026-11-23T15:16Z 2cc074a contrast asked by crm.dev.a; sub3og9j rebuilt from it (own reversible call); read-only clone identical",
-    "2026-11-23T23:42Z a69d321 follow-up drafts (asked by crm.dev.a); sub3og9j rebuilt from it at 23:43 (own reversible call); read-only clone identical"
+    "2026-11-23T23:42Z a69d321 follow-up drafts (asked by crm.dev.a); sub3og9j rebuilt from it at 23:43 (own reversible call); read-only clone identical",
+    "2026-11-24T00:45Z sub3og9j's vault key sealed with sgit pki encrypt to maestro.a-account-a and posted to its inbox (HTTP 200); recipient fingerprint checked against keys.json first",
+    "2026-11-24T00:41Z tried release.sh from release/next2 (92bb7de) under record 2026-11-24__batch-1-underwritten (D8 yes); this session's permission check refused the push; nothing ran; dev still 189ac49"
   ],
   "demo_vault": {
     "vault_id": "sub3og9j",
@@ -41,7 +43,7 @@
     "content": "synthetic only, seed 20261123, reserved example domains; organisations 'Example ... (demo)'; 16 people, 8 drafts waiting, 4 sent, 4 none; manifest.json, README.md, orgs/, people/, drafts/, mail/ (twin format v1); crm/ lives in crm.dev.a's vault egw210lk",
     "rebuild": "node sim/build-demo-vault.mjs <folder> (seed 20261123, clock 2026-11-23T12:00Z), then copy into a clone and sgit commit and push",
     "read_key": "public by design; not committed and the leak scan is not changed; given out by mail.dev.a on request until Dinis says where a public demo key lives (a.mail.conductor, 15:09 UTC 23 Nov)",
-    "write_key": "only in this session's container; never committed",
+    "write_key": "only in this session's container, and sealed to maestro.a-account-a (sha256:7b84926cc96c79ee) in its inbox at 00:45:55 UTC 24 Nov, by Dinis's rule that every vault key goes to the maestro (record 2026-11-24__decisions-b-decides, relayed by a.maestro); never committed",
     "decision": "mail.dev.a's own reversible call, on a.mail.conductor's go (15:04 UTC) under Dinis's words \"you can put some of that data in a public vault\"; the vault can be deleted from the server",
     "crm": "crm.dev.a keeps its own crm vault that points at epk5452e by id; no write key travels (a.mail.conductor, 15:09 UTC 23 Nov)",
     "if_this_container_ends": "the write key ends with it; rebuild into a new vault (same seed and generator, new id) and update vault_id here. Anything linking to the demo twin reads the id from this field until the docs page carries it.",
