@@ -15,6 +15,7 @@ PATH = [
     {'title': 'The CRM in 13 slides', 'kind': 'presentation', 'url': '/learn/overview/', 'about': 'What the CRM is, what it does and how it keeps your contacts in your own vault.'},
     {'title': 'The CRM, and its demo', 'kind': 'video', 'url': VIDEOS + '01-what-it-is/', 'about': 'A walk through the demo: Today, the lead board, a company and its people.'},
     {'title': 'How to use the CRM', 'kind': 'guide', 'url': '/how-to/', 'about': 'Step by step: the demo, logging in, getting a vault, adding people, logging actions.'},
+    {'title': 'Adding a company and a person', 'kind': 'video', 'url': VIDEOS + '11-add-people/', 'about': 'Add a company with its lead row, then a person, and where you met them.'},
     {'title': 'Logging in, and the QR key hand-over', 'kind': 'video', 'url': VIDEOS + '06-log-in/', 'about': 'Log in on You, send your QR code, and drop the one you get back.'},
     {'title': 'Today, and logging an action', 'kind': 'video', 'url': VIDEOS + '02-today-and-actions/', 'about': 'An overdue company, a follow-up logged, and the next step set.'},
     {'title': 'Follow-ups', 'kind': 'video', 'url': VIDEOS + '03-follow-ups/', 'about': 'The 5-day rule: what puts a company on the list and what takes it off.'},
