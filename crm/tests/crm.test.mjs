@@ -274,3 +274,23 @@ test('follow-ups: a reply logged later clears a waiting thread; our own new cont
   assert.ok(!followUps(v3, NOW).some((f) => f.org === 'o01'), 'our new contact restarts the clock');
   assert.ok(followUps(v3, NOW + 6 * DAY).some((f) => f.org === 'o01' && f.action === 'a-n'), 'and it comes back after 5 days');
 });
+
+test('verified keys: a signed crm.key/1 record checks; a changed one, a reused key or your own key do not', async () => {
+  const { keyRecord, keyFile, personKey } = await import('../model/crm.mjs');
+  const K = await import('../../src/app/vendor/pki/v0.2.28/keys.js');
+  const { keyCode } = await import('../../src/app/vendor/pki/v0.2.28/message.js');
+  const mk = async (label) => { const enc = await crypto.subtle.generateKey(K.RSA_GEN, true, ['encrypt', 'decrypt']), sig = await crypto.subtle.generateKey(K.EC, false, ['sign', 'verify']);
+    const b = await K.bundleOf(new Uint8Array(await crypto.subtle.exportKey('spki', enc.publicKey)), new Uint8Array(await crypto.subtle.exportKey('spki', sig.publicKey)), label); return { b, sign: sig.privateKey }; };
+  const them = await mk('Test Contact'), me = await mk('Test Verifier');
+  const base = withCrm(twin()), v = readVault(base), pid = v.people[0].id, at = '2026-11-24T15:00:00Z';
+  const rec = keyRecord(v, { person: pid, code: keyCode(them.b).code, fp: them.b.signing_fingerprint, enc_fp: them.b.fingerprint, label: 'Test Contact', how: 'qr', verified_by: 'Owner A', verified_at: at, verifier: keyCode(me.b).code, verifier_fp: me.b.signing_fingerprint });
+  const signed = { ...rec, sig: K.b64(new Uint8Array(await crypto.subtle.sign(K.ECDSA, me.sign, K.canonicalBytes(rec)))) };
+  assert.ok(await K.verifyStatement(signed, me.b.sign), 'the signature checks');
+  assert.ok(!(await K.verifyStatement({ ...signed, fp: me.b.signing_fingerprint }, me.b.sign)), 'a changed record does not');
+  const f = keyFile(signed), v2 = readVault({ ...base, [f.path]: f.text });
+  assert.equal(f.path, `crm/keys/${pid}.json`); assert.deepEqual(checkCrm(v2), []); assert.equal(personKey(v2, pid).fp, them.b.signing_fingerprint);
+  assert.equal(contacts(v2).find((p) => p.id === pid).key_fp, them.b.signing_fingerprint);
+  assert.throws(() => keyRecord(v2, { ...rec, person: v.people[1].id }), /already/);
+  assert.throws(() => keyRecord(v, { ...rec, fp: me.b.signing_fingerprint }), /your own key/);
+  assert.throws(() => keyRecord(v, { ...rec, code: 'k1.nope' }), /key code/);
+});
