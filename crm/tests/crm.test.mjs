@@ -352,3 +352,17 @@ test('Today: every company with a waiting draft offers it, whatever else it has;
   const owner = board[0].owner, mine = theDay(v, NOW, { owner });
   assert.ok(mine.cards.every((c) => c.owner === owner));
 });
+
+test('where we met: kept on the person from the form and from import, shown on Today', async () => {
+  const { personFile, importFiles, theDay } = await import('../model/crm.mjs');
+  const v = readVault(withCrm(twin())), at = '2026-11-24T18:00:00Z';
+  const [f] = personFile(v, { id: 'p-m1', name: 'Ana Test', email: 'ana@example.org', org: 'o01', met: '  Web Summit 2026 ', by: 'Owner A', at });
+  assert.equal(f.record.met, 'Web Summit 2026');
+  const [g] = personFile(v, { id: 'p-m2', name: 'Bo Test', email: 'bo@example.org', org: 'o01', by: 'Owner A', at });
+  assert.equal('met' in g.record, false, 'empty stays empty');
+  const r = importFiles(v, 'company,person,email,met\nExample New Co,Cy Test,cy@example.org,a meetup in Lisbon\n', { by: 'Owner A', at, newId: (p) => p + '-x' + Math.random().toString(16).slice(2, 6) });
+  assert.ok(r.files.some((x) => x.path.startsWith('people/') && JSON.parse(x.text).met === 'a meetup in Lisbon'));
+  const p = v.people.find((x) => x.org === theDay(v, NOW).cards[0].org);
+  const v2 = readVault({ ...withCrm(twin()), [`people/${p.id}.json`]: JSON.stringify({ ...p, met: 'a conference' }) });
+  assert.ok(theDay(v2, NOW).cards.some((c) => c.person?.met === 'a conference'));
+});

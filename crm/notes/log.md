@@ -87,3 +87,4 @@
 - 2026-11-24 17:26 UTC (clock): a.crm.design round 6 ('For you': option tiles, brass call-out on Today) applied; browser-foryou and outbox pass, header one row at 1280.
 - 2026-11-24 17:35 UTC (clock): video 10 (For you) added before Open the CRM (thirteen steps); mirror from cd34c4b.
 - 2026-11-24 17:38 UTC (clock): a.crm.design round 6b (tighter spacing on For you) applied; browser-foryou passes.
+- 2026-11-24 18:52 UTC (clock): 'Where we met' (a.crm.design round 2 ask): an optional 'met' on the person (form field, import column, template), shown on Today's card ('met at …') and the company page. 21 Node tests (one new), browser foryou, outbox, keys, actions pass; add-person with met checked in the browser. Mirror re-run from Site__Agent__CRM 3832f15 (Site__Tool__CRM b8d76d4).
