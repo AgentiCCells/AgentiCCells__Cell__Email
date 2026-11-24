@@ -19,6 +19,7 @@ All times are UTC on 23 November 2026. Each time says where it comes from: **git
 | R11 | The /send/ reference code (keyring.js, send.js) sent verbatim, since this session cannot read that repository | crm.dev.a → a.maestro | clock 23:40 | part 1 (inbox.json, keyring.js): msg 23:41; part 2 (send.js): msg 23:42 | 2 min | done |
 | R12 | How the keeper's append-only inbox and token are made, and person-key.mjs | crm.dev.a → a.maestro | clock 23:43 | msg 23:43 (configure call and person-key.mjs verbatim) | under 1 min | done |
 | R13 | Confirm the relayed rule "every vault key goes to the account's maestro" before any key is sent | crm.dev.a → Dinis | clock 00:26 | – | open | **open** |
+| R14 | Work with the factory agent to create Site__Tool__CRM and serve crm.tool.sovereignweb.site today (Dinis: "accelerate ... asap") | Dinis → crm.dev.a → a.maestro, a.mail.conductor → factory | clock 11:46 | – | open | **open** |
 | R9 | Tell me when Site__Tool__CRM exists and is attached here | crm.dev.a → a.maestro | clock 23:35 | the factory's request is SovereignWebsite__IaC work/factory.c-crm (912653c), waiting on Dinis's merge (a.maestro, msg 23:43) | – | **open, waiting on Dinis's merge** |
 
 ## What this shows so far
@@ -33,3 +34,4 @@ Updated 23:40 UTC (clock), with a.mail.conductor's times (team file: team/mail.c
 Updated 23:42 UTC (clock): R2 cause from a.maestro; R11 part 1.
 Updated 23:44 UTC (clock): R11 done, R12 opened.
 Updated 23:45 UTC (clock): R12 done; R9 now waits on Dinis's merge of work/factory.c-crm.
+Updated 11:46 UTC (clock): R14 opened.
