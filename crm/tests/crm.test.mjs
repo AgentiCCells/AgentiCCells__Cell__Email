@@ -294,3 +294,17 @@ test('verified keys: a signed crm.key/1 record checks; a changed one, a reused k
   assert.throws(() => keyRecord(v, { ...rec, fp: me.b.signing_fingerprint }), /your own key/);
   assert.throws(() => keyRecord(v, { ...rec, code: 'k1.nope' }), /key code/);
 });
+
+test('reached before: a second outreach to the same person is flagged, a note or a reply is not', async () => {
+  const { actionFile, nudgeWarning, reachedBefore } = await import('../model/crm.mjs');
+  const base = withCrm(twin()), v = readVault(base), at = '2026-11-23T12:00:00Z';
+  const p = v.people.find((x) => x.org === 'o01').id;
+  const fresh = readVault({ ...base, 'mail/threads/': undefined });
+  const [out] = actionFile(v, { id: 'a-1', org: 'o01', person: p, kind: 'linkedin', direction: 'out', at: '2026-11-20', by: 'Owner A', summary: 'Nudge about the book', logged_at: at });
+  const v2 = readVault({ ...base, [out.path]: out.text });
+  assert.match(nudgeWarning(v2, { org: 'o01', person: p, direction: 'out' }), /Already reached out to .* last on 2026-11-2\d/);
+  assert.equal(nudgeWarning(v2, { org: 'o01', person: p, direction: 'in' }), null, 'a reply is not a nudge');
+  const [note] = actionFile(v, { id: 'a-2', org: 'o02', kind: 'note', direction: 'none', at: '2026-11-20', by: 'Owner A', summary: 'Thinking', logged_at: at });
+  const v3 = readVault({ ...base, [note.path]: note.text });
+  assert.ok(reachedBefore(v3, { org: 'o02' }).every((e) => e.kind !== 'note'), 'notes never count');
+});
