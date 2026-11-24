@@ -189,3 +189,35 @@ test('adding companies and people: the exact files, and refusals', async () => {
   assert.equal(JSON.parse(nv[0].text).schema, 'crm.vault/1');
   assert.match(newId('o', () => new Uint8Array([1, 2, 3, 255])), /^o-010203ff$/);
 });
+
+test('actions: logged by hand, counted as contact, and followed up after 5 days', async () => {
+  const { actionFile, leadEditFile, timeline } = await import('../model/crm.mjs');
+  const v = readVault(withCrm(twin()));
+  const at = '2026-11-24T10:00:00Z';
+  const [a] = actionFile(v, { id: 'a-1', org: 'o03', kind: 'linkedin', direction: 'out', at: '2026-11-17', by: 'Owner B', summary: 'Sent a note after the summit', logged_at: at });
+  assert.deepEqual(a.record, { schema: 'crm.action/1', id: 'a-1', org: 'o03', kind: 'linkedin', direction: 'out', at: '2026-11-17', by: 'Owner B', summary: 'Sent a note after the summit', logged_at: at });
+  assert.throws(() => actionFile(v, { id: 'x', org: 'o03', kind: 'fax', direction: 'out', at: '2026-11-17', by: 'B', summary: 's', logged_at: at }), /unknown kind/);
+  assert.throws(() => actionFile(v, { id: 'x', org: 'o03', kind: 'call', direction: 'out', at: '17/11', by: 'B', summary: 's', logged_at: at }), /yyyy-mm-dd/);
+  assert.throws(() => actionFile(v, { id: 'x', org: 'o03', kind: 'call', direction: 'out', at: '2026-11-17', by: '', summary: 's', logged_at: at }), /your name/);
+  assert.throws(() => actionFile(v, { id: 'x', org: 'o01', person: 'p02', kind: 'call', direction: 'out', at: '2026-11-17', by: 'B', summary: 's', logged_at: at }), /not at this company/);
+  const v2 = readVault({ ...withCrm(twin()), [a.path]: a.text });
+  assert.deepEqual(checkCrm(v2), []);
+  // o03's only mail was inbound 1 day before NOW (Nov 22); a LinkedIn note on Nov 17 is older, so last contact stays the mail
+  assert.equal(leadBoard(v2, NOW).find((r) => r.org === 'o03').last_contact.thread, 't-004');
+  // a newer outbound action, 6 days before NOW: now last contact, and a follow-up
+  const [b] = actionFile(v2, { id: 'a-2', org: 'o03', kind: 'email', direction: 'out', at: '2026-11-23T11:00:00Z', by: 'Owner B', summary: 'Nudge', logged_at: at });
+  const v3 = readVault({ ...withCrm(twin()), [a.path]: a.text, [b.path]: b.text });
+  const row = leadBoard(v3, NOW + 6 * DAY).find((r) => r.org === 'o03');
+  assert.equal(row.last_contact.action, 'a-2');
+  assert.ok(followUps(v3, NOW + 6 * DAY).some((f) => f.action === 'a-2' && f.days === 6));
+  assert.deepEqual(timeline(v3, 'o03').map((e) => e.id), ['a-2', 't-004', 'a-1']);
+  // they answer: no longer waiting
+  const [c] = actionFile(v3, { id: 'a-3', org: 'o03', kind: 'email', direction: 'in', at: '2026-11-25', by: 'Owner B', summary: 'They replied', logged_at: at });
+  const v4 = readVault({ ...withCrm(twin()), [a.path]: a.text, [b.path]: b.text, [c.path]: c.text });
+  assert.ok(!followUps(v4, NOW + 9 * DAY).some((f) => f.org === 'o03' && f.action));
+  // editing a lead keeps the other fields and clears the next step when left empty
+  const [l] = leadEditFile(v4, 'o03', { stage: 'talking', owner: 'Owner C', next_step: '', next_step_due: '', at });
+  assert.equal(l.path, 'crm/leads/o03.json');
+  assert.equal(l.record.stage, 'talking'); assert.equal(l.record.owner, 'Owner C'); assert.ok(!('next_step' in l.record));
+  assert.throws(() => leadEditFile(v4, 'o03', { stage: 'nope', owner: 'a', at }), /unknown stage/);
+});

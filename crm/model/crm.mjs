@@ -42,6 +42,7 @@ export function readVault(files) {
     stages: files['crm/stages.json'] ? json(files['crm/stages.json']).stages : STAGES,
     leads: under(files, 'crm/leads/'),
     links: under(files, 'crm/links/'),
+    actions: under(files, 'crm/actions/'),
   };
 }
 
@@ -62,6 +63,11 @@ export function checkCrm(v) {
     if (l.next_step != null && typeof l.next_step !== 'string') errors.push(`lead ${l.org}: next_step is not text`);
     if (l.next_step_due != null && !DAYISO.test(l.next_step_due)) errors.push(`lead ${l.org}: next_step_due is not yyyy-mm-dd`);
     if (l.updated_at != null && !ISO.test(l.updated_at)) errors.push(`lead ${l.org}: updated_at is not an ISO time`);
+  }
+  for (const a of v.actions || []) {
+    if (a.schema !== 'crm.action/1') errors.push(`action ${a.id}: schema is not crm.action/1`);
+    if (!orgs.has(a.org)) errors.push(`action ${a.id}: no such org ${a.org}`);
+    if (a.person != null && !people.has(a.person)) errors.push(`action ${a.id}: no such person ${a.person}`);
   }
   for (const k of v.links) {
     if (k.schema !== 'crm.link/1') errors.push(`link ${k.thread}: schema is not crm.link/1`);
@@ -120,7 +126,15 @@ export function followUps(v, now, days = FOLLOW_UP_DAYS) {
     const who = threadOrg(v, t, idx);
     out.push({ thread: t.id, subject: t.subject, sent: m.date, days: waited, org: who?.org ?? null, person: who?.person ?? null });
   }
-  return out.sort((a, b) => b.days - a.days || a.thread.localeCompare(b.thread));
+  // Logged actions: a company whose latest contact (logged or mail) is us reaching out, 'days' or more ago.
+  for (const o of v.orgs) {
+    const last = timeline(v, o.id).find((e) => e.direction !== 'none');
+    if (!last || last.type !== 'action' || last.direction !== 'out') continue;
+    const waited = Math.floor((now - last.time) / DAY);
+    if (waited < days) continue;
+    out.push({ thread: null, action: last.id, subject: `${last.kind}: ${last.summary}`, sent: last.at, days: waited, org: o.id, person: last.person });
+  }
+  return out.sort((a, b) => b.days - a.days || String(a.thread || a.action).localeCompare(String(b.thread || b.action)));
 }
 
 // Draft state of a company: from drafts/ for its people. 'sent' if any was sent, else 'draft' if any
@@ -143,6 +157,11 @@ export function leadBoard(v, now) {
     threads.set(who.org, (threads.get(who.org) || 0) + 1);
     const m = lastMessage(v, t);
     if (m && (!last.has(who.org) || Date.parse(m.date) > Date.parse(last.get(who.org).date))) last.set(who.org, { date: m.date, direction: m.direction, thread: t.id });
+  }
+  for (const a of v.actions || []) {
+    if (a.direction === 'none') continue;
+    const t = actionTime(a), cur = last.get(a.org);
+    if (!cur || t > Date.parse(cur.date)) last.set(a.org, { date: new Date(t).toISOString().replace(/\.\d+Z$/, 'Z'), direction: a.direction === 'out' ? 'outbound' : 'inbound', action: a.id, kind: a.kind });
   }
   const waiting = new Map();
   // Threads at this company still waiting on a reply: how many, and the longest wait (followUps is
@@ -261,4 +280,48 @@ export function newVaultFiles({ owner, at }) {
     { path: 'manifest.json', text: JSON.stringify(manifest, null, 2) + '\n' },
     { path: 'crm/stages.json', text: JSON.stringify({ schema: 'crm.stages/1', stages: STAGES }, null, 2) + '\n' },
   ];
+}
+
+// Actions: each thing the team does with a contact, logged by hand (Dinis, 24 Nov 2026: the team needs "a centralised
+// place to put each contact and each action taken with them"). crm/actions/<id>.json, crm.action/1:
+// { id, org, person?, kind, direction: 'out' | 'in' | 'none', at (yyyy-mm-dd or ISO time), by, summary, logged_at }.
+// 'out' is us reaching out, 'in' is them answering, 'none' is a note or an internal step.
+export const ACTION_KINDS = ['email', 'linkedin', 'call', 'meeting', 'message', 'note'];
+const DAYISH = /^\d{4}-\d{2}-\d{2}(T\d{2}:\d{2}:\d{2}Z)?$/;
+const actionTime = (a) => Date.parse(a.at.length === 10 ? a.at + 'T12:00:00Z' : a.at);
+
+export function actionFile(v, { id, org, person = null, kind, direction, at, by, summary, logged_at }) {
+  summary = String(summary || '').trim();
+  if (!v.orgs.some((o) => o.id === org)) throw new Error(`no such company ${org}`);
+  if (person && v.people.find((p) => p.id === person)?.org !== org) throw new Error(`that person is not at this company`);
+  if (!ACTION_KINDS.includes(kind)) throw new Error(`unknown kind ${kind}`);
+  if (!['out', 'in', 'none'].includes(direction)) throw new Error(`unknown direction ${direction}`);
+  if (!DAYISH.test(at || '')) throw new Error('the date must be yyyy-mm-dd');
+  if (!by) throw new Error('set your name first (top right)');
+  if (!summary) throw new Error('say in a few words what happened');
+  if (!ISO.test(logged_at || '')) throw new Error('needs the time, as an ISO time');
+  const a = { schema: 'crm.action/1', id, org, ...(person ? { person } : {}), kind, direction, at, by, summary, logged_at };
+  return [{ path: `crm/actions/${id}.json`, record: a, text: JSON.stringify(a, null, 2) + '\n' }];
+}
+
+// A lead row changed by hand: stage, owner, next step and its date. Returns the one file to write.
+export function leadEditFile(v, org, { stage, owner, next_step = '', next_step_due = '', at }) {
+  if (!v.orgs.some((o) => o.id === org)) throw new Error(`no such company ${org}`);
+  if (!v.stages.some((s) => s.id === stage)) throw new Error(`unknown stage ${stage}`);
+  if (!owner) throw new Error('a lead needs an owner');
+  if (next_step_due && !/^\d{4}-\d{2}-\d{2}$/.test(next_step_due)) throw new Error('the due date must be yyyy-mm-dd');
+  if (!ISO.test(at || '')) throw new Error('needs the time, as an ISO time');
+  const old = v.leads.find((l) => l.org === org) || {};
+  const lead = { ...old, schema: 'crm.lead/1', org, stage, owner, updated_at: at };
+  if (next_step) lead.next_step = next_step; else delete lead.next_step;
+  if (next_step_due) lead.next_step_due = next_step_due; else delete lead.next_step_due;
+  return [{ path: `crm/leads/${org}.json`, record: lead, text: JSON.stringify(lead, null, 2) + '\n' }];
+}
+
+// Everything that happened with a company, newest first: logged actions and mail, in one list.
+export function timeline(v, org) {
+  const idx = index(v);
+  const acts = (v.actions || []).filter((a) => a.org === org).map((a) => ({ type: 'action', at: a.at, time: actionTime(a), kind: a.kind, direction: a.direction, by: a.by, person: a.person || null, summary: a.summary, id: a.id }));
+  const mail = v.threads.filter((t) => threadOrg(v, t, idx)?.org === org).map((t) => { const m = lastMessage(v, t); return m && { type: 'mail', at: m.date, time: Date.parse(m.date), kind: 'email', direction: m.direction === 'outbound' ? 'out' : 'in', person: threadOrg(v, t, idx).person, summary: t.subject, id: t.id }; }).filter(Boolean);
+  return [...acts, ...mail].sort((a, b) => b.time - a.time);
 }

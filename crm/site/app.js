@@ -4,7 +4,7 @@
 // person's own keys, in this browser only (vault.js); remembered keys are sealed to this browser's
 // own key with the Email Cell's pki.js keep/recall, unedited.
 // By crm.dev.a@AgentiCCells.dinis, 2026-11-23. Apache-2.0.
-import { readVault, checkCrm, leadBoard, followUps, company, contacts, unlinkedThreads, linkFile, companyFiles, personFile, newVaultFiles, newId, KINDS, FOLLOW_UP_DAYS } from './crm.mjs';
+import { readVault, checkCrm, leadBoard, followUps, company, contacts, unlinkedThreads, linkFile, companyFiles, personFile, newVaultFiles, newId, KINDS, actionFile, leadEditFile, timeline, ACTION_KINDS, FOLLOW_UP_DAYS } from './crm.mjs';
 import { keyKind, openVault, readAll, merge, whyNotWritable, writeFiles, createCrmVault } from './vault.js';
 import { identity, existingIdentity, keep, recall, forget, kept } from './pki.js';
 
@@ -16,7 +16,12 @@ let V = null, NOW = 0, MODE = 'demo', OPENED = null, SYNTHETIC = true;
 let CRMV = null, CRM_MANIFEST = null, TOKEN = '', PENDING = null, FILES = {}, NEWKEY = null;
 const nowIso = () => new Date().toISOString().replace(/\.\d+Z$/, 'Z');
 const canEdit = () => MODE === 'demo' || !whyNotWritable(CRMV, CRM_MANIFEST);
-const me = () => (MODE === 'demo' ? 'Owner A' : CRM_MANIFEST?.owner || 'the vault owner');
+// Who is using this browser, for "by" on what they log: kept in this browser only (a convenience, not a record).
+const NAME_KEY = 'crm.name';
+const myName = () => { try { return localStorage.getItem(NAME_KEY) || ''; } catch { return ''; } };
+const setMyName = (n) => { try { localStorage.setItem(NAME_KEY, n); } catch {} };
+const me = () => myName() || (MODE === 'demo' ? 'Owner A' : CRM_MANIFEST?.owner || '');
+const today = () => new Date(MODE === 'demo' ? NOW : Date.now()).toISOString().slice(0, 10);
 const idOf = (key) => (String(key).trim().match(/:([a-z0-9]{4,32})$/) || [])[1] || '?';
 // The Email Cell's send screen, where a draft is reviewed and sent. In demo mode it opens the same
 // synthetic contact (person id) in its own demo. Parameters agreed with mail.dev.a@AgentiCCells.dinis:
@@ -24,6 +29,12 @@ const idOf = (key) => (String(key).trim().match(/:([a-z0-9]{4,32})$/) || [])[1] 
 const SEND_URL = 'https://email-cell.agenticcells.site/app/send.html';
 // Synthetic data (the demo, or a vault marked synthetic) only ever links to the send screen's demo.
 const sendLink = (person) => `${SEND_URL}?${SYNTHETIC ? 'demo&' : ''}contact=${encodeURIComponent(person)}`;
+
+function askName() {
+  const n = prompt('Your name, as the team knows you (it goes on what you log):', myName());
+  if (n != null && n.trim()) { setMyName(n.trim()); showName(); }
+}
+function showName() { const b = $('#me'); if (b) b.textContent = myName() ? `You: ${myName()}` : 'Set your name'; }
 
 function setMode(mode, label, synthetic) {
   MODE = mode;
@@ -194,6 +205,9 @@ function companyPage(id) {
     <dt>Next step</dt><dd>${esc(c.next_step || '–')} ${c.next_step_due ? `<span class="${c.overdue ? 'warn' : 'muted'}">(${c.overdue ? 'overdue, ' : 'due '}${c.next_step_due})</span>` : ''}</dd>
     <dt>Draft</dt><dd>${draftBadge(c.draft, c.org)}</dd>
   </dl>
+  ${editLeadForm(c)}
+  <h2>Activity</h2>${logActionForm(c)}
+  <ul class="list timeline">${timeline(V, c.org).map((e) => `<li><span class="when">${day(e.at)}</span> <span class="badge">${esc(e.kind)}</span> ${e.direction === 'out' ? 'we reached out' : e.direction === 'in' ? '<strong>they replied</strong>' : 'note'}${e.person ? ' · ' + esc(who(e.person)) : ''} · ${esc(e.summary)}${e.by ? ` <span class="muted small">(${esc(e.by)})</span>` : ''}</li>`).join('') || '<li class="muted">Nothing logged yet.</li>'}</ul>
   <h2>People</h2>${addPersonForm(c.org)}
   <ul class="list">${c.contacts.map((p) => `<li>${esc(p.name)} <span class="muted">${esc(p.role || '')} · ${esc((p.emails || [])[0] || '')}</span></li>`).join('') || '<li class="muted">None yet</li>'}</ul>
   <h2>Mail threads</h2>
@@ -204,8 +218,8 @@ function companyPage(id) {
 
 function followUpsPage() {
   const list = followUps(V, NOW);
-  return `<h1>Follow-ups</h1><p class="muted">Threads where we wrote last and there has been no reply in ${FOLLOW_UP_DAYS} days or more.</p>
-  <div class="scroll"><table class="grid"><thead><tr><th>Days</th><th>Company</th><th>Person</th><th>Thread</th><th>Sent</th></tr></thead>
+  return `<h1>Follow-ups</h1><p class="muted">Where we reached out last (by email, or a logged email, LinkedIn message, call or meeting) and there has been no reply in ${FOLLOW_UP_DAYS} days or more.</p>
+  <div class="scroll"><table class="grid"><thead><tr><th>Days</th><th>Company</th><th>Person</th><th>What we sent</th><th>Sent</th></tr></thead>
   <tbody>${list.map((f) => `<tr><td class="num">${f.days}</td><td>${f.org ? `<a href="#/company/${esc(f.org)}">${esc(orgName(f.org))}</a>` : '–'}</td><td>${esc(V.people.find((p) => p.id === f.person)?.name || '–')}</td><td>${esc(f.subject)}</td><td>${day(f.sent)}</td></tr>`).join('')}</tbody></table></div>`;
 }
 
@@ -277,6 +291,26 @@ function addCompanyForm() {
     <label>Next step <span class="muted">(optional)</span> <input id="o-next"></label>
     <button type="submit">Show what will be written</button> <span id="form-error" class="warn"></span></form></details>`;
 }
+function editLeadForm(c) {
+  if (!canEdit()) return '';
+  return `<details class="add"><summary>Edit stage, owner and next step</summary><form id="edit-lead" data-org="${esc(c.org)}" class="open" autocomplete="off">
+    <label>Stage <select id="l-stage">${V.stages.map((s) => `<option value="${esc(s.id)}"${s.id === c.stage ? ' selected' : ''}>${esc(s.name)}</option>`).join('')}</select></label>
+    <label>Owner <input id="l-owner" value="${esc(c.owner || me())}" required></label>
+    <label>Next step <input id="l-next" value="${esc(c.next_step || '')}"></label>
+    <label>Due <input id="l-due" type="date" value="${esc(c.next_step_due || '')}"></label>
+    <button type="submit">Show what will be written</button> <span id="form-error" class="warn"></span></form></details>`;
+}
+function logActionForm(c) {
+  if (!canEdit()) return '';
+  return `<details class="add" open><summary>Log an action</summary><form id="log-action" data-org="${esc(c.org)}" class="open inline" autocomplete="off">
+    <label>What <select id="a-kind">${ACTION_KINDS.map((k) => `<option>${k}</option>`).join('')}</select></label>
+    <label>Which way <select id="a-dir"><option value="out">We reached out</option><option value="in">They replied</option><option value="none">A note</option></select></label>
+    <label>When <input id="a-at" type="date" value="${today()}" required></label>
+    <label>Who <select id="a-person"><option value="">(the company)</option>${c.contacts.map((p) => `<option value="${esc(p.id)}">${esc(p.name)}</option>`).join('')}</select></label>
+    <label class="wide">What happened <input id="a-sum" required placeholder="for example: sent a LinkedIn note after the summit"></label>
+    <button type="submit">Show what will be written</button> <span id="form-error" class="warn"></span></form></details>`;
+}
+
 function addPersonForm(org) {
   if (!canEdit()) return '';
   return `<details class="add"><summary>Add a person</summary><form id="add-person" data-org="${esc(org)}" class="open" autocomplete="off">
@@ -287,6 +321,8 @@ function addPersonForm(org) {
 }
 
 function wireActions() {
+  $('#log-action')?.addEventListener('submit', (ev) => { ev.preventDefault(); if (!me()) return askName(); ask('Log this action?', () => actionFile(V, { id: newId('a'), org: ev.target.dataset.org, person: $('#a-person').value || null, kind: $('#a-kind').value, direction: $('#a-dir').value, at: $('#a-at').value, by: me(), summary: $('#a-sum').value, logged_at: nowIso() })); });
+  $('#edit-lead')?.addEventListener('submit', (ev) => { ev.preventDefault(); ask('Change this lead?', () => leadEditFile(V, ev.target.dataset.org, { stage: $('#l-stage').value, owner: $('#l-owner').value.trim(), next_step: $('#l-next').value.trim(), next_step_due: $('#l-due').value, at: nowIso() })); });
   $('#add-org')?.addEventListener('submit', (ev) => { ev.preventDefault(); ask('Add this company?', () => companyFiles(V, { id: newId('o'), name: $('#o-name').value, domain: $('#o-domain').value, kind: $('#o-kind').value, next_step: $('#o-next').value.trim(), owner: me(), at: nowIso() })); });
   $('#add-person')?.addEventListener('submit', (ev) => { ev.preventDefault(); ask('Add this person?', () => personFile(V, { id: newId('p'), name: $('#p-name').value, email: $('#p-email').value, role: $('#p-role').value, org: ev.target.dataset.org, by: me(), at: nowIso() })); });
   $('#nk-copy')?.addEventListener('click', () => { $('#nk').select(); navigator.clipboard?.writeText($('#nk').value).catch(() => {}); });
@@ -312,4 +348,5 @@ async function route() {
   for (const a of document.querySelectorAll('nav a')) a.classList.toggle('on', a.getAttribute('href') === `#/${page || 'board'}`);
 }
 
+$('#me')?.addEventListener('click', askName); showName();
 loadDemo().then(() => { addEventListener('hashchange', route); route(); }).catch((e) => { $('#main').innerHTML = `<p class="warn">Could not load the demo: ${esc(e.message)}</p>`; });

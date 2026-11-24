@@ -31,6 +31,10 @@ On **Open your vault**, under **Start a new CRM vault**: give your name and your
 
 On the lead board, **Add a company** (name, domain, kind, next step) prepares two files: the company and its lead row. On a company's page, **Add a person** (name, email, role) prepares one. The page shows them; only **Write it** writes them to your vault. Contacts live only in your own vault, never on this site or in a repository.
 
+## Log what the team does
+
+On a company's page, **Log an action** records each thing done with a contact: an email, a LinkedIn message, a call, a meeting, a message or a note; whether we reached out or they replied; the date; who; and a line on what happened. It goes in the company's **Activity**, together with any mail. Logged actions count as contact on the lead board, and anything where we reached out last with no reply in 5 days shows on **Follow-ups**. **Edit stage, owner and next step** changes the lead row. Set **your name** once (top right): it goes on what you log, and stays in your browser only.
+
 ## Open your own vault
 
 1. Press **Open your vault**.
