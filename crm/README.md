@@ -35,6 +35,10 @@ On the lead board, **Add a company** (name, domain, kind, next step) prepares tw
 
 On a company's page, **Log an action** records each thing done with a contact: an email, a LinkedIn message, a call, a meeting, a message or a note; whether we reached out or they replied; the date; who; and a line on what happened. It goes in the company's **Activity**, together with any mail. Logged actions count as contact on the lead board, and anything where we reached out last with no reply in 5 days shows on **Follow-ups**. **Edit stage, owner and next step** changes the lead row. Set **your name** once (top right): it goes on what you log, and stays in your browser only.
 
+## Import from a spreadsheet
+
+**Import** takes a CSV the team fills in (download the template from the page): one line per person or company, with company, domain, kind, person, email, role, stage, owner, next step and the last contact. Only *company* is required; empty cells stay empty. The page shows how many companies, people and contacts it will add, and every file; **Write it** adds them to your vault in one commit. Companies already there are matched by domain then name, people by email, and nothing existing is changed.
+
 ## Open your own vault
 
 1. Press **Open your vault**.

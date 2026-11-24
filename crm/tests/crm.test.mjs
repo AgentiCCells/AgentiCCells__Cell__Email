@@ -221,3 +221,27 @@ test('actions: logged by hand, counted as contact, and followed up after 5 days'
   assert.equal(l.record.stage, 'talking'); assert.equal(l.record.owner, 'Owner C'); assert.ok(!('next_step' in l.record));
   assert.throws(() => leadEditFile(v4, 'o03', { stage: 'nope', owner: 'a', at }), /unknown stage/);
 });
+
+test('import: a CSV the team fills in becomes the CRM files, shown before writing; nothing is guessed', async () => {
+  const { importFiles, parseCsv } = await import('../model/crm.mjs');
+  const { readFileSync } = await import('node:fs');
+  assert.deepEqual(parseCsv('a,"b, c","say ""hi"""\r\n1,"two\nlines",3\n\n'), [['a', 'b, c', 'say "hi"'], ['1', 'two\nlines', '3']]);
+  const v = readVault(withCrm(twin()));
+  let i = 0; const mk = (p) => `${p}-${String(++i).padStart(4, '0')}`;
+  const csv = readFileSync(new URL('../site/template.csv', import.meta.url), 'utf8');
+  const { files, report } = importFiles(v, csv, { by: 'Owner A', at: '2026-11-24T12:00:00Z', newId: mk });
+  assert.deepEqual({ ...report, skipped: report.skipped.length }, { orgs: 2, people: 2, leads: 2, actions: 1, skipped: 0, unknown_columns: [] });
+  const after = readVault({ ...withCrm(twin()), ...Object.fromEntries(files.map((f) => [f.path, f.text])) });
+  assert.deepEqual(checkCrm(after), []);
+  const harbour = after.orgs.find((o) => o.domain === 'harbour.example.com');
+  assert.equal(after.people.filter((p) => p.org === harbour.id).length, 2, 'two people at one company: one company record');
+  const lead = after.leads.find((l) => l.org === harbour.id);
+  assert.deepEqual([lead.stage, lead.owner, lead.next_step, lead.next_step_due], ['contacted', 'Owner A', 'Send the deck', '2026-11-28']);
+  assert.equal(after.actions[0].kind, 'linkedin');
+  // existing company matched by domain, existing email not duplicated, bad rows reported, not guessed
+  const again = importFiles(after, 'company,domain,person,email,last_contact_date\nAnything,harbour.example.com,Ana,ana@harbour.example.com,\n,x.example.com,,,\nNew Co,new.example.com,Someone,,\nBad Date Co,bad.example.com,,,24/11\n', { by: 'Owner A', at: '2026-11-24T12:00:00Z', newId: mk });
+  assert.equal(again.report.orgs, 2); assert.equal(again.report.people, 0);
+  assert.deepEqual(again.report.skipped.map((s) => s.split(':')[0]), ['line 3', 'line 4', 'line 5']);
+  assert.throws(() => importFiles(v, 'name,email\nA,a@b.example.com', { by: 'x', at: '2026-11-24T12:00:00Z' }), /"company" column/);
+  assert.throws(() => importFiles(v, csv, { by: '', at: '2026-11-24T12:00:00Z' }), /your name/);
+});
