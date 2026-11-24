@@ -1,0 +1,1 @@
+The key file for this area is team/keys/mail-conductor-a-agenticcells.json; copy it to site/keys/mail.conductor.a.json in Site__Agent__Conductor (this repository's leak scan allows public keys only under team/keys).

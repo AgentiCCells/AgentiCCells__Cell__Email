@@ -104,7 +104,8 @@
   ],
   "incidents": [
     "2026-11-23 ~15:12Z | crm.dev.a | the write passphrase of its first demo vault a5a7rrbl was printed in its own session output by `sgit vault info`; not in any file, commit or message; the vault holds synthetic data only; abandoned and replaced by egw210lk; sgit output now masked. Deleting a5a7rrbl on the server is Dinis's call.",
-    "2026-11-23T15:14Z | mail.dev.a | re-ran sgit create in the folder holding epk5452e's clone: made vault db5vicpi (synthetic) and lost epk5452e's write key; db5vicpi's read key never given out; now creates each vault in a new empty folder"
+    "2026-11-23T15:14Z | mail.dev.a | re-ran sgit create in the folder holding epk5452e's clone: made vault db5vicpi (synthetic) and lost epk5452e's write key; db5vicpi's read key never given out; now creates each vault in a new empty folder",
+    "2026-11-24T13:21Z | mail.conductor.a | pushed 96c607f with the leak scan failing (the command chain did not stop on it): a copy of my own public key outside team/keys. Not a secret; removed in a6f1cd7. The scan now gates each commit with &&."
   ],
   "decision_batch": {
     "id": "gmail-crm-decisions-1",
