@@ -21,6 +21,7 @@ All times are UTC on 23 November 2026. Each time says where it comes from: **git
 | R13 | Confirm the relayed rule "every vault key goes to the account's maestro" before any key is sent | crm.dev.a → Dinis | clock 00:26 | Dinis, for the RiskMandate key: "the master should get the risk mandate key" (clock 13:10); sent 13:13 | about 12 h 45 min | done for sygecq6z; synthetic vaults not asked |
 | R14 | Work with the factory agent to create Site__Tool__CRM and serve crm.tool.sovereignweb.site today (Dinis: "accelerate ... asap") | Dinis → crm.dev.a → a.maestro, a.mail.conductor → factory | clock 11:46 | a.factory picked it up: IaC work/factory.a-crm 11fd0a3 ready 11:48 (msg); creation waits on Dinis: merge the scoped Org apply change, re-enable Org apply, his word to push | under 5 min to the factory | **done**: repository created 12:08 (a.factory, msg); content pushed 12:11 (clock) |
 | R15 | A design agent for five CRM designs (Dinis: "Very important") | Dinis → crm.dev.a → a.maestro | clock 13:11 | – | open | **open** |
+| R16 | The feedback loop live: a lasting recipient key for the CRM inbox (zxehwe8t), and an agent that drains it and hands requests to crm.dev.a | Dinis → crm.dev.a → a.maestro | clock 13:21 | – | open | **open** |
 | R9 | Tell me when Site__Tool__CRM exists and is attached here | crm.dev.a → a.maestro | clock 23:35 | the factory's request is SovereignWebsite__IaC work/factory.c-crm (912653c), waiting on Dinis's merge (a.maestro, msg 23:43) | – | **open, waiting on Dinis's merge** |
 
 ## What this shows so far
