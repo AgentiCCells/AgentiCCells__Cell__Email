@@ -11,7 +11,8 @@
     "1. The simple send screen (G3): on work/mail.dev.a; reviewed by a.mail.conductor at 1bed623, its must-fix (the daily cap reset on reload with a send-only token) fixed with a sealed per-day count. Demo mode checked in Chromium (desktop, phone); real mode checked in Chromium against a stand-in for Gmail (sim/send-standin.cjs). Not on dev: waits on a.mail.conductor's confirm before release.sh.",
     "2. Demo mode with a synthetic mailbox: done on the branch. One shared demo twin for the mail and CRM demos (layout agreed with crm.dev.a), public vault sub3og9j on dev.send.sgraph.ai; crm.dev.a's records in its own vault, which points here by id.",
     "3. Make Gmail better, one feature at a time, each usable in demo mode first.",
-    "4. Take over the cell's code work from account D's email.* team, after their hand-over; W18 first if still open."
+    "4. Take over the cell's code work from account D's email.* team, after their hand-over; W18 first if still open.",
+    "5. Signed batches (proposal, demo only; asked by Dinis ~16:15 UTC 24 Nov via a.maestro; plan by a.mail.conductor): src/app/batch.js (exact-content ECDSA P-256 signatures by a pinned key, batch plan within the daily limit, PDF/PNG/JPEG attachments up to 10 MB, multipart MIME), /app/batch.html in demo with a test key. Live sending waits on Dinis's yes to ABP line C9."
   ],
   "read": [
     "CLAUDE.md, README.md, REALITY.md, board/ and board/handovers/ on dev (189ac49)",
