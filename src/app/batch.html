@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" href="/assets/logo.svg" type="image/svg+xml">
+<link rel="stylesheet" href="send-page.css?v=__VERSION__">
+<title>Signed batch · Email AgenticCell</title>
+<meta name="description" content="Signed batches, demo only: emails signed by a pinned key, sent on one confirmation per batch, within the daily limit.">
+</head>
+<body class="is-demo">
+<header class="bar">
+  <a class="brand" href="/"><img src="/assets/logo.svg" alt="" width="28" height="28"> Email AgenticCell <span class="muted">Signed batch</span></a>
+  <span class="mode">Demo mode</span>
+  <nav class="links"><a href="send.html?demo">Send screen</a> <a href="connect.html">Gateway</a> <a href="/version.html">Version</a></nav>
+</header>
+<div class="demo-banner" role="note">
+  <strong>Demo mode, a proposal.</strong> Synthetic emails at reserved example domains, signed with a test key made in this page. Nothing leaves this page; each send is a <strong>simulation</strong>. Sending real signed batches waits on Dinis's yes to the policy line C9.
+</div>
+
+<main class="wrap batch">
+  <section aria-labelledby="pin-h">
+    <h2 id="pin-h">1. The pinned key</h2>
+    <p class="muted small">Only emails signed by a key pinned here can join a batch. In real use the person carries their signing key into this page by QR code; here a test key stands in.</p>
+    <p id="pinned"></p>
+    <p class="muted small">At most <span id="max"></span> sends a day; <span id="today">0</span> so far today (in this demo).</p>
+  </section>
+
+  <section class="draft" aria-labelledby="batch-h">
+    <h2 id="batch-h">2. The batch</h2>
+    <ul id="rows" class="rows"></ul>
+    <h2>3. Send the batch</h2>
+    <p class="actions"><button id="send" type="button" class="primary">Send batch</button> <button id="reset" type="button">Start again</button></p>
+    <p id="status" role="status"></p>
+  </section>
+
+  <section class="log" aria-labelledby="log-h">
+    <h2 id="log-h">Sent from this page</h2>
+    <p class="muted small">This tab only; nothing is stored.</p>
+    <ul id="sent" class="sent"></ul>
+  </section>
+</main>
+<script type="module" src="batch-page.js?v=__VERSION__"></script>
+</body>
+</html>
