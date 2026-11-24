@@ -81,3 +81,4 @@
 - 2026-11-24 16:52 UTC (clock): video 6 (logging in, QR hand-over) added to the learn path as step 4 of 9; mirror re-run from Site__Agent__CRM 3abf555.
 - 2026-11-24 17:07 UTC (clock): video 7 (verified keys) added to the learn path after Import (ten steps); mirror re-run from Site__Agent__CRM 75fab43 (Site__Tool__CRM 8067a4a).
 - 2026-11-24 17:07 UTC (clock): a.crm.design round 5 CSS (quiet Log an action next to brass Review and send, Everyone/Mine as a switch, count line as headline, signature check wins on Outbox chips) applied; header one row at 1280, no sideways scroll at 390.
+- 2026-11-24 17:13 UTC (clock): video 8 (Requests) added before Open the CRM (eleven steps); mirror re-run from Site__Agent__CRM bb25b31 (Site__Tool__CRM 6f5908f).
