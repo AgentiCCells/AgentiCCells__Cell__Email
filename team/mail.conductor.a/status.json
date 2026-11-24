@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-24T00:57Z",
+  "updated": "2026-11-24T00:59Z",
   "state": "hand-over written (board/handovers/2026-11-23-mail-conductor-a.md); waiting on Dinis's batch 1",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -35,6 +35,7 @@
     "release_next2": "92bb7de, 28 commits ahead of dev, waits on Dinis's W13 in email.dev.d's session"
   },
   "asks": [
+    "Dinis (urgent): allow mail.dev.a's push to dev in its own session (release.sh from release/next2, decided by b.decisions as D8/A12); its permission check refused it at ~00:40 UTC. No agent will work around the check.",
     "Dinis (urgent, D7 = W13): release release/next2 to dev now; it fixes a live weakness (unknown-sender codes replace keys silently). Recommended: yes, run by mail.dev.a, send screen after",
     "Dinis: release work/mail.dev.a 5acb335 to dev (the send screen /app/send.html, demo mode, mail.dev.a's key entry)? Recommended: yes",
     "Dinis: crm.dev.a's add-repo for PrompTugal News, the Web Summit team CRM, SovereignWebsite IaC and Site__Platform__AWS (read-only): approve or refuse in its session",
@@ -75,7 +76,8 @@
     "2026-11-23T23:38Z | dinis (crm.dev.a's session ~22:50 UTC, relayed) | Gmail tool to move from the Email Cell to Site__Tool__Gmail; \"anybody working on that?\": nobody yet; proposed mail.dev.a; request notes/2026-11-23-site-tool-gmail-request.md for a.maestro",
     "2026-11-24T00:17Z | wake 00:14 | no HOLD; dev unchanged; crm.dev.a's Requests page checked (inert, licence recorded); asked that crm/site/send/ be the one copy the Gmail tool's talk page reuses",
     "2026-11-24T00:17Z | noted | crm.dev.a: the safety check refused further code copied via a.maestro from repositories D5 has not opened; crm/site/send/ came that way; it asked Dinis (approve access, confirm copying is fine, or remove the page). W10 is not built on crm/site/send/ until he answers. My own W10 plan took only shapes (formats) from a.maestro, no code.",
-    "2026-11-24T00:57Z | rules | read in PrompTugal guidance README and from-b.md: every vault key to the maestro; b.decisions decides routine asks (security underwrites); decision requests as files. D6 landing branch land/mail.conductor.a-docs (28aae62, signed); requests for D6 and D2 committed"
+    "2026-11-24T00:57Z | rules | read in PrompTugal guidance README and from-b.md: every vault key to the maestro; b.decisions decides routine asks (security underwrites); decision requests as files. D6 landing branch land/mail.conductor.a-docs (28aae62, signed); requests for D6 and D2 committed",
+    "2026-11-24T00:59Z | blocked | mail.dev.a's push of release/next2 to dev refused by its session's permission check (~00:40 msg); dev still 189ac49. crm.dev.a holds key sealing until Dinis confirms the keys-to-maestro rule himself (R13)."
   ],
   "team": {
     "mail.dev.a": "work/mail.dev.a: send screen reviewed OK at 5acb335 (release waits on Dinis D1); demo twin now vault sub3og9j (clean history, generator 606d358; id read from team/mail.dev.a/status.json demo_vault.vault_id); a69d321/b5d0599: follow-up drafts sent as replies on the send screen (to review before landing)",
