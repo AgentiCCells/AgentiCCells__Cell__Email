@@ -1,0 +1,54 @@
+{
+  "about": "Shared test vector for src/app/signoff.mjs (mail.dev.a, 24 Nov 2026). For each draft, canon is the exact UTF-8 string that is hashed: draft_sha256 = lowercase SHA-256 hex of canon, no newline; the signed string is draft_sha256 + batch_id. The hashes are not stored here (the leak scan refuses long hex); the test computes them, and they are sent by message. Signatures are checked with a fresh key per test run; no private key is stored.",
+  "batch_id": "b-20261124T160000Z-ab12",
+  "cases": [
+    {
+      "draft": {
+        "v": 1,
+        "id": "d-1",
+        "crm": {
+          "org": "o01",
+          "person": "p01"
+        },
+        "to": [
+          "reader1@example.com"
+        ],
+        "subject": "Book note 1",
+        "text": "Hi,\n\nNote 1.\n",
+        "attachments": [],
+        "created_at": "2026-11-24T15:00:00Z",
+        "created_by": "crm.dev.a (demo)"
+      },
+      "canon": "{\"attachments\":[],\"created_at\":\"2026-11-24T15:00:00Z\",\"created_by\":\"crm.dev.a (demo)\",\"crm\":{\"org\":\"o01\",\"person\":\"p01\"},\"id\":\"d-1\",\"subject\":\"Book note 1\",\"text\":\"Hi,\\n\\nNote 1.\\n\",\"to\":[\"reader1@example.com\"],\"v\":1}"
+    },
+    {
+      "draft": {
+        "v": 1,
+        "id": "d-2",
+        "crm": {
+          "org": "o03",
+          "person": "p03",
+          "thread": "t-002"
+        },
+        "to": [
+          "hugo.brandt@security.example.net"
+        ],
+        "subject": "Re: Your question about pricing",
+        "text": "Hi Hugo,\n\nA short follow-up.\n",
+        "in_reply_to": "<m-0003@mailbox.example.org>",
+        "attachments": [
+          {
+            "path": "drafts/d-2/att/one-pager.pdf",
+            "type": "application/pdf",
+            "bytes": 12,
+            "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+          }
+        ],
+        "send_after": "2026-11-25T09:00:00Z",
+        "created_at": "2026-11-24T15:00:00Z",
+        "created_by": "crm.dev.a (demo)"
+      },
+      "canon": "{\"attachments\":[{\"bytes\":12,\"path\":\"drafts/d-2/att/one-pager.pdf\",\"sha256\":\"0000000000000000000000000000000000000000000000000000000000000000\",\"type\":\"application/pdf\"}],\"created_at\":\"2026-11-24T15:00:00Z\",\"created_by\":\"crm.dev.a (demo)\",\"crm\":{\"org\":\"o03\",\"person\":\"p03\",\"thread\":\"t-002\"},\"id\":\"d-2\",\"in_reply_to\":\"<m-0003@mailbox.example.org>\",\"send_after\":\"2026-11-25T09:00:00Z\",\"subject\":\"Re: Your question about pricing\",\"text\":\"Hi Hugo,\\n\\nA short follow-up.\\n\",\"to\":[\"hugo.brandt@security.example.net\"],\"v\":1}"
+    }
+  ]
+}

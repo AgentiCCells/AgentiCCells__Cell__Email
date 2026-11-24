@@ -42,7 +42,7 @@ async function build() {
       files[path] = f.data;
       attachments.push({ path, type: f.type, bytes: f.data.length, sha256: await sha(f.data) });
     }
-    const draft = { v: 1, id, crm: { org: src.org, person: src.contact, ...(src.thread_id ? { thread: src.thread_id } : {}) }, to: src.to, subject: src.subject, text: src.text, attachments, ...(src.in_reply_to ? { in_reply_to: src.in_reply_to } : {}), created_at: box.generated.at, created_by: 'demo generator' };
+    const draft = { v: 1, id, crm: { org: src.org, person: src.contact, ...(src.thread_id ? { thread: src.thread_id } : {}) }, to: src.to, subject: src.subject, text: src.text, attachments, ...(src.in_reply_to ? { in_reply_to: src.in_reply_to } : {}), created_at: box.generated.at.replace(/\.\d+Z$/, 'Z'), created_by: 'demo generator' };
     // Six cases: three signed off by the pinned key; one not signed off; one by a key not pinned here;
     // one changed after it was signed off.
     let approved = null;
