@@ -17,6 +17,7 @@ Each time is marked: **git** (a commit time), **msg** (a message's queued time f
 | R6 | Search Console review of the cell's site (G4 5, Dinis's own task) | Dinis | asked 14:58 git (669b515) | **open** | about 8 h 40 min open |
 | R7 | Site__Tool__Gmail (Gmail tool moves out of the cell) | a.maestro then c.factory | Dinis ~22:50 (crm.dev.a's session); request 23:35 git (2f58a0b) | re-sent with R2b to c.factory and d.factory or conductor.d at 23:37 (a.maestro, msg); account C has not acknowledged | minutes |
 | R9 | Delete synthetic test vault tezq66k0 (crm.dev.a's, made 23:3x for the new-vault feature) | Dinis | 23:40 msg (crm.dev.a) | open; joins D4 with epk5452e and db5vicpi | minutes |
+| R10 | Is code copied from other repositories through a.maestro acceptable while D5 (repo access) is open? crm/site/send/ came that way | Dinis | crm.dev.a, ~23:46 (its session) | open; no more code that way until he answers | minutes |
 | R8 | Grace Farrell repository, to read the messaging pattern | this session's permission check | refused 15:39 clock | refused; shapes relayed by a.maestro 15:40 msg instead | 1 min |
 
 ## Within the team (for contrast)

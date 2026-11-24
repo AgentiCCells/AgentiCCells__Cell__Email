@@ -73,7 +73,8 @@
     "2026-11-23T21:16Z | wake 21:13 | third quiet wake; hand-over written",
     "2026-11-23T21:44Z | dinis (crm.dev.a's session, 21:42 UTC, relayed) | \"ok so we need to move this to a SovereignWebsite repo, what about Site__Tool__CRM? which will then have a tight integration with our gmail tool\"; request updated by crm.dev.a (305ee54); relayed to a.maestro",
     "2026-11-23T23:38Z | dinis (crm.dev.a's session ~22:50 UTC, relayed) | Gmail tool to move from the Email Cell to Site__Tool__Gmail; \"anybody working on that?\": nobody yet; proposed mail.dev.a; request notes/2026-11-23-site-tool-gmail-request.md for a.maestro",
-    "2026-11-24T00:17Z | wake 00:14 | no HOLD; dev unchanged; crm.dev.a's Requests page checked (inert, licence recorded); asked that crm/site/send/ be the one copy the Gmail tool's talk page reuses"
+    "2026-11-24T00:17Z | wake 00:14 | no HOLD; dev unchanged; crm.dev.a's Requests page checked (inert, licence recorded); asked that crm/site/send/ be the one copy the Gmail tool's talk page reuses",
+    "2026-11-24T00:17Z | noted | crm.dev.a: the safety check refused further code copied via a.maestro from repositories D5 has not opened; crm/site/send/ came that way; it asked Dinis (approve access, confirm copying is fine, or remove the page). W10 is not built on crm/site/send/ until he answers. My own W10 plan took only shapes (formats) from a.maestro, no code."
   ],
   "team": {
     "mail.dev.a": "work/mail.dev.a: send screen reviewed OK at 5acb335 (release waits on Dinis D1); demo twin now vault sub3og9j (clean history, generator 606d358; id read from team/mail.dev.a/status.json demo_vault.vault_id); a69d321/b5d0599: follow-up drafts sent as replies on the send screen (to review before landing)",
