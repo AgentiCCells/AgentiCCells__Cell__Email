@@ -308,3 +308,31 @@ test('reached before: a second outreach to the same person is flagged, a note or
   const v3 = readVault({ ...base, [note.path]: note.text });
   assert.ok(reachedBefore(v3, { org: 'o02' }).every((e) => e.kind !== 'note'), 'notes never count');
 });
+
+test('outbox: mail.dev.a\'s hash vector, and a draft written here is approved and verified by the cell\'s own functions', async () => {
+  // batch.js is mail.dev.a's, vendored unedited (crm/vendor/cell-batch/3f6bc8b), as built into the site: build first.
+  const B = await import('../_build/site/batch.js');
+  const { outboxDraftFile, approvalFile, outbox, reachedBefore } = await import('../model/crm.mjs');
+  const vector = { v: 1, id: 'd-1', crm: { org: 'o01', person: 'p01' }, to: ['reader1@example.com'], subject: 'Book note 1', text: 'Hi,\n\nNote 1.\n', attachments: [], created_at: '2026-11-24T15:00:00Z', created_by: 'crm.dev.a (demo)' };
+  // The exact bytes mail.dev.a hashes (canonical JSON, keys sorted, no newline); its published hash of them begins 1fd4bffa.
+  const bytes = '{"attachments":[],"created_at":"2026-11-24T15:00:00Z","created_by":"crm.dev.a (demo)","crm":{"org":"o01","person":"p01"},"id":"d-1","subject":"Book note 1","text":"Hi,\\n\\nNote 1.\\n","to":["reader1@example.com"],"v":1}';
+  const { createHash } = await import('node:crypto');
+  const expected = createHash('sha256').update(bytes, 'utf8').digest('hex');
+  assert.ok(expected.startsWith('1fd4bffa'), 'the bytes are the ones mail.dev.a hashed');
+  assert.equal(await B.draftHash(vector), expected);
+  const base = withCrm(twin()), v = readVault(base), p = v.people.find((x) => x.org === 'o01');
+  const [f] = outboxDraftFile(v, { id: 'd-t1', org: 'o01', person: p.id, subject: 'A test', text: 'Hello', created_at: '2026-11-24T16:00:00Z', created_by: 'Owner A' });
+  const stored = JSON.parse(f.text);                                   // what the cell will read back from the vault
+  const kp = await crypto.subtle.generateKey({ name: 'ECDSA', namedCurve: 'P-256' }, false, ['sign', 'verify']);   // a fresh test key, never stored
+  const spki = new Uint8Array(await crypto.subtle.exportKey('spki', kp.publicKey));
+  const batch = B.newBatchId(new Date('2026-11-24T16:01:00Z'));
+  const a = await B.approve(kp.privateKey, spki, f.record, batch);
+  const pinned = [{ fingerprint: await B.fingerprint(spki), spki, name: 'test' }];
+  assert.ok((await B.verifyApproval(stored, a, pinned, batch)).ok, 'the cell accepts the CRM\'s sign-off');
+  assert.ok(!(await B.verifyApproval({ ...stored, subject: 'Changed' }, a, pinned, batch)).ok, 'a changed draft is refused');
+  const ap = approvalFile(a), sentRec = B.sentRecord(stored, a, { id: 'g1', threadId: 't1', simulation: true }, new Date('2026-11-24T16:05:00Z'));
+  const v2 = readVault({ ...base, [f.path]: f.text, [ap.path]: ap.text, 'sent/d-t1.json': JSON.stringify(sentRec) });
+  assert.deepEqual(outbox(v2).map((x) => x.state), ['sent']);
+  assert.ok(reachedBefore(v2, { org: 'o01', person: p.id }).some((e) => e.type === 'sent'), 'a sent email counts as reaching out');
+  assert.equal(v2.drafts.some((d) => d.v === 1), false, 'outbox drafts stay out of the twin\'s drafts');
+});
