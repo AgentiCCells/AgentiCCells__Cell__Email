@@ -115,3 +115,4 @@
 - 2026-11-25 09:42 UTC (clock): hourly Requests check (lane zxehwe8t): 3 entries, 0 new.
 - 2026-11-25 10:43 UTC (clock): hourly Requests check (lane zxehwe8t): 3 entries, 0 new.
 - 2026-11-25 11:26 UTC (clock): a.maestro (11:36 UTC): Dinis's priorities today: CRM, then Gmail and the Email Cell, then multi-account; account A at 81%, keep spend lean. Sent a.maestro the CRM's blockers as decisions (first import with lawful basis, removal route, retention, key holders; Our work key holders; a.feedback's asks; Angelo's vault; the Book vault; lane retention), plus non-blocking cards (design pick, real iPad check, Outbox sending via Gmail, iOS v2). Passed the priorities to a.crm.design and a.crm.studio.
+- 2026-11-25 11:42 UTC (clock): hourly Requests check (lane zxehwe8t): 3 entries, 0 new.
