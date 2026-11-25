@@ -104,3 +104,4 @@
 - 2026-11-25 02:43 UTC (clock): hourly Requests check (lane zxehwe8t): 3 entries, 0 new.
 - 2026-11-25 02:53 UTC (clock): explainers 06 and 07 re-mirrored from Site__Agent__CRM 79f3628 (a.crm.studio recaptured them for the You page's new hand-over half; Site__Tool__CRM 5ba68e3). share, quality, html-validate pass.
 - 2026-11-25 02:58 UTC (clock): Dinis decided against offering to clear the clipboard (via a.maestro, 02:38 UTC: 'it could cause issues ... let's not have that'). Left out. security.b is post-checking 94ab736.
+- 2026-11-25 03:02 UTC (clock): a.feedback (session started by a.maestro, it says at Dinis's word) asked for the zxehwe8t enum key and write access to Our work (yiy6okw9); fingerprints enc sha256:090e0e338234fdcc, sign sha256:db40c4acf3181712. Not sealed: both need Dinis's go, and its key is not yet published. Hourly check continues.
