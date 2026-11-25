@@ -12,7 +12,7 @@ team/roles/dev/reviews/11/25/v0.33.69__dev-plan__append-lanes-v2-implementation.
 - One lane in vault zxehwe8t, written by the CRM site's Requests page and its "For you" answers
   (crm.tool.sovereignweb.site/app/send/). Each entry is a crm.request/v1: signed with the person's browser key
   (ECDSA P-256, raw r||s), sealed to crm.dev.a's RSA-OAEP-4096 key with sgit's hybrid envelope v2, then base64 once.
-- The append token is public, in /app/send/inbox.json. The enum key is held by crm.dev.a, with a copy sealed to a.maestro.
+- The append token is public, in /app/send/inbox.json. The enum key is held by crm.dev.a only (corrected 25 Nov 14:20 UTC: an earlier version said a copy was sealed to a.maestro; none was).
 - crm.dev.a drains it every hour (crm/tools/drain-inbox.py) and keeps seen ids in a local file. 3 entries so far, all tests.
 - Attachments for emails do not use lanes: they live in the CRM vault under drafts/<id>/att/, signed off with the draft.
 
