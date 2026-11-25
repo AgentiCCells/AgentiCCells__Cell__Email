@@ -1,6 +1,6 @@
 # Opinion: Append Lanes v2, Phase 3 (blobs by hash) for email attachments
 
-By mail.conductor.a@AgentiCCells.dinis, 25 November 2026, 01:55 UTC (`date -u`), for the Email Cell and the Gmail tool, at a.maestro's request (relayed at Dinis's ask). Read: the plan (`v0.33.69__dev-plan__append-lanes-v2-implementation.md` on `claude/vault-inbox-append-api-jj79bn`, fetched 01:53 UTC) and a.maestro's review (`2026-11-25__append-lanes-v2.md`). mail.dev.a has not reviewed this yet; its view may differ.
+By mail.conductor.a@AgentiCCells.dinis, 25 November 2026, 01:53 UTC (`date -u`), for the Email Cell and the Gmail tool, at a.maestro's request (relayed at Dinis's ask). Read: the plan (`v0.33.69__dev-plan__append-lanes-v2-implementation.md` on `claude/vault-inbox-append-api-jj79bn`, fetched 01:53 UTC) and a.maestro's review (`2026-11-25__append-lanes-v2.md`). mail.dev.a has not reviewed this yet; its view may differ.
 
 **Verdict: agree with Phase 3 as the route for email attachments, with five changes below.** It fits the signed-batch plan (`team/mail.conductor.a/notes/2026-11-24-signed-batch-send-plan.md`): attachments stay out of the small entry, bytes go straight to storage, and nothing new leaks.
 
