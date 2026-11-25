@@ -14,3 +14,4 @@
 - Plans: notes/2026-11-23-site-tool-gmail-request.md (move, now under way by mail.dev.a); notes/2026-11-23-w10-talk-to-the-team-plan.md (parked).
 - Request timelines: team/mail.conductor.a/requests.md. Full log and asks: team/mail.conductor.a/status.json.
 - Team: mail.dev.a (work/mail.dev.a-r2; Site__Tool__Google__Gmail), crm.dev.a (Site__Tool__CRM). Both idle on budget unless Dinis asks.
+- mail.dev.a's hand-over (also moving to cl-3): https://github.com/SovereignWebsite/Site__Tool__Google__Gmail/tree/dev/docs/keeper/mail.dev.a (502c767); work/mail.dev.a-r2 f2bc9df kept untouched for D1.
