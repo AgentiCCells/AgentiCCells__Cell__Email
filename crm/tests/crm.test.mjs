@@ -385,3 +385,20 @@ test('unzip reads stored and deflated entries and skips folders and __MACOSX', a
   assert.equal(new TextDecoder().decode(out[1].bytes), 'm1.made-up-code-two '.repeat(40));
   await assert.rejects(unzip(new Uint8Array(100)), /not a zip/);
 });
+
+// security.b review 036: a zip that declares a small size but inflates big is stopped while inflating; names are cleaned.
+test('unzip stops a zip bomb while inflating, refuses big entries, and cleans names', async () => {
+  const { unzip, safeName } = await import('../site/unzip.mjs'); const { deflateRawSync } = await import('node:zlib');
+  const make = (name, raw, declared) => { const data = deflateRawSync(raw), n = Buffer.from(name);
+    const h = Buffer.alloc(30); h.writeUInt32LE(0x04034b50, 0); h.writeUInt16LE(8, 8); h.writeUInt32LE(data.length, 18); h.writeUInt32LE(declared, 22); h.writeUInt16LE(n.length, 26);
+    const c = Buffer.alloc(46); c.writeUInt32LE(0x02014b50, 0); c.writeUInt16LE(8, 10); c.writeUInt32LE(data.length, 20); c.writeUInt32LE(declared, 24); c.writeUInt16LE(n.length, 28);
+    const cd = Buffer.concat([c, n]), e = Buffer.alloc(22); e.writeUInt32LE(0x06054b50, 0); e.writeUInt16LE(1, 8); e.writeUInt16LE(1, 10); e.writeUInt32LE(cd.length, 12); e.writeUInt32LE(30 + n.length + data.length, 16);
+    return new Uint8Array(Buffer.concat([h, n, data, cd, e])); };
+  const big = Buffer.alloc(8 * 1024 * 1024); // 8 MB of zeros, a few KB deflated
+  await assert.rejects(unzip(make('bomb.png', big, 1000)), /inflates to more/);
+  await assert.rejects(unzip(make('big.png', big, big.length)), /over 5 MB/);
+  await assert.rejects(unzip(make('short.txt', Buffer.from('abc'), 10)), /not the size it declares/);
+  assert.equal(safeName('gpj.‮evil.png'), 'gpj.evil.png');
+  assert.equal(safeName('a\u0000b\nc'), 'abc');
+  assert.equal(safeName('x'.repeat(200)).length, 80);
+});

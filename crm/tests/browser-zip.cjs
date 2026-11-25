@@ -28,6 +28,10 @@ const S = process.argv[2], T = 'http://localhost:8765/', TMP = fs.mkdtempSync(pa
     ta.dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true })); document.querySelector('section.added')?.remove(); }, fs.readFileSync(path.join(TMP, 'two.png')).toString('base64'));
   await p.waitForSelector('section.added', { timeout: 120000 }).catch(() => {});
   console.log('paste in the box:', ((await p.textContent('section.added h2').catch(() => '')) || (await p.textContent('#rc-status'))).trim());
+  // A zip inside a zip is refused (security.b review 036, M2).
+  execFileSync('python3', ['-c', 'import sys,zipfile\nz=zipfile.ZipFile(sys.argv[1],"w")\nz.write(sys.argv[2],"inner.zip")\nz.close()', path.join(TMP, 'nested.zip'), path.join(TMP, 'codes.zip')]);
+  await p.setInputFiles('#qrfile', path.join(TMP, 'nested.zip')); await p.waitForFunction(() => /Not opened/.test(document.querySelector('#rc-status')?.textContent || ''), null, { timeout: 30000 }).catch(() => {});
+  console.log('nested:', (await p.textContent('#rc-status')).trim());
   await p.screenshot({ path: path.join(S, 'shots', 'you-zip.png') }).catch(() => {});
   console.log('errors:', errs); await b.close(); fs.rmSync(TMP, { recursive: true, force: true });
 })().catch((e) => { console.log('FAILED', String(e.message).slice(0, 300)); fs.rmSync(TMP, { recursive: true, force: true }); process.exit(1); });
