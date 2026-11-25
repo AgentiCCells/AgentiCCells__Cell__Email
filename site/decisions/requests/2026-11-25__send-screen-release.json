@@ -23,12 +23,13 @@
    "sim/**",
    "tests/**",
    "team/mail.dev.a/**",
-   "team/keys/mail-dev-a-agenticcells.json"
+   "team/keys/mail-dev-a-agenticcells.json",
+   "REALITY.md"
   ],
   "commits": [
-   "0f3404b77b8ae269ecde4b4a0a2ea2852079067c"
+   "f2bc9df167d434130e7cb6e7a20ad320a537b6f1"
   ],
-  "range": "origin/dev 92bb7de..0f3404b (22 commits, all by mail.dev.a)",
+  "range": "origin/dev 92bb7de..f2bc9df (23 commits, all by mail.dev.a)",
   "patch_ids": []
  },
  "why": "Dinis's G3 (23 Nov): one page to pick a contact, see the draft, edit, press Send; demo mode always available (his 23 Nov words). Lets the team try the flow on synthetic data and send real email with a person's press. Also lands mail.dev.a's public key entry (W8-style key merge).",
@@ -42,7 +43,8 @@
   "send.js (the live Approve and send) unchanged",
   "batch.html: CSP has no connect-src (default-src 'none'), so the page cannot reach Gmail; sends go to FakeGmail and are marked simulation; real sending waits on ABP C9",
   "send screen real mode: one To, no Cc/Bcc, a real address, no key material, at most 20 a day (count kept sealed, survives reload), the person confirms",
-  "reviewed by mail.conductor.a: 5acb335 on 23 Nov, the rest at 0f3404b on 25 Nov"
+  "reviewed by mail.conductor.a: 5acb335 on 23 Nov, the rest at 0f3404b on 25 Nov",
+  "f2bc9df adds only a REALITY.md update (the unknown-sender fix is live; W18 option 4 stays Dinis's); reviewed by mail.conductor.a 01:02 UTC 25 Nov"
  ],
  "kind": "push",
  "flags": {
@@ -64,5 +66,6 @@
   "https://github.com/AgentiCCells/AgentiCCells__Cell__Email/tree/work/mail.dev.a-r2",
   "https://github.com/PrompTugal/PrompTugal__News__Website/blob/dev/board/team/maestro.a/decisions/2026-11-23-gmail-crm-go.md",
   "https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/work/mail.conductor.a/team/mail.conductor.a/notes/2026-11-24-signed-batch-send-plan.md"
- ]
+ ],
+ "updated_at": "2026-11-25T01:02:00Z"
 }
