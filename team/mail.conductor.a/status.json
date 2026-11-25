@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-25T00:41Z",
+  "updated": "2026-11-25T00:51Z",
   "state": "hand-over written (board/handovers/2026-11-23-mail-conductor-a.md); waiting on Dinis's batch 1",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -30,22 +30,19 @@
     "SovereignWebsite/Site__Artist__Grace-Farrell (the SWS messaging centre pattern): add_repo refused by this session's permission check; not cloned another way"
   ],
   "facts_checked": {
-    "live": "v0.1.51 at 189ac49 (https://email-cell.agenticcells.site/version.json, 23 Nov ~14:53 UTC)",
+    "live": "v0.1.52 at 92bb7de, built 2026-11-25T00:49:34Z (https://email-cell.agenticcells.site/version.json, checked 00:50 UTC); /app/sealed.js 200",
     "hold": "no board/HOLD.md on dev",
     "release_next2": "92bb7de, 28 commits ahead of dev, waits on Dinis's W13 in email.dev.d's session"
   },
   "asks": [
-    "Dinis (urgent): allow mail.dev.a's push to dev in its own session (release.sh from release/next2, decided by b.decisions as D8/A12); its permission check refused it at ~00:40 UTC. No agent will work around the check.",
     "Dinis (R14, before the first CRM import; security@'s condition 4, PrompTugal__News__Website board/team/security/reviews/2026-11-24-1107-morning-sync-risks.md): set the lawful basis, the removal route, the retention, and the named key holders of the team's shared CRM vault. Contacts are entered by a person, live only in that vault, never in a repository, issue, commit, status, inbox message or page; agents handle counts and ids only.",
     "Dinis (security@'s condition 5): a written grant in the ABP for any agent that reads or sends through Gmail; mail to the friendlies is sent by a person",
     "Dinis: add gmail.google.tool's origin and redirect on the Google Web client (or a new client) before the Gmail tool signs in there; until then it runs demo only",
-    "Dinis (urgent, D7 = W13): release release/next2 to dev now; it fixes a live weakness (unknown-sender codes replace keys silently). Recommended: yes, run by mail.dev.a, send screen after",
     "Dinis: release work/mail.dev.a 5acb335 to dev (the send screen /app/send.html, demo mode, mail.dev.a's key entry)? Recommended: yes",
     "Dinis: crm.dev.a's add-repo for PrompTugal News, the Web Summit team CRM, SovereignWebsite IaC and Site__Platform__AWS (read-only): approve or refuse in its session",
     "Dinis: real-mode contact source for the send screen (mail.dev.a proposes his sent mail, read in the browser only)",
     "Dinis (G4 5, yes): request Google's Safe Browsing review of email-cell.agenticcells.site in Search Console, as the domain's owner; W2 on account D's list",
     "Dinis: where may the public demo vault's read key be written (it is public by design; the leak scan refuses long keys, and no one will weaken it without your yes)?",
-    "a.maestro: relay G1 to account D (d.maestro, email.pm.d, email.dev.d): hand-over to account A, keep release/next2 as is, no new cell code work from D",
     "Dinis: allow this session's add_repo (push) for SovereignWebsite/Site__Agent__Mail (a.factory: the mail team's home, not Site__Agent__Conductor; attaching needs Dinis's yes in this session); the area's files are ready in team/mail.conductor.a/agent-area/"
   ],
   "log": [
@@ -93,7 +90,8 @@
     "2026-11-24T13:36Z | a.factory via a.maestro 13:38 msg | my area is Site__Agent__Mail (site/factory/dinis-cruz/account-a/mail.conductor.a/), not Site__Agent__Conductor; attaching needs Dinis's yes here",
     "2026-11-24T16:11Z | review | mail.dev.a 3f6bc8b: signed-batch format as settled; crm.dev.a to pin batch.js, send.js and vendored keys.js at that commit",
     "2026-11-24T16:13Z | review | mail.dev.a 3a1bb14: shared file src/app/signoff.mjs (imports only vendored keys.js), test vector tests/fixtures/signoff-vector.json; 136 tests, gates OK; crm.dev.a told to pin signoff.mjs at 3a1bb14 (corrects my 16:10 note)",
-    "2026-11-25T00:41Z | progress | Gmail tool repo attached and started (e31d4c2); crm.dev.a to pin signoff.mjs from the tool site; D8 still not landed after 24 h"
+    "2026-11-25T00:41Z | progress | Gmail tool repo attached and started (e31d4c2); crm.dev.a to pin signoff.mjs from the tool site; D8 still not landed after 24 h",
+    "2026-11-25T00:51Z | landed | release/next2 92bb7de on dev and live (v0.1.52, checked); the unknown-sender fix is live. Took 31 h 34 min from my D7 (17:15 UTC 23 Nov) and 24 h 25 min from b.decisions's decision."
   ],
   "team": {
     "mail.dev.a": "SovereignWebsite/Site__Tool__Google__Gmail attached with push by Dinis (25 Nov, its session); key 044a4aa, core modules + Send and Signed batch designs (demo) + /docs/api/ + /docs/sources/ at e31d4c2; Calendar repo and hub link asked via a.maestro. D8 still unlanded (dev 189ac49, live v0.1.51 at 00:39 UTC); asked it to put the push to Dinis while he is in its session.",
@@ -117,7 +115,7 @@
     "player": "built with studio.d's player v0 (Apache-2.0) from PrompTugal__News__Website board/team/studio.d/player",
     "decisions": "D7 (urgent) release release/next2 first; D1 release send screen; D2 real-mode recipients; D3 demo read key; D4 delete epk5452e and db5vicpi (a5a7rrbl deleted and history left as is on Dinis's word in crm.dev.a's session); D5 crm.dev.a add-repo; D6 publish docs; task: Safe Browsing review",
     "recommended": "D7 a D1 a D2 c D3 a D4 a D5 a D6 a",
-    "answered": "D7 decided by b.decisions under Dinis's delegation, underwritten by security.b (record 2026-11-24__batch-1-underwritten, relayed by a.maestro 00:39 msg; from-b.md 00:25Z): release/next2 lands, run by mail.dev.a. D2 and D6 moved to b.decisions as request files (site/decisions/requests/). D1 follows once the send screen is rebased and reviewed. D3 (a check change), D4 (deletions), D5 (repository access) stay with Dinis."
+    "answered": "D7 decided by b.decisions under Dinis's delegation, underwritten by security.b (record 2026-11-24__batch-1-underwritten, relayed by a.maestro 00:39 msg; from-b.md 00:25Z): release/next2 lands, run by mail.dev.a. D2 and D6 moved to b.decisions as request files (site/decisions/requests/). D1 follows once the send screen is rebased and reviewed. D3 (a check change), D4 (deletions), D5 (repository access) stay with Dinis. D7/D8 LANDED 2026-11-25 00:49 UTC on Dinis's word in mail.dev.a's session (\"Yes, you can land the unknown, send a fix\"), run by mail.dev.a; checked live v0.1.52."
   },
   "team_rules": [
     "Every time comes from `date -u`, git, or a notification's own timestamp; never an estimate. All three agents on this team wrote times ahead of the clock on 23 Nov and corrected them (mail.conductor.a 15:07, mail.dev.a 01454a5, crm.dev.a 3a41ef2)."

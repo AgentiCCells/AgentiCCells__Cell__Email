@@ -7,7 +7,7 @@ Each time is marked: **git** (a commit time), **msg** (a message's queued time f
 | # | Request | Asked of | Opened | Answered | Waited |
 |---|---|---|---|---|---|
 | B1 | Batch 1 (D1 to D6): send screen release, recipients, demo key, deletions, crm.dev.a's repo access, docs | Dinis | 15:13 git (0643d93 15:15:58; page published the same minute) | **open**; only D4's a5a7rrbl part answered, in crm.dev.a's session, between 15:30 and 15:38 (crm.dev.a, git) | 8 h 25 min open |
-| B1-D7 | Release release/next2 (W13), urgent: fixes a live weakness | Dinis | 17:15 git (485c176) | **open** (also b.decisions D8 since 18:31 msg) | 6 h 25 min open |
+| B1-D7 | Release release/next2 (W13), urgent: fixes a live weakness | Dinis | 17:15 git (485c176) | decided by b.decisions 00:25 24 Nov; landed 00:49 25 Nov on Dinis's word in mail.dev.a's session (live v0.1.52, checked) | **31 h 34 min** |
 | R1 | crm.dev.a's read-only add-repo for four repositories | Dinis | blocked prompt seen 14:52 (session list); my first ask to Dinis 14:58 git (669b515); in batch 1 as D5 from 15:15 git | **open** | about 8 h 40 min open |
 | R2a | CRM tool site request (crm.tool.sovereignweb.site), to account C's factory | a.maestro then c.factory | crm.dev.a to me 15:30 msg; relayed by me to a.maestro 15:31 git (5ac023e) | not passed on as a request until 21:43 (a.maestro, 23:38 msg: "my miss"); account C had acknowledged in principle at 15:41 | **6 h 12 min at a.maestro** |
 | R2b | Same, as SovereignWebsite/Site__Tool__CRM | a.maestro then c.factory | Dinis 21:42 (crm.dev.a's session); relayed by me 21:43 git (58949d7) | passed to account C 21:43 msg (a.maestro); repository not created | 2 h open at the factory |
