@@ -5,7 +5,7 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-24T16:13Z",
+  "updated": "2026-11-25T00:41Z",
   "state": "hand-over written (board/handovers/2026-11-23-mail-conductor-a.md); waiting on Dinis's batch 1",
   "key": {
     "label": "mail-conductor-a-agenticcells",
@@ -38,7 +38,6 @@
     "Dinis (urgent): allow mail.dev.a's push to dev in its own session (release.sh from release/next2, decided by b.decisions as D8/A12); its permission check refused it at ~00:40 UTC. No agent will work around the check.",
     "Dinis (R14, before the first CRM import; security@'s condition 4, PrompTugal__News__Website board/team/security/reviews/2026-11-24-1107-morning-sync-risks.md): set the lawful basis, the removal route, the retention, and the named key holders of the team's shared CRM vault. Contacts are entered by a person, live only in that vault, never in a repository, issue, commit, status, inbox message or page; agents handle counts and ids only.",
     "Dinis (security@'s condition 5): a written grant in the ABP for any agent that reads or sends through Gmail; mail to the friendlies is sent by a person",
-    "Dinis: allow mail.dev.a's add_repo (push) for SovereignWebsite/Site__Tool__Google__Gmail in its session; refused by its permission check ~12:09 UTC, so the move cannot start",
     "Dinis: add gmail.google.tool's origin and redirect on the Google Web client (or a new client) before the Gmail tool signs in there; until then it runs demo only",
     "Dinis (urgent, D7 = W13): release release/next2 to dev now; it fixes a live weakness (unknown-sender codes replace keys silently). Recommended: yes, run by mail.dev.a, send screen after",
     "Dinis: release work/mail.dev.a 5acb335 to dev (the send screen /app/send.html, demo mode, mail.dev.a's key entry)? Recommended: yes",
@@ -93,10 +92,11 @@
     "2026-11-24T13:21Z | factory guidance (a.maestro 13:19 msg) | every agent keeps an area on its Site__Agent__<Type>; mine is Site__Agent__Conductor; add_repo refused; area files prepared on this branch",
     "2026-11-24T13:36Z | a.factory via a.maestro 13:38 msg | my area is Site__Agent__Mail (site/factory/dinis-cruz/account-a/mail.conductor.a/), not Site__Agent__Conductor; attaching needs Dinis's yes here",
     "2026-11-24T16:11Z | review | mail.dev.a 3f6bc8b: signed-batch format as settled; crm.dev.a to pin batch.js, send.js and vendored keys.js at that commit",
-    "2026-11-24T16:13Z | review | mail.dev.a 3a1bb14: shared file src/app/signoff.mjs (imports only vendored keys.js), test vector tests/fixtures/signoff-vector.json; 136 tests, gates OK; crm.dev.a told to pin signoff.mjs at 3a1bb14 (corrects my 16:10 note)"
+    "2026-11-24T16:13Z | review | mail.dev.a 3a1bb14: shared file src/app/signoff.mjs (imports only vendored keys.js), test vector tests/fixtures/signoff-vector.json; 136 tests, gates OK; crm.dev.a told to pin signoff.mjs at 3a1bb14 (corrects my 16:10 note)",
+    "2026-11-25T00:41Z | progress | Gmail tool repo attached and started (e31d4c2); crm.dev.a to pin signoff.mjs from the tool site; D8 still not landed after 24 h"
   ],
   "team": {
-    "mail.dev.a": "work/mail.dev.a: send screen reviewed OK at 5acb335 (release waits on Dinis D1); demo twin now vault sub3og9j (clean history, generator 606d358; id read from team/mail.dev.a/status.json demo_vault.vault_id); a69d321/b5d0599: follow-up drafts sent as replies on the send screen (to review before landing); signed batches in demo at 3f6bc8b (agreed format, canon() hash, 133 tests, gates OK; reviewed 16:10 UTC); C9 is Dinis's",
+    "mail.dev.a": "SovereignWebsite/Site__Tool__Google__Gmail attached with push by Dinis (25 Nov, its session); key 044a4aa, core modules + Send and Signed batch designs (demo) + /docs/api/ + /docs/sources/ at e31d4c2; Calendar repo and hub link asked via a.maestro. D8 still unlanded (dev 189ac49, live v0.1.51 at 00:39 UTC); asked it to put the push to Dinis while he is in its session.",
     "crm.dev.a": "LIVE: https://crm.tool.sovereignweb.site/app/ v0.1.1 (2ec3b4a, Site__Tool__CRM dev; 200 at 12:13 UTC, checked). main via the decision route; shared vault key with Dinis (R14)."
   },
   "defects": [
