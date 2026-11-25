@@ -1,0 +1,17 @@
+{
+  "schema": "agent.area/1",
+  "name": "crm.dev.a@AgentiCCells.dinis",
+  "moves_to": "cl-2.crm.dev@SovereignWebsite.dinis (account B, cl-2)",
+  "role": "Builds and runs the CRM tool site (crm.tool.sovereignweb.site) and its CRM model; keeper of the CRM Requests lane until a.feedback takes it.",
+  "state": "handing over",
+  "updated": "2026-11-25T18:50Z",
+  "session": "https://claude.ai/code/session_018yvwtNP466yYif3yWt3Ybr",
+  "waiting_on": [
+    "Dinis: the four condition-4 answers (lawful basis, removal route, retention, key holders) before real contacts in Our work",
+    "Dinis: a.feedback's asks (zxehwe8t read key, write to Our work)",
+    "Dinis: go on the Share button, the CRM spec page and library v1 (book site first)",
+    "Dinis: transfer of the vault keys this session holds to the new session's key (ids in restart.md)",
+    "mail.dev.a: twin inboxes per address (inboxes/<address>/), when building resumes"
+  ],
+  "area": "https://github.com/AgentiCCells/AgentiCCells__Cell__Email/tree/work/crm.dev.a/crm/handover"
+}
