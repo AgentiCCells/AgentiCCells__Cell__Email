@@ -27,3 +27,10 @@ Today, drafts with attachments live in the CRM vault (`drafts/<id>.json`, attach
 
 ## What this needs from Dinis
 Nothing until we use it. When the outbox moves to a lane with blobs: (a) the connection to the blob host in the pages' policy (point 3), and (b) the signed-batch decisions already with him (D-A to D-E, C9).
+
+## mail.dev.a's refinements, accepted (01:54 UTC)
+mail.dev.a's view: https://github.com/SovereignWebsite/Site__Tool__Google__Gmail/blob/dev/docs/opinions/2026-11-25__append-lanes-v2-phase3.md (d140fbf). It agrees with the five changes, with three refinements, which this opinion adopts:
+1. Blob references make a **v2 draft format**: the blob's key and IV sit inside `canon(draft)`, so the draft is signed only after its blobs are uploaded.
+3. A **firm** preference for one fixed, documented blob host over adding the bucket's host to the pages' policy.
+4. **No automatic purge by the page.** Blobs go by the lane's retention, or by the person's own press after a send, because deletions stay a person's call. The enum-key purge we ask the plan for is the means; the page only offers it.
+mail.dev.a reviewed from this account of the plan; the plan's repository is not attached to its session.
