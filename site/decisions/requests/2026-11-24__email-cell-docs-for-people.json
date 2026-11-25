@@ -9,22 +9,22 @@
  "change": {
   "repository": "AgentiCCells/AgentiCCells__Cell__Email",
   "branch": "dev",
-  "source_branch": "land/mail.conductor.a-docs",
+  "source_branch": "land/mail.conductor.a-docs-r2",
   "paths": [
    "docs/pages/use-the-tools.md",
    "docs/pages/run-your-own.md",
    "docs/pages/join.md"
   ],
   "commits": [
-   "28aae6235def7af64a0ea2919edcf7a1fd0f00b9"
+   "fde49882295db7102aae6af4d524ff7aab52d709"
   ],
   "patch_ids": [
-   "6cf42293a32c7fc5f3f654d1269755b70e41ae72"
+   "5149da06f52eadf660b984856f1112c31aa287b6"
   ]
  },
  "why": "Dinis, 23 Nov (G1 to G5 record): documentation pages for the team, and a fork-it-yourself guide so people \"can do OAuth on Google directly, so they don't have to come through us\". Published at /use-the-tools.html, /run-your-own.html, /join.html; marked as drafts until someone outside the team has followed them. Text only; no code, policy or check changes.",
  "checks": [
-  "tests: 112 pass (on dev 189ac49 plus this commit)",
+  "tests: 112 pass (on dev 92bb7de plus this commit)",
   "build, validate, check-app: OK",
   "leak scan: OK (197 files)",
   "check-commits: OK (1 commit)",
@@ -49,5 +49,7 @@
  "links": [
   "https://github.com/AgentiCCells/AgentiCCells__Cell__Email/tree/land/mail.conductor.a-docs/docs/pages",
   "https://github.com/PrompTugal/PrompTugal__News__Website/blob/dev/board/team/maestro.a/decisions/2026-11-23-gmail-crm-go.md"
- ]
+ ],
+ "updated_at": "2026-11-25T00:59:00Z",
+ "update_note": "Rebased onto dev 92bb7de (D8 landed) and use-the-tools.md now lists the live CRM; the earlier land/mail.conductor.a-docs (28aae62) is superseded."
 }
