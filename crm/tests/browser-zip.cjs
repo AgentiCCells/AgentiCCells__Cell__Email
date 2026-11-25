@@ -22,6 +22,12 @@ const S = process.argv[2], T = 'http://localhost:8765/', TMP = fs.mkdtempSync(pa
   await p.evaluate(async (b64) => { const bin = atob(b64), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i); await navigator.clipboard.write([new ClipboardItem({ 'image/png': new Blob([u], { type: 'image/png' }) })]); }, png);
   await p.click('details.add summary'); await p.click('#pasteqr'); await p.waitForFunction(() => document.querySelector('section.added') && /Test CRM added/.test(document.querySelector('section.added h2').textContent), null, { timeout: 120000 }).catch(() => {});
   console.log('paste:', ((await p.textContent('section.added h2').catch(() => '')) || (await p.textContent('#rc-status'))).trim());
+  // A picture pasted into the text box (press and hold, Paste on an iPad) goes through as a picture.
+  await p.click('details.add summary').catch(() => {}); await p.evaluate(async (b64) => { const bin = atob(b64), u = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u[i] = bin.charCodeAt(i);
+    const dt = new DataTransfer(); dt.items.add(new File([u], 'image.png', { type: 'image/png' })); const ta = document.querySelector('#rc-text'); ta.focus();
+    ta.dispatchEvent(new ClipboardEvent('paste', { clipboardData: dt, bubbles: true, cancelable: true })); document.querySelector('section.added')?.remove(); }, fs.readFileSync(path.join(TMP, 'two.png')).toString('base64'));
+  await p.waitForSelector('section.added', { timeout: 120000 }).catch(() => {});
+  console.log('paste in the box:', ((await p.textContent('section.added h2').catch(() => '')) || (await p.textContent('#rc-status'))).trim());
   await p.screenshot({ path: path.join(S, 'shots', 'you-zip.png') }).catch(() => {});
   console.log('errors:', errs); await b.close(); fs.rmSync(TMP, { recursive: true, force: true });
 })().catch((e) => { console.log('FAILED', String(e.message).slice(0, 300)); fs.rmSync(TMP, { recursive: true, force: true }); process.exit(1); });
