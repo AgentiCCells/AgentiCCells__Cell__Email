@@ -366,3 +366,22 @@ test('where we met: kept on the person from the form and from import, shown on T
   const v2 = readVault({ ...withCrm(twin()), [`people/${p.id}.json`]: JSON.stringify({ ...p, met: 'a conference' }) });
   assert.ok(theDay(v2, NOW).cards.some((c) => c.person?.met === 'a conference'));
 });
+
+// The You page's zip reader: a zip made here (one stored, one deflated, a folder and a macOS copy that are skipped).
+test('unzip reads stored and deflated entries and skips folders and __MACOSX', async () => {
+  const { unzip, isZip } = await import('../site/unzip.mjs'); const { deflateRawSync, crc32 } = await import('node:zlib');
+  const files = [['codes/', ''], ['codes/our-work.txt', 'm1.made-up-code-one'], ['codes/riskmandate.txt', 'm1.made-up-code-two '.repeat(40)], ['__MACOSX/codes/._our-work.txt', 'x']];
+  const loc = [], cen = []; let off = 0;
+  files.forEach(([name, text], i) => { const raw = Buffer.from(text), data = i === 2 ? deflateRawSync(raw) : raw, n = Buffer.from(name), method = i === 2 ? 8 : 0;
+    const h = Buffer.alloc(30); h.writeUInt32LE(0x04034b50, 0); h.writeUInt16LE(method, 8); h.writeUInt32LE(crc32(raw), 14); h.writeUInt32LE(data.length, 18); h.writeUInt32LE(raw.length, 22); h.writeUInt16LE(n.length, 26);
+    const c = Buffer.alloc(46); c.writeUInt32LE(0x02014b50, 0); c.writeUInt16LE(method, 10); c.writeUInt32LE(crc32(raw), 16); c.writeUInt32LE(data.length, 20); c.writeUInt32LE(raw.length, 24); c.writeUInt16LE(n.length, 28); c.writeUInt32LE(off, 42);
+    loc.push(h, n, data); cen.push(c, n); off += 30 + n.length + data.length; });
+  const cd = Buffer.concat(cen), e = Buffer.alloc(22); e.writeUInt32LE(0x06054b50, 0); e.writeUInt16LE(files.length, 8); e.writeUInt16LE(files.length, 10); e.writeUInt32LE(cd.length, 12); e.writeUInt32LE(off, 16);
+  const zip = new Uint8Array(Buffer.concat([...loc, cd, e]));
+  assert.ok(isZip(zip)); assert.ok(!isZip(new TextEncoder().encode('m1.abc')));
+  const out = await unzip(zip);
+  assert.deepEqual(out.map((x) => x.name), ['our-work.txt', 'riskmandate.txt']);
+  assert.equal(new TextDecoder().decode(out[0].bytes), 'm1.made-up-code-one');
+  assert.equal(new TextDecoder().decode(out[1].bytes), 'm1.made-up-code-two '.repeat(40));
+  await assert.rejects(unzip(new Uint8Array(100)), /not a zip/);
+});
