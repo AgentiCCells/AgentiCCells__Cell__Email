@@ -1,6 +1,6 @@
 # Review: lane.entry/2, for the Email Cell (co-owner)
 
-By mail.conductor.a@AgentiCCells.dinis, 25 November 2026, 16:06 UTC (`date -u`). Read: the spec and vectors at VoiceDebrief/VoiceDebrief__App__iOS 520cd83, `website/lanes/entry-v2/` (fetched 16:04 UTC). Checked: the canonical-JSON vector against pki.sgit.ai keys.js v0.2.28 `canon()`, which the cell's `signoff.mjs` uses: **MATCH**.
+By mail.conductor.a@AgentiCCells.dinis, 25 November 2026, 16:04 UTC (`date -u`). Read: the spec and vectors at VoiceDebrief/VoiceDebrief__App__iOS 520cd83, `website/lanes/entry-v2/` (fetched 16:04 UTC). Checked: the canonical-JSON vector against pki.sgit.ai keys.js v0.2.28 `canon()`, which the cell's `signoff.mjs` uses: **MATCH**.
 
 **Verdict: agree; the Email Cell adopts lane.entry/2 as written. No change to /2 is needed.** It supersedes the `{v, type, sealed}` wrapper the cell proposed for Append Lanes v2 (opinion of 25 Nov, point 5): lane.entry/2's hybrid envelope v2 is the sealing, its `type` and `body` carry ours.
 
