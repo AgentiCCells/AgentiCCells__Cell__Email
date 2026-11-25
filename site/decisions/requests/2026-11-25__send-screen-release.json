@@ -1,0 +1,68 @@
+{
+ "v": 1,
+ "id": "2026-11-25__send-screen-release",
+ "agent": "mail.conductor.a@AgentiCCells.dinis",
+ "account": "A",
+ "session": "named in the Claude-Session trailer of this agent's commits",
+ "asked_at": "2026-11-25T00:56:00Z",
+ "title": "Release the send screen (/app/send.html, G3), its synthetic demo, and the demo-only signed-batch page to the Email Cell's dev (the live site)",
+ "change": {
+  "repository": "AgentiCCells/AgentiCCells__Cell__Email",
+  "branch": "dev",
+  "source_branch": "work/mail.dev.a-r2",
+  "paths": [
+   "src/app/send.html",
+   "src/app/send-page.js",
+   "src/app/send-page.css",
+   "src/app/compose.js",
+   "src/app/demo/**",
+   "src/app/batch.html",
+   "src/app/batch-page.js",
+   "src/app/batch.js",
+   "src/app/signoff.mjs",
+   "sim/**",
+   "tests/**",
+   "team/mail.dev.a/**",
+   "team/keys/mail-dev-a-agenticcells.json"
+  ],
+  "commits": [
+   "0f3404b77b8ae269ecde4b4a0a2ea2852079067c"
+  ],
+  "range": "origin/dev 92bb7de..0f3404b (22 commits, all by mail.dev.a)",
+  "patch_ids": []
+ },
+ "why": "Dinis's G3 (23 Nov): one page to pick a contact, see the draft, edit, press Send; demo mode always available (his 23 Nov words). Lets the team try the flow on synthetic data and send real email with a person's press. Also lands mail.dev.a's public key entry (W8-style key merge).",
+ "checks": [
+  "fast-forward of dev 92bb7de (checked by mail.conductor.a, 00:55 UTC 25 Nov)",
+  "tests: 162 pass",
+  "abp-check, build, validate: OK",
+  "check-app: OK (4 app pages, 15 scripts, 18 vendored pinned)",
+  "leak scan: OK (277 files)",
+  "check-commits: OK (22 commits); all signed G by mail.dev.a",
+  "send.js (the live Approve and send) unchanged",
+  "batch.html: CSP has no connect-src (default-src 'none'), so the page cannot reach Gmail; sends go to FakeGmail and are marked simulation; real sending waits on ABP C9",
+  "send screen real mode: one To, no Cc/Bcc, a real address, no key material, at most 20 a day (count kept sealed, survives reload), the person confirms",
+  "reviewed by mail.conductor.a: 5acb335 on 23 Nov, the rest at 0f3404b on 25 Nov"
+ ],
+ "kind": "push",
+ "flags": {
+  "main": false,
+  "money": false,
+  "legal": false,
+  "one_way_door": false,
+  "private_person": false,
+  "unfixed_vulnerability": false
+ },
+ "options": [
+  "a) land all, including the demo-only batch page (recommended)",
+  "b) land the send screen and demo; hold batch.html and batch-page.js until C9",
+  "c) hold"
+ ],
+ "recommendation": "a)",
+ "needed_by": "2026-11-25T18:00:00Z",
+ "links": [
+  "https://github.com/AgentiCCells/AgentiCCells__Cell__Email/tree/work/mail.dev.a-r2",
+  "https://github.com/PrompTugal/PrompTugal__News__Website/blob/dev/board/team/maestro.a/decisions/2026-11-23-gmail-crm-go.md",
+  "https://github.com/AgentiCCells/AgentiCCells__Cell__Email/blob/work/mail.conductor.a/team/mail.conductor.a/notes/2026-11-24-signed-batch-send-plan.md"
+ ]
+}
