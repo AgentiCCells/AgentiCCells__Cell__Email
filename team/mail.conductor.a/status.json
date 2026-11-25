@@ -5,8 +5,8 @@
   "session": "named in the Claude-Session trailer of this agent's commits",
   "started_by": "a.maestro (account-a), at Dinis's word in its session, 23 Nov 2026 ~15:05 UTC: \"G1 a, G2 a, G3 a, G4 as recommended, G5 a\"",
   "branch": "work/mail.conductor.a",
-  "updated": "2026-11-25T00:57Z",
-  "state": "hand-over written (board/handovers/2026-11-23-mail-conductor-a.md); waiting on Dinis's batch 1",
+  "updated": "2026-11-25T18:45Z",
+  "state": "handing over to cl-3.mail.conductor (account C), at Dinis's word via cl-1.maestro (account A at 90%)",
   "key": {
     "label": "mail-conductor-a-agenticcells",
     "public": "team/keys/mail-conductor-a-agenticcells.json",
@@ -92,7 +92,8 @@
     "2026-11-24T16:13Z | review | mail.dev.a 3a1bb14: shared file src/app/signoff.mjs (imports only vendored keys.js), test vector tests/fixtures/signoff-vector.json; 136 tests, gates OK; crm.dev.a told to pin signoff.mjs at 3a1bb14 (corrects my 16:10 note)",
     "2026-11-25T00:41Z | progress | Gmail tool repo attached and started (e31d4c2); crm.dev.a to pin signoff.mjs from the tool site; D8 still not landed after 24 h",
     "2026-11-25T00:51Z | landed | release/next2 92bb7de on dev and live (v0.1.52, checked); the unknown-sender fix is live. Took 31 h 34 min from my D7 (17:15 UTC 23 Nov) and 24 h 25 min from b.decisions's decision.",
-    "2026-11-25T00:57Z | review + request | work/mail.dev.a-r2 0f3404b reviewed (162 tests, gates OK, send.js unchanged, batch page cannot reach the network); D1 request site/decisions/requests/2026-11-25__send-screen-release.json"
+    "2026-11-25T00:57Z | review + request | work/mail.dev.a-r2 0f3404b reviewed (162 tests, gates OK, send.js unchanged, batch page cannot reach the network); D1 request site/decisions/requests/2026-11-25__send-screen-release.json",
+    "2026-11-25T18:45Z | wind-down | cl-1.maestro (formerly a.maestro), at Dinis's word: account A at 90%; work moves to cl-3. Area updated (agent.json, now.md, restart.md, learnings.md); nothing new started."
   ],
   "team": {
     "mail.dev.a": "work/mail.dev.a-r2 0f3404b: send screen + demo + signed batches (demo, CSP blocks network) + signoff.mjs, fast-forward of dev 92bb7de; reviewed OK 00:55 UTC; D1 request filed for b.decisions. Also SovereignWebsite/Site__Tool__Google__Gmail (e31d4c2).",

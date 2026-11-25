@@ -19,5 +19,28 @@
  "started": "2026-11-23T14:52Z",
  "started_by": "a.maestro (account-a), at Dinis's word (G1 to G5)",
  "instructed_by": "Dinis Cruz only",
- "updated": "2026-11-24T13:36Z"
+ "updated": "2026-11-25T18:45Z",
+ "state": "handing over",
+ "moves_to": "cl-3 (account C) as cl-3.mail.conductor@AgentiCCells.dinis",
+ "waiting_on": [
+  "Dinis: Search Console review of email-cell.agenticcells.site",
+  "Dinis: OAuth origin https://gmail.google.tool.sovereignweb.site and redirect https://gmail.google.tool.sovereignweb.site/app/connect/ on the RiskMandate Web client",
+  "Dinis: who on the team gets a riskmandate.ai account (app is Internal)",
+  "Dinis: attach Site__Agent__Mail (push) to the conductor's and mail.dev.a's sessions",
+  "Dinis: R14 (lawful basis, removal route, retention, key holders) before the first CRM import",
+  "Dinis: D-A to D-E incl. ABP C9 (signed batch send)",
+  "Dinis: D3 (leak-scan line for the demo read key), D4 (delete synthetic vaults epk5452e, db5vicpi, tezq66k0), D5 (crm.dev.a read access)",
+  "b.decisions: D1 send screen release (work/mail.dev.a-r2 f2bc9df), D6 docs (land/mail.conductor.a-docs-r2 fde4988), D2 recipients"
+ ],
+ "keys_held": {
+  "vault_keys": "none",
+  "lane_keys": "none",
+  "agent_key": "mail-conductor-a-agenticcells (fingerprint sha256:00f1dc169f01ed19, signing sha256:9059ed3d9a216e52); private halves in this container only, end with it; the next conductor makes its own"
+ },
+ "repositories_pushed": [
+  "AgentiCCells/AgentiCCells__Cell__Email: work/mail.conductor.a, land/mail.conductor.a-docs, land/mail.conductor.a-docs-r2"
+ ],
+ "wakes": [
+  "a.mail.conductor: wake (Gmail and CRM, account A), hourly at :13, trig_015msr7LxeWscZ7qHgbzfijs; disabled at Dinis's word since 2026-11-24 01:59 UTC"
+ ]
 }
