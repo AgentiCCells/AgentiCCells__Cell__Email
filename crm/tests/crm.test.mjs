@@ -402,3 +402,25 @@ test('unzip stops a zip bomb while inflating, refuses big entries, and cleans na
   assert.equal(safeName('a\u0000b\nc'), 'abc');
   assert.equal(safeName('x'.repeat(200)).length, 80);
 });
+
+// People types (Dinis Cruz, 25 Nov 2026): team members may have no email; synthetic people only on reserved domains;
+// a simulated reply only from a synthetic person; the People page groups them.
+test('person types: team, agent, synthetic, twin inboxes and simulated replies', async () => {
+  const { personFile, actionFile, peopleByType, importFiles } = await import('../model/crm.mjs');
+  const v = readVault(withCrm(twin())), org = v.orgs[0].id, at = '2026-11-25T12:00:00Z';
+  assert.throws(() => personFile(v, { id: 'p-x', name: 'Fake', email: 'fake@realcompany.com', org, type: 'synthetic', by: 'me', at }), /synthetic person's email/);
+  assert.throws(() => personFile(v, { id: 'p-x', name: 'X', email: 'x@example.com', org, type: 'robot', by: 'me', at }), /unknown type/);
+  assert.throws(() => personFile(v, { id: 'p-x', name: 'X', email: 'x@example.com', org, twin: 'x@gmail.com', by: 'me', at }), /twin inbox/);
+  const [t] = personFile(v, { id: 'p-team', name: 'A Team Member', email: '', org, type: 'team', by: 'me', at });
+  assert.deepEqual(t.record.emails, []);
+  const [s] = personFile(v, { id: 'p-syn', name: 'Avery Test', email: 'avery@northwind.example.com', org, type: 'synthetic', twin: 'avery@northwind.example.com', by: 'me', at });
+  const v2 = readVault({ ...withCrm(twin()), [t.path]: t.text, [s.path]: s.text });
+  const [a] = actionFile(v2, { id: 'a-sim', org, person: 'p-syn', kind: 'email', direction: 'in', at: '2026-11-25', by: 'me', summary: 'Simulated reply: yes', logged_at: at, simulated: true });
+  assert.equal(a.record.simulated, true);
+  assert.throws(() => actionFile(v2, { id: 'a-x', org, person: 'p-team', kind: 'email', direction: 'in', at: '2026-11-25', by: 'me', summary: 'x', logged_at: at, simulated: true }), /only a synthetic/);
+  const g = peopleByType(readVault({ ...withCrm(twin()), [t.path]: t.text, [s.path]: s.text, [a.path]: a.text }));
+  assert.equal(g.team.length, 1); assert.equal(g.synthetic[0].last.simulated, true); assert.ok(g.contacts > 0);
+  const csv = 'company,person,email,type,twin\nThe team,Someone,,team,\nNorthwind Example,Jo Sample,jo@northwind.example.com,synthetic,jo@northwind.example.com\n';
+  const r = importFiles(v, csv, { by: 'me', at });
+  assert.equal(r.report.people, 2); assert.deepEqual(r.report.skipped, []);
+});
