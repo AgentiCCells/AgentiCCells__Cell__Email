@@ -27,7 +27,8 @@ const { chromium } = require('playwright'); const S = process.argv[2];
     await p.click('#add-hot button[type=submit]'); await p.waitForSelector('#pending'); await p.click('#w-go'); await p.waitForSelector('#pending', { state: 'detached' });
     r = await rows(p);
     check(tag, 'new case with no company shows its case id', r.length === 6 && r.some((x) => /^case-[0-9a-f]{6} 1\. Invited/.test(x)));
-    check(tag, 'draft link by stage', (await p.$$eval('a[href*="/designs/onboarding/#"]', (a) => a.map((x) => x.hash))).includes('#uploads-in'));
+    const hashes = await p.$$eval('a[href*="/designs/onboarding/#"]', (a) => a.map((x) => x.hash));
+    check(tag, 'draft link by stage, only where a draft exists', hashes.includes('#uploads-in') && hashes.includes('#live') && hashes.every((h) => !/consent|picked|paused/.test(h)));
     check(tag, 'no horizontal scroll', await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth));
     await p.close();
   }

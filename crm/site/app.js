@@ -233,6 +233,8 @@ function companyPage(id) {
 // cl-2.mail.dev's onboarding drafts, one per stage id (Site__Tool__Google__Gmail a5d2360, 26 Nov 2026). Designs with a
 // made-up owner; the person fills in the names and sends it themselves. Nothing from the vault goes in the link.
 const DRAFTS_URL = 'https://gmail.google.tool.sovereignweb.site/designs/onboarding/';
+// The stages that have a draft (cl-2.mail.dev, 26 Nov 2026, 18:24 UTC); the others wait on the keeper or are paused.
+const DRAFT_STAGES = ['invited', 'qr-sent', 'uploads-in', 'designs-ready', 'live', 'editing'];
 function hotPage(query) {
   const h = hotList(V, NOW), editing = (new URLSearchParams(query || '').get('edit')) || '';
   const WHO = { owner: 'the owner', keeper: 'the site keeper', dinis: 'you' };
@@ -256,7 +258,7 @@ function hotPage(query) {
   <tbody>${h.rows.map((r) => `<tr><td>${r.org ? `<a href="#/company/${esc(r.org)}">${esc(r.name)}</a>` : `<code>${esc(r.case)}</code>`}${r.person ? `<div class="muted small">${esc(r.person.name)}</div>` : ''}</td>
     <td>${r.step}. ${esc(r.stage_name)}<div class="muted small">since ${day(r.since)}</div></td><td class="num">${r.days}</td>
     <td>${r.next_step ? esc(r.next_step) : '<span class="muted small">none set</span>'}${r.next_step_due ? `<div class="small${r.overdue ? ' warn' : ' muted'}">${r.overdue ? 'overdue since' : 'by'} ${esc(r.next_step_due)}</div>` : ''}</td>
-    <td>${r.waits === 'dinis' ? '<strong>you</strong>' : WHO[r.waits] || esc(r.waits)}</td><td><a class="button small quiet" href="${esc(DRAFTS_URL + '#' + r.stage)}" title="cl-2.mail.dev's draft for this stage (a design, with a made-up owner): you fill it in and send it yourself">Draft</a> ${canEdit() ? `<a class="button small" href="#/hot?edit=${esc(r.case)}">Change</a>` : ''}</td></tr>
+    <td>${r.waits === 'dinis' ? '<strong>you</strong>' : WHO[r.waits] || esc(r.waits)}</td><td>${DRAFT_STAGES.includes(r.stage) ? `<a class="button small quiet" href="${esc(DRAFTS_URL + '#' + r.stage)}" title="cl-2.mail.dev's draft for this stage (a design, with a made-up owner): you fill it in and send it yourself">Draft</a> ` : ''}${canEdit() ? `<a class="button small" href="#/hot?edit=${esc(r.case)}">Change</a>` : ''}</td></tr>
     ${editing === r.case ? `<tr><td colspan="6">${form(r.case)}</td></tr>` : ''}`).join('')}</tbody></table></div>` : '<p class="muted">No one on the hot list yet.</p>'}
   ${editing && !h.rows.some((r) => r.case === editing) && rec(editing).case ? form(editing) : ''}
   ${add}`;
