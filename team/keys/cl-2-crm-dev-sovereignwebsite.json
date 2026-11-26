@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "encrypt": "-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAsm9/pxgITcTYSK0imEm4\nOkvLbtcMm1ri8GN8n7eaIAg3E6smr6cPLp8EAOU6nlli7LN8F7U7V2beGNvBcOi3\naNxOSJtGr4bDTdin0voM6HZ7B1nPjhKUmDavBnElTvg8NOPO7NSJOBebZ7jTSxPP\nixCP/wShJYsMVOez/6Zog2jfgUGjYn0OYwQaUm4YbG5SzIAHE5BZZhW8WaKZA72R\nQkx1ArrEJkG196prO8/WU/RvTSMcw/vd5dxkC3ZMJOfbEh/2X3cjskr9ue9/tuf/\nCbuwxvtrNXLKHHL8gzrLUV3kLban1rVM8VwQk2PfpmTYuF2/5VQLdwZQ+tXMhmtT\nZ2yf1ZSrN6eEOhtpEOqClQH9pyhjgP99dEx15Prmupny6TFP3VT8OQrDYAuLbDAP\nKAnJYTU2E1rUKHPYyYf0MyLrSSy029hGWRqRGkUjRXuWqbgmI6ED+SNu1FjBjn7y\nVU3bRvmZafkDuxidWfAFKKjCLqKweFw/+E0cyeQFkryYrmCxq901frQ9qyohnUAR\nNiFfyunvaJ96rSvuQs7Y1HautJPgcUu85GdeCkiD9qeZqrtITrtvwKLzlSOJ91q5\nbUyAdCZ85dQtRPlIztkT5WDzD9C9nqUBZZkgVVci94yfffArPsRKa/IC+ZsGmTge\ng/Ould65ZASu5qNGEHD5/ZcCAwEAAQ==\n-----END PUBLIC KEY-----\n",
+  "sign": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAES00vMof8MtjtqtNmGMJEbrX7LNrk\nk14Kpc+hcWtbaDxMR4Yi+7ElIAVjrF7CyLEKkf03k7cD1rS74gveeQqp0Q==\n-----END PUBLIC KEY-----\n",
+  "label": "cl-2-crm-dev-sovereignwebsite",
+  "fingerprint": "sha256:cbe24c3fef895584",
+  "signing_fingerprint": "sha256:2ab7ebce3a54fc54",
+  "created": "2026-11-26T13:30Z",
+  "supersedes": "crm-dev-a-agenticcells (sha256:5082f0417d7ae097), as keeper of the CRM; that key stays crm.dev.a's",
+  "approved_by": "pending: Dinis merges keys under team/keys/ (maestro.b, 13:41 UTC 26 Nov 2026)",
+  "agent": "cl-2.crm.dev@SovereignWebsite.dinis",
+  "session": "https://claude.ai/code/session_01Kw9UwDtVrNDaZZiNceBp5H"
+}
