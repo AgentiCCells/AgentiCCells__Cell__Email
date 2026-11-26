@@ -424,3 +424,34 @@ test('person types: team, agent, synthetic, twin inboxes and simulated replies',
   const r = importFiles(v, csv, { by: 'me', at });
   assert.equal(r.report.people, 2); assert.deepEqual(r.report.skipped, []);
 });
+
+test('hot list: onboarding stages, overdue first then longest waiting, history kept, cold owners counted, checks', async () => {
+  const { onboardingFile, hotList, ONBOARDING_STAGES } = await import('../model/crm.mjs');
+  const base = withCrm(twin()), v = readVault(base), [o1, o2, o3] = v.orgs.map((o) => o.id);
+  assert.deepEqual(ONBOARDING_STAGES.map((s) => s.name), ['QR sent', 'Uploads in', 'Site built', 'Editing']);
+  assert.throws(() => onboardingFile(v, o1, { stage: 'done', by: 'me', at: iso(NOW) }), /unknown stage/);
+  assert.throws(() => onboardingFile(v, 'nope', { stage: 'qr-sent', by: 'me', at: iso(NOW) }), /no such company/);
+  assert.throws(() => onboardingFile(v, o1, { stage: 'qr-sent', by: '', at: iso(NOW) }), /your name/);
+  assert.throws(() => onboardingFile(v, o1, { stage: 'qr-sent', next_step_due: '26 Nov', by: 'me', at: iso(NOW) }), /yyyy-mm-dd/);
+  const put = (files, recs) => { for (const r of recs) files[r.path] = r.text; return files; };
+  const f = { ...base };
+  put(f, onboardingFile(v, o1, { stage: 'qr-sent', next_step: 'Ask if the QR opened', by: 'me', at: iso(NOW - 6 * DAY) }));
+  put(f, onboardingFile(v, o2, { stage: 'site-built', next_step: 'Show the site', next_step_due: '2026-11-20', by: 'me', at: iso(NOW - 1 * DAY) }));
+  put(f, onboardingFile(v, o3, { stage: 'editing', hot: false, by: 'me', at: iso(NOW - 9 * DAY) }));
+  let w = readVault(f);
+  assert.deepEqual(checkCrm(w), []);
+  let h = hotList(w, NOW);
+  assert.deepEqual(h.rows.map((r) => r.org), [o2, o1]); // overdue first, then the longest wait
+  assert.equal(h.rows[1].days, 6); assert.equal(h.rows[0].overdue, true); assert.equal(h.cold, 1);
+  assert.equal(h.stages.find((s) => s.id === 'qr-sent').count, 1);
+  // Same stage again keeps 'since'; a new stage starts it again and adds to the history.
+  const [same] = onboardingFile(w, o1, { stage: 'qr-sent', next_step: 'Call', by: 'me', at: iso(NOW) });
+  assert.equal(same.record.since, iso(NOW - 6 * DAY)); assert.equal(same.record.history.length, 1);
+  const [moved] = onboardingFile(w, o1, { stage: 'uploads-in', next_step: 'Tell the keeper', by: 'me', at: iso(NOW) });
+  assert.equal(moved.record.since, iso(NOW)); assert.deepEqual(moved.record.history.map((x) => x.stage), ['qr-sent', 'uploads-in']);
+  assert.equal(moved.record.waits, undefined); assert.ok(!('name' in moved.record));
+  w = readVault({ ...f, [moved.path]: moved.text });
+  h = hotList(w, NOW); assert.equal(h.rows.find((r) => r.org === o1).waits, 'keeper');
+  const bad = readVault({ ...f, 'crm/onboarding/zz.json': JSON.stringify({ schema: 'crm.onboarding/1', org: 'zz', stage: 'late', since: 'x', hot: 'yes' }) });
+  assert.deepEqual(checkCrm(bad).filter((e) => e.startsWith('onboarding zz')).length, 4);
+});

@@ -49,6 +49,7 @@ export function readVault(files) {
     links: under(files, 'crm/links/'),
     actions: under(files, 'crm/actions/'),
     keys: under(files, 'crm/keys/'),
+    onboarding: under(files, 'crm/onboarding/'),
   };
 }
 
@@ -74,6 +75,20 @@ export function checkCrm(v) {
     if (a.schema !== 'crm.action/1') errors.push(`action ${a.id}: schema is not crm.action/1`);
     if (!orgs.has(a.org)) errors.push(`action ${a.id}: no such org ${a.org}`);
     if (a.person != null && !people.has(a.person)) errors.push(`action ${a.id}: no such person ${a.person}`);
+  }
+  const onb = new Set();
+  for (const o of v.onboarding || []) {
+    const at = `onboarding ${o.org}:`;
+    if (o.schema !== 'crm.onboarding/1') errors.push(`${at} schema is not crm.onboarding/1`);
+    if (!orgs.has(o.org)) errors.push(`${at} no such org`);
+    if (onb.has(o.org)) errors.push(`${at} duplicate`);
+    onb.add(o.org);
+    if (!ONBOARDING_STAGES.some((s) => s.id === o.stage)) errors.push(`${at} unknown stage ${o.stage}`);
+    if (o.person != null && people.get(o.person)?.org !== o.org) errors.push(`${at} person ${o.person} is not at ${o.org}`);
+    if (o.next_step != null && typeof o.next_step !== 'string') errors.push(`${at} next_step is not text`);
+    if (o.next_step_due != null && !DAYISO.test(o.next_step_due)) errors.push(`${at} next_step_due is not yyyy-mm-dd`);
+    if (!ISO.test(o.since || '')) errors.push(`${at} since is not an ISO time`);
+    if (typeof o.hot !== 'boolean') errors.push(`${at} hot is not true or false`);
   }
   const keyFps = new Map();
   for (const k of v.keys || []) {
@@ -547,4 +562,52 @@ export function peopleByType(v) {
   }
   for (const k of PERSON_TYPES) out[k].sort((a, b) => a.name.localeCompare(b.name));
   return out;
+}
+
+// The hot list (Dinis Cruz, 26 Nov 2026, in maestro.b's session: "we need a CRM just to manage the ones that are hot now
+// ... and the ones who are now actually editing this stuff"; brief 2026-11-26-onboarding-vaults.md). One record per site
+// owner Dinis is working with: crm/onboarding/<org-id>.json, crm.onboarding/1
+//   { org, person?, stage, since (ISO: when this stage began), next_step?, next_step_due?, hot, history: [{ stage, at, by }],
+//     updated_at, updated_by }
+// The record holds no name or contact: those stay on the org and person, in the encrypted vault. By cl-2.crm.dev, 26 Nov 2026.
+export const ONBOARDING_STAGES = [
+  { id: 'qr-sent', name: 'QR sent', waits: 'owner' },
+  { id: 'uploads-in', name: 'Uploads in', waits: 'keeper' },
+  { id: 'site-built', name: 'Site built', waits: 'owner' },
+  { id: 'editing', name: 'Editing', waits: 'owner' },
+];
+
+// The one file a stage or next-step change writes. A new stage starts a new 'since' and adds to the history.
+export function onboardingFile(v, org, { stage, person = null, next_step = '', next_step_due = '', hot = true, by, at }) {
+  next_step = String(next_step || '').trim();
+  if (!v.orgs.some((o) => o.id === org)) throw new Error(`no such company ${org}`);
+  if (!ONBOARDING_STAGES.some((s) => s.id === stage)) throw new Error(`unknown stage ${stage}`);
+  if (person && v.people.find((p) => p.id === person)?.org !== org) throw new Error('that person is not at this company');
+  if (next_step_due && !DAYISO.test(next_step_due)) throw new Error('the due date must be yyyy-mm-dd');
+  if (!by) throw new Error('set your name first (top right)');
+  if (!ISO.test(at || '')) throw new Error('needs the time, as an ISO time');
+  const old = (v.onboarding || []).find((o) => o.org === org) || null;
+  const moved = !old || old.stage !== stage;
+  const rec = { schema: 'crm.onboarding/1', org, ...(person || old?.person ? { person: person || old.person } : {}), stage,
+    since: moved ? at : old.since, hot: !!hot, history: [...(old?.history || []), ...(moved ? [{ stage, at, by }] : [])], updated_at: at, updated_by: by };
+  if (next_step) rec.next_step = next_step;
+  if (next_step_due) rec.next_step_due = next_step_due;
+  return [{ path: `crm/onboarding/${org}.json`, record: rec, text: JSON.stringify(rec, null, 2) + '\n' }];
+}
+
+// The hot list: the owners marked hot, those whose next step is overdue first, then the ones waiting longest in their stage.
+// Counts by stage for the top of the page; 'cold' is how many records are kept but not hot.
+export function hotList(v, now) {
+  const order = new Map(ONBOARDING_STAGES.map((s, i) => [s.id, i]));
+  const all = v.onboarding || [];
+  const rows = all.filter((o) => o.hot).map((o) => {
+    const org = v.orgs.find((x) => x.id === o.org) || {};
+    const p = v.people.find((x) => x.id === o.person) || v.people.find((x) => x.org === o.org) || null;
+    const stage = ONBOARDING_STAGES.find((s) => s.id === o.stage);
+    const overdue = !!(o.next_step_due && Date.parse(o.next_step_due + 'T23:59:59Z') < now);
+    return { org: o.org, name: org.name || o.org, person: p ? { id: p.id, name: p.name } : null, stage: o.stage, stage_name: stage?.name || o.stage,
+      waits: stage?.waits || null, step: (order.get(o.stage) ?? 0) + 1, since: o.since, days: Math.max(0, Math.floor((now - Date.parse(o.since)) / DAY)),
+      next_step: o.next_step || null, next_step_due: o.next_step_due || null, overdue, synthetic: !!org.synthetic };
+  }).sort((a, b) => (b.overdue - a.overdue) || (b.days - a.days) || a.name.localeCompare(b.name));
+  return { rows, stages: ONBOARDING_STAGES.map((s) => ({ ...s, count: rows.filter((r) => r.stage === s.id).length })), cold: all.length - rows.length };
 }

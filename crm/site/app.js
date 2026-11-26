@@ -4,7 +4,7 @@
 // person's own keys, in this browser only (vault.js); remembered keys are sealed to this browser's
 // own key with the Email Cell's pki.js keep/recall, unedited.
 // By crm.dev.a@AgentiCCells.dinis, 2026-11-23. Apache-2.0.
-import { peopleByType } from './crm.mjs';
+import { peopleByType, hotList, onboardingFile, ONBOARDING_STAGES } from './crm.mjs';
 import { readVault, checkCrm, leadBoard, followUps, company, contacts, unlinkedThreads, linkFile, companyFiles, personFile, newVaultFiles, newId, KINDS, actionFile, leadEditFile, timeline, ACTION_KINDS, importFiles, IMPORT_COLUMNS, theDay, FOLLOW_UP_DAYS, keyRecord, keyFile, personKey, nudgeWarning, outbox, outboxDraftFile, approvalFile } from './crm.mjs';
 import { keyKind, openVault, readAll, merge, whyNotWritable, writeFiles, createCrmVault } from './vault.js';
 import { identity, existingIdentity, keep, recall, forget, kept } from './pki.js';
@@ -228,6 +228,33 @@ function companyPage(id) {
   <ul class="list">${c.drafts.map((d) => `<li><strong>${esc(d.subject)}</strong> <span class="muted">to ${esc((d.to || []).join(', '))} · ${esc(d.status)}</span>${d.status === 'draft' ? ` <a href="${esc(sendLink(d.person))}">Review and send (demo) →</a>` : ''}</li>`).join('') || '<li class="muted">None</li>'}</ul>`;
 }
 
+// The hot list (Dinis Cruz, 26 Nov 2026): the site owners he is working with now, each one's stage and his next step.
+// Overdue next steps first, then the longest wait. Names come from the open vault only; nothing here is sent anywhere.
+function hotPage(query) {
+  const h = hotList(V, NOW), editing = (new URLSearchParams(query || '').get('edit')) || '';
+  const waits = (r) => r.waits === 'keeper' ? 'the site keeper' : 'the owner';
+  const opts = (sel) => ONBOARDING_STAGES.map((s) => `<option value="${esc(s.id)}"${s.id === sel ? ' selected' : ''}>${esc(s.name)}</option>`).join('');
+  const rec = (org) => (V.onboarding || []).find((o) => o.org === org) || {};
+  const form = (org) => { const o = rec(org); return `<form id="edit-hot" data-org="${esc(org)}" class="stack">
+    <label>Stage <select id="h-stage">${opts(o.stage || 'qr-sent')}</select></label>
+    <label>Your next step <input id="h-next" value="${esc(o.next_step || '')}" maxlength="200"></label>
+    <label>By <input id="h-due" type="date" value="${esc(o.next_step_due || '')}"></label>
+    <label class="inline"><input id="h-hot" type="checkbox"${o.hot === false ? '' : ' checked'}> On the hot list</label>
+    <p><button type="submit">Prepare the change</button> <a class="button quiet" href="#/hot">Cancel</a></p><p id="form-error" class="warn" role="alert"></p></form>`; };
+  const add = canEdit() ? (() => { const left = V.orgs.filter((o) => !rec(o.id).org); return left.length ? `<form id="add-hot" class="inline-form"><label>Add a company to the hot list <select id="h-org">${left.map((o) => `<option value="${esc(o.id)}">${esc(o.name)}</option>`).join('')}</select></label> <button type="submit">Add as QR sent</button><p id="form-error" class="warn" role="alert"></p></form>` : ''; })() : '';
+  return `<h1>Hot list</h1>
+  <p class="muted">Site owners you are working with now: where each one is, and your next step. Overdue steps first, then the longest wait.${SYNTHETIC ? ' These are made-up owners (demo).' : ''}</p>
+  <p class="stages">${h.stages.map((s, i) => `<span class="stage">${i + 1}. ${esc(s.name)} <strong>${s.count}</strong></span>`).join(' ')}${h.cold ? ` <span class="muted small">${h.cold} not hot</span>` : ''}</p>
+  ${h.rows.length ? `<div class="scroll"><table class="grid"><thead><tr><th>Owner</th><th>Stage</th><th>Days</th><th>Your next step</th><th>Waiting on</th><th><span class="sr-only">Action</span></th></tr></thead>
+  <tbody>${h.rows.map((r) => `<tr><td><a href="#/company/${esc(r.org)}">${esc(r.name)}</a>${r.person ? `<div class="muted small">${esc(r.person.name)}</div>` : ''}</td>
+    <td>${r.step}. ${esc(r.stage_name)}<div class="muted small">since ${day(r.since)}</div></td><td class="num">${r.days}</td>
+    <td>${r.next_step ? esc(r.next_step) : '<span class="muted small">none set</span>'}${r.next_step_due ? `<div class="small${r.overdue ? ' warn' : ' muted'}">${r.overdue ? 'overdue since' : 'by'} ${esc(r.next_step_due)}</div>` : ''}</td>
+    <td>${waits(r)}</td><td>${canEdit() ? `<a class="button small" href="#/hot?edit=${esc(r.org)}">Change</a>` : ''}</td></tr>
+    ${editing === r.org ? `<tr><td colspan="6">${form(r.org)}</td></tr>` : ''}`).join('')}</tbody></table></div>` : '<p class="muted">No one on the hot list yet.</p>'}
+  ${editing && !h.rows.some((r) => r.org === editing) && rec(editing).org ? form(editing) : ''}
+  ${add}`;
+}
+
 function followUpsPage() {
   const list = followUps(V, NOW);
   return `<h1>Follow-ups</h1><p class="muted">Where we reached out last (by email, or a logged email, LinkedIn message, call or meeting) and there has been no reply in ${FOLLOW_UP_DAYS} days or more.</p>
@@ -383,6 +410,8 @@ async function doPending() {
   }
   for (const f of p.files) { if (f.text == null) delete FILES[f.path]; else FILES[f.path] = f.text; }
   V = readVault(FILES);
+  // A hot-list change closes its form once written.
+  if (location.hash.startsWith('#/hot?')) history.replaceState(null, '', '#/hot');
   PENDING = null; route();
 }
 
@@ -603,6 +632,8 @@ function wireActions() {
     return { files, note };
   }); });
   $('#log-action')?.addEventListener('submit', (ev) => { ev.preventDefault(); if (!me()) return askName(); { const org = ev.target.dataset.org, person = $('#a-person').value || null, direction = $('#a-dir').value, warn = nudgeWarning(V, { org, person, direction }); ask(warn ? 'Reached before: log this anyway?' : 'Log this action?', () => { const files = actionFile(V, { id: newId('a'), org, person, kind: $('#a-kind').value, direction, at: $('#a-at').value, by: me(), summary: $('#a-sum').value, logged_at: nowIso() }); return warn ? { files, note: warn + ' Check this is not a second nudge before writing it.' } : files; }); } });
+  $('#edit-hot')?.addEventListener('submit', (ev) => { ev.preventDefault(); ask('Change this owner\'s stage?', () => onboardingFile(V, ev.target.dataset.org, { stage: $('#h-stage').value, next_step: $('#h-next').value.trim(), next_step_due: $('#h-due').value, hot: $('#h-hot').checked, by: me(), at: nowIso() })); });
+  $('#add-hot')?.addEventListener('submit', (ev) => { ev.preventDefault(); ask('Add to the hot list?', () => onboardingFile(V, $('#h-org').value, { stage: 'qr-sent', by: me(), at: nowIso() })); });
   $('#edit-lead')?.addEventListener('submit', (ev) => { ev.preventDefault(); ask('Change this lead?', () => leadEditFile(V, ev.target.dataset.org, { stage: $('#l-stage').value, owner: $('#l-owner').value.trim(), next_step: $('#l-next').value.trim(), next_step_due: $('#l-due').value, at: nowIso() })); });
   $('#add-org')?.addEventListener('submit', (ev) => { ev.preventDefault(); ask('Add this company?', () => companyFiles(V, { id: newId('o'), name: $('#o-name').value, domain: $('#o-domain').value, kind: $('#o-kind').value, next_step: $('#o-next').value.trim(), owner: me(), at: nowIso() })); });
   checkKeys();
@@ -647,7 +678,7 @@ function wireActions() {
 async function route() {
   const [path, query] = (location.hash.slice(1) || '/today').split('?');
   const [, page, id] = path.split('/');
-  const body = page === 'open' ? await openPage() : page === 'company' ? companyPage(id) : page === 'today' ? todayPage(query) : page === 'threads' ? threadsPage() : page === 'import' ? importPage() : page === 'me' ? await mePage() : page === 'follow-ups' ? followUpsPage() : page === 'contacts' ? contactsPage() : page === 'people' ? peoplePage() : page === 'outbox' ? outboxPage() : page === 'for' ? await forYouPage() : board();
+  const body = page === 'open' ? await openPage() : page === 'company' ? companyPage(id) : page === 'today' ? todayPage(query) : page === 'threads' ? threadsPage() : page === 'import' ? importPage() : page === 'me' ? await mePage() : page === 'follow-ups' ? followUpsPage() : page === 'contacts' ? contactsPage() : page === 'people' ? peoplePage() : page === 'hot' ? hotPage(query) : page === 'outbox' ? outboxPage() : page === 'for' ? await forYouPage() : board();
   $('#main').innerHTML = newKeyPanel() + pendingPanel() + body;
   if (page === 'open') wireOpen();
   wireActions();
