@@ -230,6 +230,9 @@ function companyPage(id) {
 
 // The hot list (Dinis Cruz, 26 Nov 2026): the site owners he is working with now, each one's stage and his next step.
 // Overdue next steps first, then the longest wait. Names come from the open vault only; nothing here is sent anywhere.
+// cl-2.mail.dev's onboarding drafts, one per stage id (Site__Tool__Google__Gmail a5d2360, 26 Nov 2026). Designs with a
+// made-up owner; the person fills in the names and sends it themselves. Nothing from the vault goes in the link.
+const DRAFTS_URL = 'https://gmail.google.tool.sovereignweb.site/designs/onboarding/';
 function hotPage(query) {
   const h = hotList(V, NOW), editing = (new URLSearchParams(query || '').get('edit')) || '';
   const waits = (r) => r.waits === 'keeper' ? 'the site keeper' : 'the owner';
@@ -249,7 +252,7 @@ function hotPage(query) {
   <tbody>${h.rows.map((r) => `<tr><td><a href="#/company/${esc(r.org)}">${esc(r.name)}</a>${r.person ? `<div class="muted small">${esc(r.person.name)}</div>` : ''}</td>
     <td>${r.step}. ${esc(r.stage_name)}<div class="muted small">since ${day(r.since)}</div></td><td class="num">${r.days}</td>
     <td>${r.next_step ? esc(r.next_step) : '<span class="muted small">none set</span>'}${r.next_step_due ? `<div class="small${r.overdue ? ' warn' : ' muted'}">${r.overdue ? 'overdue since' : 'by'} ${esc(r.next_step_due)}</div>` : ''}</td>
-    <td>${waits(r)}</td><td>${canEdit() ? `<a class="button small" href="#/hot?edit=${esc(r.org)}">Change</a>` : ''}</td></tr>
+    <td>${waits(r)}</td><td><a class="button small quiet" href="${esc(DRAFTS_URL + '#' + r.stage)}" title="cl-2.mail.dev's draft for this stage (a design, with a made-up owner): you fill it in and send it yourself">Draft</a> ${canEdit() ? `<a class="button small" href="#/hot?edit=${esc(r.org)}">Change</a>` : ''}</td></tr>
     ${editing === r.org ? `<tr><td colspan="6">${form(r.org)}</td></tr>` : ''}`).join('')}</tbody></table></div>` : '<p class="muted">No one on the hot list yet.</p>'}
   ${editing && !h.rows.some((r) => r.org === editing) && rec(editing).org ? form(editing) : ''}
   ${add}`;
