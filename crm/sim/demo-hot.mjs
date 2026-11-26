@@ -12,22 +12,24 @@ for (const p of Object.keys(b.files)) if (/^(orgs|people)\/so-|^crm\/onboarding\
 const now = Date.parse(JSON.parse(b.files['manifest.json']).generated_at);
 const iso = (ms) => new Date(ms).toISOString().replace(/\.\d+Z$/, 'Z');
 const OWNERS = [
-  // id, owner, site, kind of site, steps: [stage, days ago], next step, due in days (null: none), hot
-  ['so-01', 'Rowan Example', 'Rowan Ceramics (demo)', 'artist', [['qr-sent', 6]], 'Ask whether the QR code opened their vault', -1, true],
-  ['so-02', 'Sam Example', 'Sam\'s Market Stall (demo)', 'trader', [['qr-sent', 9], ['uploads-in', 2]], 'Tell the keeper the photos are in', 1, true],
-  ['so-03', 'Jo Example', 'The Jo Example Trio (demo)', 'musician', [['qr-sent', 14], ['uploads-in', 8], ['site-built', 3]], 'Show Jo the site on a call', 2, true],
-  ['so-04', 'Alex Example', 'The Example Rooms (demo)', 'venue', [['qr-sent', 20], ['uploads-in', 15], ['site-built', 10], ['editing', 4]], 'Check their text edits went live', null, true],
-  ['so-05', 'Kim Example', 'Kim Example Club (demo)', 'club', [['qr-sent', 30]], 'Parked until after the holidays', null, false],
+  // case id, owner, site, kind of site, steps: [stage, days ago], next step, due in days (null: none)
+  ['demo-0001', 'Rowan Example', 'Rowan Ceramics (demo)', 'artist', [['invited', 8], ['qr-sent', 6]], 'Ask whether the QR code opened their vault', -1],
+  ['demo-0002', 'Sam Example', 'Sam\'s Market Stall (demo)', 'trader', [['qr-sent', 9], ['uploads-in', 2]], 'Tell the keeper the photos are in', 1],
+  ['demo-0003', 'Jo Example', 'The Jo Example Trio (demo)', 'musician', [['qr-sent', 14], ['uploads-in', 8], ['consent-recorded', 7], ['designs-ready', 3]], 'Show Jo the designs on a call', 2],
+  ['demo-0004', 'Alex Example', 'The Example Rooms (demo)', 'venue', [['qr-sent', 20], ['uploads-in', 15], ['design-picked', 12], ['live', 10], ['editing', 4]], 'Check their text edits went live', null],
+  ['demo-0005', 'Lee Example', 'Lee Example Studio (demo)', 'artist', [['qr-sent', 12], ['uploads-in', 9], ['design-picked', 5], ['live', 1]], 'Tell Lee the site is live', 0],
+  ['demo-0006', 'Kim Example', 'Kim Example Club (demo)', 'club', [['qr-sent', 30], ['paused', 21]], 'Paused until after the holidays', null],
 ];
-for (const [id, name, site, kind, , , , ] of OWNERS) {
-  const dom = `${id}.example.org`;
+const orgId = (c) => 'so-' + c.slice(5);
+for (const [c, name, site, kind] of OWNERS) {
+  const id = orgId(c), dom = `${id}.example.org`;
   b.files[`orgs/${id}.json`] = JSON.stringify({ schema: 'crm.org/1', id, name: site, domain: dom, kind: 'customer', site_type: kind, synthetic: true }, null, 2) + '\n';
   b.files[`people/${id}-p.json`] = JSON.stringify({ id: `${id}-p`, name, emails: [`owner@${dom}`], org: id, role: 'Site owner', synthetic: true }, null, 2) + '\n';
 }
-for (const [id, , , , steps, next, due, hot] of OWNERS) {
+for (const [c, , , , steps, next, due] of OWNERS) {
   steps.forEach(([stage, ago], i) => {
     const last = i === steps.length - 1;
-    const [f] = onboardingFile(readVault(b.files), id, { stage, person: `${id}-p`, hot, by: 'Owner A', at: iso(now - ago * DAY),
+    const [f] = onboardingFile(readVault(b.files), c, { stage, org: orgId(c), person: `${orgId(c)}-p`, by: 'Owner A', at: iso(now - ago * DAY),
       ...(last ? { next_step: next, next_step_due: due == null ? '' : iso(now + due * DAY).slice(0, 10) } : {}) });
     b.files[f.path] = JSON.stringify({ ...f.record, synthetic: true }, null, 2) + '\n';
   });

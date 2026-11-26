@@ -78,17 +78,18 @@ export function checkCrm(v) {
   }
   const onb = new Set();
   for (const o of v.onboarding || []) {
-    const at = `onboarding ${o.org}:`;
+    const at = `onboarding ${o.case}:`;
     if (o.schema !== 'crm.onboarding/1') errors.push(`${at} schema is not crm.onboarding/1`);
-    if (!orgs.has(o.org)) errors.push(`${at} no such org`);
-    if (onb.has(o.org)) errors.push(`${at} duplicate`);
-    onb.add(o.org);
-    if (!ONBOARDING_STAGES.some((s) => s.id === o.stage)) errors.push(`${at} unknown stage ${o.stage}`);
+    if (!CASE_ID.test(o.case || '')) errors.push(`${at} case is not a case id (case-xxxxxx or demo-0001)`);
+    if (onb.has(o.case)) errors.push(`${at} duplicate`);
+    onb.add(o.case);
+    if (o.org != null && !orgs.has(o.org)) errors.push(`${at} no such org ${o.org}`);
     if (o.person != null && people.get(o.person)?.org !== o.org) errors.push(`${at} person ${o.person} is not at ${o.org}`);
+    if (!ONBOARDING_STAGES.some((s) => s.id === o.stage)) errors.push(`${at} unknown stage ${o.stage}`);
+    if (!WAITS.includes(o.waits)) errors.push(`${at} waits is not ${WAITS.join(', ')}`);
     if (o.next_step != null && typeof o.next_step !== 'string') errors.push(`${at} next_step is not text`);
     if (o.next_step_due != null && !DAYISO.test(o.next_step_due)) errors.push(`${at} next_step_due is not yyyy-mm-dd`);
     if (!ISO.test(o.since || '')) errors.push(`${at} since is not an ISO time`);
-    if (typeof o.hot !== 'boolean') errors.push(`${at} hot is not true or false`);
   }
   const keyFps = new Map();
   for (const k of v.keys || []) {
@@ -566,48 +567,66 @@ export function peopleByType(v) {
 
 // The hot list (Dinis Cruz, 26 Nov 2026, in maestro.b's session: "we need a CRM just to manage the ones that are hot now
 // ... and the ones who are now actually editing this stuff"; brief 2026-11-26-onboarding-vaults.md). One record per site
-// owner Dinis is working with: crm/onboarding/<org-id>.json, crm.onboarding/1
-//   { org, person?, stage, since (ISO: when this stage began), next_step?, next_step_due?, hot, history: [{ stage, at, by }],
-//     updated_at, updated_by }
-// The record holds no name or contact: those stay on the org and person, in the encrypted vault. By cl-2.crm.dev, 26 Nov 2026.
+// owner's case: crm/onboarding/<case-id>.json, crm.onboarding/1
+//   { case, org?, person?, stage, waits, since (ISO: when this stage began), next_step?, next_step_due?,
+//     history: [{ stage, waits, at, by }], updated_at, updated_by }
+// Stages and case ids agreed with b.onboarding (26 Nov 2026, subject to Dinis's word): the case record holds no name or
+// contact. In the case vault, org and person are absent; names come from the contacts vault, joined by case id, only in
+// Dinis's browser. Case ids are random (case-xxxxxx), demo ids readable (demo-0001). By cl-2.crm.dev, 26 Nov 2026.
 export const ONBOARDING_STAGES = [
+  { id: 'invited', name: 'Invited', waits: 'owner' },
   { id: 'qr-sent', name: 'QR sent', waits: 'owner' },
   { id: 'uploads-in', name: 'Uploads in', waits: 'keeper' },
-  { id: 'site-built', name: 'Site built', waits: 'owner' },
+  { id: 'consent-recorded', name: 'Consent recorded', waits: 'keeper' },
+  { id: 'designs-ready', name: 'Designs ready', waits: 'owner' },
+  { id: 'design-picked', name: 'Design picked', waits: 'keeper' },
+  { id: 'live', name: 'Live', waits: 'dinis' },
   { id: 'editing', name: 'Editing', waits: 'owner' },
+  { id: 'paused', name: 'Paused', waits: 'dinis' },
 ];
+export const WAITS = ['owner', 'keeper', 'dinis'];
+const CASE_ID = /^(case-[0-9a-f]{6,16}|demo-\d{4})$/;
+export const newCaseId = (rand = () => crypto.getRandomValues(new Uint8Array(3))) => newId('case', rand);
 
-// The one file a stage or next-step change writes. A new stage starts a new 'since' and adds to the history.
-export function onboardingFile(v, org, { stage, person = null, next_step = '', next_step_due = '', hot = true, by, at }) {
+// The one file a stage, wait or next-step change writes. A new stage starts a new 'since'; a new stage or a new wait adds
+// to the history. waits defaults to the stage's usual one.
+export function onboardingFile(v, caseId, { stage, waits = '', org = null, person = null, next_step = '', next_step_due = '', by, at }) {
   next_step = String(next_step || '').trim();
-  if (!v.orgs.some((o) => o.id === org)) throw new Error(`no such company ${org}`);
-  if (!ONBOARDING_STAGES.some((s) => s.id === stage)) throw new Error(`unknown stage ${stage}`);
+  if (!CASE_ID.test(caseId || '')) throw new Error('needs a case id (case-xxxxxx)');
+  const def = ONBOARDING_STAGES.find((s) => s.id === stage);
+  if (!def) throw new Error(`unknown stage ${stage}`);
+  waits = waits || def.waits;
+  if (!WAITS.includes(waits)) throw new Error(`waits must be ${WAITS.join(', ')}`);
+  const old = (v.onboarding || []).find((o) => o.case === caseId) || null;
+  org = org || old?.org || null; person = person || old?.person || null;
+  if (org && !v.orgs.some((o) => o.id === org)) throw new Error(`no such company ${org}`);
   if (person && v.people.find((p) => p.id === person)?.org !== org) throw new Error('that person is not at this company');
   if (next_step_due && !DAYISO.test(next_step_due)) throw new Error('the due date must be yyyy-mm-dd');
   if (!by) throw new Error('set your name first (top right)');
   if (!ISO.test(at || '')) throw new Error('needs the time, as an ISO time');
-  const old = (v.onboarding || []).find((o) => o.org === org) || null;
-  const moved = !old || old.stage !== stage;
-  const rec = { schema: 'crm.onboarding/1', org, ...(person || old?.person ? { person: person || old.person } : {}), stage,
-    since: moved ? at : old.since, hot: !!hot, history: [...(old?.history || []), ...(moved ? [{ stage, at, by }] : [])], updated_at: at, updated_by: by };
+  const moved = !old || old.stage !== stage, changed = moved || old.waits !== waits;
+  const rec = { schema: 'crm.onboarding/1', case: caseId, ...(org ? { org } : {}), ...(person ? { person } : {}), stage, waits,
+    since: moved ? at : old.since, history: [...(old?.history || []), ...(changed ? [{ stage, waits, at, by }] : [])], updated_at: at, updated_by: by };
   if (next_step) rec.next_step = next_step;
   if (next_step_due) rec.next_step_due = next_step_due;
-  return [{ path: `crm/onboarding/${org}.json`, record: rec, text: JSON.stringify(rec, null, 2) + '\n' }];
+  return [{ path: `crm/onboarding/${caseId}.json`, record: rec, text: JSON.stringify(rec, null, 2) + '\n' }];
 }
 
-// The hot list: the owners marked hot, those whose next step is overdue first, then the ones waiting longest in their stage.
-// Counts by stage for the top of the page; 'cold' is how many records are kept but not hot.
+// The hot list: every case not paused; overdue next steps first, then those waiting on Dinis, then the longest wait.
+// The name is the company's when this vault has one (joined in the browser), else the case id. Counts by stage on top.
 export function hotList(v, now) {
   const order = new Map(ONBOARDING_STAGES.map((s, i) => [s.id, i]));
   const all = v.onboarding || [];
-  const rows = all.filter((o) => o.hot).map((o) => {
-    const org = v.orgs.find((x) => x.id === o.org) || {};
-    const p = v.people.find((x) => x.id === o.person) || v.people.find((x) => x.org === o.org) || null;
+  const rows = all.filter((o) => o.stage !== 'paused').map((o) => {
+    const org = (o.org && v.orgs.find((x) => x.id === o.org)) || null;
+    const p = (o.person && v.people.find((x) => x.id === o.person)) || (org && v.people.find((x) => x.org === org.id)) || null;
     const stage = ONBOARDING_STAGES.find((s) => s.id === o.stage);
     const overdue = !!(o.next_step_due && Date.parse(o.next_step_due + 'T23:59:59Z') < now);
-    return { org: o.org, name: org.name || o.org, person: p ? { id: p.id, name: p.name } : null, stage: o.stage, stage_name: stage?.name || o.stage,
-      waits: stage?.waits || null, step: (order.get(o.stage) ?? 0) + 1, since: o.since, days: Math.max(0, Math.floor((now - Date.parse(o.since)) / DAY)),
-      next_step: o.next_step || null, next_step_due: o.next_step_due || null, overdue, synthetic: !!org.synthetic };
-  }).sort((a, b) => (b.overdue - a.overdue) || (b.days - a.days) || a.name.localeCompare(b.name));
-  return { rows, stages: ONBOARDING_STAGES.map((s) => ({ ...s, count: rows.filter((r) => r.stage === s.id).length })), cold: all.length - rows.length };
+    return { case: o.case, org: org?.id || null, name: org?.name || o.case, person: p ? { id: p.id, name: p.name } : null, stage: o.stage,
+      stage_name: stage?.name || o.stage, waits: o.waits, step: (order.get(o.stage) ?? 0) + 1, since: o.since,
+      days: Math.max(0, Math.floor((now - Date.parse(o.since)) / DAY)), next_step: o.next_step || null, next_step_due: o.next_step_due || null,
+      overdue, synthetic: !!(org?.synthetic || o.synthetic) };
+  }).sort((a, b) => (b.overdue - a.overdue) || ((b.waits === 'dinis') - (a.waits === 'dinis')) || (b.days - a.days) || a.name.localeCompare(b.name));
+  return { rows, stages: ONBOARDING_STAGES.filter((s) => s.id !== 'paused').map((s) => ({ ...s, count: rows.filter((r) => r.stage === s.id).length })),
+    paused: all.length - rows.length };
 }
